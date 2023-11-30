@@ -369,10 +369,10 @@
     
     
     
-    // insert lienketph_hs
+    // insert yeucaulienket
     function insertLienKet($mahs, $maph, $tenhs, $tenph,$nyc, $connection)
     {
-        $sql = "insert into lienketph_hs values(?,?,?,?,?)";
+        $sql = "insert into yeucaulienket values(?,?,?,?,?)";
         try {
             $statement = $connection->prepare($sql);
     
@@ -392,7 +392,7 @@
     function selectdslk($connection, $magv)
     {
     
-        $sql = 'SELECT * FROM lienketph_hs WHERE nyc = "hs" and  MaPH = ? ';
+        $sql = 'SELECT * FROM yeucaulienket WHERE nyc = "hs" and  MaPH = ? ';
     
         try {
             $connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
@@ -413,7 +413,7 @@
     function deletedslk($connection, $mahs , $maph)
     {
     
-        $sql = 'DELETE FROM lienketph_hs WHERE MaHS = ? and MaPH =?';
+        $sql = 'DELETE FROM yeucaulienket WHERE MaHS = ? and MaPH =?';
     
         try {
             $connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);

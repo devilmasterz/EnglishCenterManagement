@@ -119,7 +119,7 @@
     }
     //
     function deleteLKPHHS($connection,$MaHS){
-        $sql = "delete from lienketph_hs where MaHS = ?";
+        $sql = "delete from yeucaulienket where MaHS = ?";
         try{
             $connection -> setAttribute(PDO:: ATTR_ERRMODE, PDO:: ERRMODE_EXCEPTION);
             $statement =  $connection->prepare($sql);

@@ -214,7 +214,7 @@ CREATE TABLE `englishcenter`.`lopghp`
 PRIMARY KEY (`MaLop`),
  foreign key (MaLop) references lop(Malop)) ENGINE = InnoDB;
 
- -- lienketph_hs
+ -- yeucaulienket
  CREATE TABLE `englishcenter`.`lopghp` 
 (`MaHS` int NOT NULL , 
 `MaPH` int NOT NULL , 
