@@ -1,9 +1,10 @@
 <?php
-require '../lib/functionStudent.php';
+
+require '../lib/functionParent.php';
 
 
 
-    $mahs = $_POST['id'];
+    $maph = $_POST['id'];
     $ten = trim($_POST['name']);
     $gt = $_POST['gender'];
     $ns = $_POST['birthday'];
@@ -12,11 +13,11 @@ require '../lib/functionStudent.php';
     $sdt = $_POST['phone'];
     $email = trim($_POST['email']);
     
-    updateStudentbyID($connection, $mahs, $ten, $gt, $ns, $tuoi, $dc, $sdt, $email);
+    updateParentbyID($connection, $maph, $ten, $gt, $ns, $tuoi, $dc, $sdt, $email);
 
-   $listStudent =  listStudent($connection);
+   $listParent = listParent($connection);
 
-   print_r(json_encode($listStudent)) ;
+   print_r(json_encode($listParent)) ;
 
 
 ?>

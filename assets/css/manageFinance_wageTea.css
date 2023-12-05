@@ -22,19 +22,17 @@ h1 {
     border-radius: 0;
 }
 
-/* Thêm hiệu ứng khi hover trên các button */
+
+#search:hover{
+  background-color: #4CAF50;
+}
+
+
 .tab button:hover {
     background-color: #ddd;
 }
 
-/* Thiết lập kích thước cho mỗi tab content */
-/* .tabcontent {
-    display: none;
-    margin-top: 25px;
-    text-align: center;
-    background-color: #ffff;
-    height: 300px;
-} */
+
 
 #Tab2,#Tab3,#Tab4,#Tab5
 ,#Tab2-add,#Tab3-add,#Tab4-add,#Tab5-add,

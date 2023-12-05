@@ -161,8 +161,8 @@ $jslistBill = json_encode($listBill);
             <h1>Chi phí khác</h1>
             <div class="search-container">
                 <form id="form-search" method="post" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>" style="width: 45%; margin: unset;display: inline-flex;" autocomplete="off">
-                    <input type="text" name="keyword" placeholder="Tìm kiếm..." style="width: 70%" value="<?php if(isset($_POST['keyword'])) echo  $_POST['keyword']?>">
-                    <input type="submit" name="search" id="search" value="Tìm kiếm" style="width: 100px">
+                <input type="text" name="keyword" id="keyword" placeholder="Tìm kiếm..." style="width: 70% ; border-radius: 0px; border-color:black;"  value="<?php if (isset($_POST['keyword'])) {echo $_POST['keyword'];}?>" oninput="searchList()">
+			<input type="button" id="search"  value="Tìm kiếm" style="width: 100px;  background-color: #4CAF50;">	
                     <button type="submit" id="refesh-btn" name="refesh" style=" background-color: currentcolor "> <img style="width: 30px;" src="../assets/images/Refresh-icon.png" alt=""></button>
                 </form>
                 <div style="display:inline-flex">

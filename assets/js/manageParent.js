@@ -1,5 +1,5 @@
 
-showTableStudent("");
+showTableParent("");
 
 
 function convertDateFormat(dateString) {
@@ -13,11 +13,10 @@ function numberWithCommas(x) {
 }
 
 
-
-function showTableStudent(text) {
+function showTableParent(text) {
 
     $.ajax({
-        url: '../jquery_ajax/ajax_showTableStudent.php',
+        url: '../jquery_ajax/ajax_showTableParent.php',
         type: 'POST',
         data: {
             key: text,
@@ -35,18 +34,13 @@ function showTableStudent(text) {
 // tim kiem
 function searchList() {
     var text = document.getElementById('keyword').value;
-    showTableStudent(text);
+    showTableParent(text);
     removeSortIcons();
 }
 
 
 
-document.getElementById('cancle-change-pass').addEventListener('click', () => {
-    document.getElementById('div-change-pass').style.display = 'none';
-    document.getElementById('err-pass').textContent = '';
-    document.getElementById('new-password').value = '';
 
-});
 
 
 
@@ -54,213 +48,137 @@ const rows = document.querySelectorAll('.tbody-1 tr');
 const modalBg = document.querySelector('.modal-bg');
 const modalContent = document.querySelector('.modal-content');
 
-var stt_select;
 
-var classes = [];
-var student_select;
-var dsph_lk = [];
-var maPH_delete;
-// khi nhấn vào 1 hàng , hiển thị thông tin chi tiêt
+
+
+
+
+var stt_select;
+var parent_select;
+
+
+
 document.querySelector('.tbody-1').addEventListener('click', function (event) {
 
     if (event.target.tagName === 'TD') {
-
-
         stt_select = event.target.parentNode.cells[1].textContent;
 
-
-
-
-        for (var i = 0; i < ds_hocsinh.length; i++) {
-            if (stt_select == ds_hocsinh[i].MaHS)
-                student_select = ds_hocsinh[i];
+        for (var i = 0; i < ds_phuhuynh.length; i++) {
+            if (stt_select == ds_phuhuynh[i].MaPH)
+                parent_select = ds_phuhuynh[i];
         }
 
-        // lay tt phu huynh
-        var phhs = [];
+        var hs_of_ph = [];
         var j = 0;
-        for (var i = 0; i < ds_ph_hs.length; i++) {
-            if (ds_ph_hs[i].MaHS === student_select.MaHS) {
-                phhs[j++] = ds_ph_hs[i].TenPH;
+        for (var i = 0; i < ds_hs_of_ph.length; i++) {
+            if (ds_hs_of_ph[i].MaPH === parent_select.MaPH) {
+                hs_of_ph[j++] = ds_hs_of_ph[i].TenHS;
             }
         }
 
-        document.getElementById('Student-name').textContent = student_select.TenHS;
-        document.getElementById('Student-gender').textContent = student_select.GioiTinh;
-        document.getElementById('Student-age').textContent = student_select.Tuoi;
-
-        document.getElementById('Student-id').textContent = student_select.MaHS;
-        document.getElementById('Student-address').textContent = student_select.DiaChi;
-        document.getElementById('Student-date').textContent = convertDateFormat(student_select.NgaySinh);
-        document.getElementById('Student-phone').textContent = student_select.SDT;
-        document.getElementById('Student-email').textContent = student_select.Email;
-
+        document.getElementById('Parent-name').textContent = parent_select.TenPH;
+        document.getElementById('Parent-gender').textContent = parent_select.GioiTinh;
+        document.getElementById('Parent-age').textContent = parent_select.Tuoi;
+        document.getElementById('Parent-id').textContent = parent_select.MaPH;
+        document.getElementById('Parent-address').textContent = parent_select.DiaChi;
+        document.getElementById('Parent-date').textContent = convertDateFormat(parent_select.NgaySinh);
+        document.getElementById('Parent-phone').textContent = parent_select.SDT;
+        document.getElementById('Parent-email').textContent = parent_select.Email;
 
 
-        phhs.forEach(function (name) {
-            const pTag = document.createElement("p");
-            pTag.innerText = name;
-            const tdTag = document.getElementById("Student-parent");
-            tdTag.appendChild(pTag);
-
+        var html_hs = '';
+        hs_of_ph.forEach(function (name) {
+            html_hs += '<p class ="infor-student">' + name + '</p>';
         });
+        const tdTag = document.getElementById("Parent-parent"); // Lấy đối tượng td có id là Parent-parent
+        tdTag.innerHTML = html_hs;
 
-        // document.getElementById('Student-parent').textContent =
 
 
         var img = document.getElementById("img");
 
-        if (student_select.GioiTinh == "Nam") {
-            img.src = "../assets/images/Student-male-icon.png";
+        if (parent_select.GioiTinh == "Nam") {
+            img.src = "../assets/images/Parent-male-icon.png";
         } else {
-            img.src = "../assets/images/Student-female-icon.png";
+            img.src = "../assets/images/Parent-female-icon.png";
         }
 
         document.getElementById("tab1").classList.add("show");
         document.getElementById("tab2").classList.remove("show");
         document.getElementById("tab3").classList.remove("show");
-        document.getElementById("tab4").classList.remove("show");
         document.getElementById("tb1").classList.add("active");
         document.getElementById("tb2").classList.remove("active");
         document.getElementById("tb3").classList.remove("active");
-        document.getElementById("tb4").classList.remove("active");
 
-        // thong tin lop cua hoc vien
-        classes = [];
-        var k = 0;
-        for (var i = 0; i < ds_hs_lop.length; i++) {
-            if (ds_hs_lop[i].MaHS === student_select.MaHS) {
-                classes[k++] = ds_hs_lop[i];
+        
+       
+        //thong tin tai khoan
+    
+        for (var i = 0; i < ds_tk_ph.length; i++) {
+            if (ds_tk_ph[i].MaPH === parent_select.MaPH) {
+                document.getElementById('name-login').textContent = ds_tk_ph[i]['UserName'];
+                document.getElementById('username-login').value = ds_tk_ph[i]['UserName'];
+                document.getElementById('password').value = ds_tk_ph[i]['Password'];
+                document.getElementById('date_logup').textContent = "Ngày đăng ký  :  " + convertDateFormat(ds_tk_ph[i]['NgayDK']);
+        
             }
         }
-
-
-        var html = '';
-        var color = '';
-        if (classes.length === '0') {
-            html += '<p>Học viên chưa tham gia lớp học nào </p>';
-        } else {
-            html += '<p> Số lớp đã tham gia: ' + classes.length + '</p>';
-
-            for (var i = 0; i < classes.length; i++) {
-
-                if (classes[i]['TrangThai'] == 'Đang mở') {
-                    color = '#00c608';
-                } else if (classes[i]['TrangThai'] == 'Chưa mở') {
-                    color = '#ad9d0b';
-                } else {
-                    color = '#ad0b0b';
-                }
-
-                html += '<div class="class">' +
-                    '<p></p>' +
-                    '<table>' +
-                    '<tr>' +
-
-                    '<td>' +
-                    '<p id="id-class">Mã lớp học:  ' + classes[i]['MaLop'] + '</p>' +
-                    '</td>' +
-
-                    '<td>' +
-                    '<p id="num-of-session">Số buổi học:  ' + classes[i]['SoBuoiDaToChuc'] + '/' + classes[i]['SoBuoi'] + ' (Vắng : ' + classes[i]['SoBuoiNghi'] + ') </p>' +
-                    '</td>' +
-                    '</tr>' +
-                    '<tr>' +
-
-                    '<td>' +
-                    '<p id="name-class">Tên lớp học:  ' + classes[i]['TenLop'] + '</p>' +
-                    '</td>' +
-
-                    '<td>' +
-                    '<p id="name =name-teacher">Tên giáo viên:  ' + classes[i]['TenGV'] + '</p>' +
-                    '</td>' +
-                    '</tr>' +
-                    '<tr>' +
-
-                    '<td>' +
-                    '<p id="fee-class">Học phí:  ' + numberWithCommas(classes[i]['HocPhi']) + '/buổi' + '</p>' +
-                    '</td>' +
-
-                    '<td>' +
-                    '<p id="de-fee-class">Giảm học phí:  ' + classes[i]['GiamHocPhi'] + '%' + '</p>' +
-                    '</td>' +
-                    '</tr>' +
-                    '<tr>' +
-
-                    '<td>' +
-                    '<p id="status-class" style ="color:' + color + '" >Trạng thái:  ' + classes[i]['TrangThai'] + '</p>' +
-                    '</td>' +
-                    '</tr>' +
-                    '</table>' +
-                    '</div>';
-            }
-
-            document.querySelector(".class-of-student").innerHTML = html;
-
-        }
-
-        // thong tin tai khoan
-
-        for (var i = 0; i < ds_tk_hs.length; i++) {
-            if (ds_tk_hs[i].MaHS === student_select.MaHS) {
-                document.getElementById('name-login').textContent = ds_tk_hs[i]['UserName'];
-                document.getElementById('username-login').value = ds_tk_hs[i]['UserName'];
-                document.getElementById('password').value = ds_tk_hs[i]['Password'];
-                document.getElementById('date_logup').textContent = "Ngày đăng ký  :  " + convertDateFormat(ds_tk_hs[i]['NgayDK']);
-                break;
-            }
-        }
-
-
-        showParent();
-
-
+        showStudent()
+        
         modalBg.style.display = 'block';
     }
 });
 
 
-function showParent() {
-    //thong tin phu huynh cua hoc sinh
-    var parent = [];
-    var k = 0, j = 0;
 
-    dsph_lk = ds_phuhuynh;
-
-    for (var i = 0; i < ds_ph_hs.length; i++) {
-        if (ds_ph_hs[i].MaHS === student_select.MaHS) {
-            parent[k++] = ds_ph_hs[i];
+var dshs_lk = [];
+var maHS_delete;
+function showStudent(){
+    //thong tin con cua phu huynh
+    var child = [];
+    var k = 0;
+    dshs_lk =[];
+    dshs_lk = ds_hocsinh;
+    for (var i = 0; i < ds_hs_of_ph.length; i++) {
+        if (ds_hs_of_ph[i].MaPH === parent_select.MaPH) {
+            child[k++] = ds_hs_of_ph[i];
         }
     }
 
+
+
+
+
+
     var html = '';
 
-    if (parent.length === '0') {
-        html += '<p> Học sinh này chưa liên kết với phụ huynh</p>';
+    if (child.length === '0') {
+        html += '<p> Phụ huynh này chưa liên kết với học viên</p>';
     } else {
-        html += '<p> Số phụ huynh liên kết : ' + parent.length + '</p>';
+        html += '<p> Số học viên liên kết : ' + child.length + '</p>';
 
-        for (var i = 0; i < parent.length; i++) {
+        for (var i = 0; i < child.length; i++) {
 
-            dsph_lk = dsph_lk.filter(phuhuynh => phuhuynh.MaPH != parent[i]['MaPH']);
+            dshs_lk = dshs_lk.filter(hocsinh => hocsinh.MaHS != child[i]['MaHS']);
 
-            html += '<div class="parent">' +
+
+            html += '<div class="child">' +
                 '<p></p>' +
                 '<table>' +
                 '<td>' +
-                '<p ><strong> Mã phụ huynh :</strong>' + '   ' + parent[i]['MaPH'] + '</p>' +
+                '<p ><strong> Mã học sinh :</strong>' + '   ' + child[i]['MaHS'] + '</p>' +
                 '</td>' +
                 '<td>' +
-                '<button  class="delete-button" data-maph="' + parent[i]['MaPH'] + '" style=" float: right ;background-color: cadetblue;"> Xóa' +
+                '<button  class="delete-button" data-mahs="' +child[i]['MaHS'] + '" style=" float: right ;background-color: cadetblue;"> Xóa' +
                 '</td>' +
                 '<tr>' +
 
                 '<td>' +
-                '<p ><strong> Họ tên :</strong>' + '   ' + parent[i]['TenPH'] + '</p>' +
+                '<p ><strong> Họ tên :</strong>' + '   ' + child[i]['TenHS'] + '</p>' +
                 '</td>' +
 
                 '<td>' +
-                '<p ><strong> Tuổi :</strong>' + '   ' + parent[i]['Tuoi'] + '</p>' +
+                '<p ><strong> Tuổi :</strong>' + '   ' + child[i]['Tuoi'] + '</p>' +
                 '</td>' +
 
                 '</tr>' +
@@ -269,54 +187,68 @@ function showParent() {
                 '<tr>' +
 
                 '<td>' +
-                '<p ><strong> Giới tính :</strong>' + '   ' + parent[i]['GioiTinh'] + '</p>' +
+                '<p ><strong> Giới tính :</strong>' + '   ' + child[i]['GioiTinh'] + '</p>' +
                 '</td>' +
 
                 '<td>' +
-                '<p ><strong> Ngày sinh :</strong>' + '   ' + convertDateFormat(parent[i]['NgaySinh']) + '</p>' +
+                '<p ><strong> Ngày sinh :</strong>' + '   ' + convertDateFormat(child[i]['NgaySinh']) + '</p>' +
                 '</td>' +
                 '</tr>' +
                 '<tr>' +
 
                 '<td>' +
-                '<p ><strong>Số điện thoại :</strong>' + '   ' + parent[i]['SDT'] + '</p>' +
+                '<p ><strong>Số điện thoại :</strong>' + '   ' + child[i]['SDT'] + '</p>' +
                 '</td>' +
 
                 '<td>' +
-                '<p ><strong>Email :</strong>' + '   ' + parent[i]['Email'] + '</p>' +
+                '<p ><strong>Email :</strong>' + '   ' + child[i]['Email'] + '</p>' +
                 '</td>' +
                 '</tr>' +
+                '<tr>' +
 
+                '<td>' +
+                '<p ><strong> Lớp học :</strong>' + ' 	  ';
+
+            var k = true;
+            for (var j = 0; j < ds_hs_lop.length; j++) {
+                if (ds_hs_lop[j].MaHS === child[i]['MaHS']) {
+                    html += ds_hs_lop[j].MaLop + ' ;  ';
+                    k = false;
+                }
+            }
+            if (k) {
+                html += "(Chưa tham gia lớp học nào)"
+            }
+            html += '</p>' +
+                '</td>' +
+                '</tr>' +
 
                 '</table>' +
                 '</div>';
         }
 
 
+     
 
-
-
-
-        document.querySelector("#parent-infor").innerHTML = html;
-
+        document.querySelector("#child-infor").innerHTML = html;
 
     }
 
 
-
-    const selectElement = document.getElementById('select-parent');
+    const selectElement = document.getElementById('select-student');
     const options = selectElement.querySelectorAll('option:not(:first-child)');
 
     options.forEach(option => {
         option.remove();
     });
 
-    dsph_lk.forEach((phuHuynh) => {
+    dshs_lk.forEach((hocsinh) => {
         const option = document.createElement('option');
-        option.value = phuHuynh.MaPH;
-        option.textContent = `${phuHuynh.MaPH}. ${phuHuynh.TenPH} - ${phuHuynh.Tuoi} tuổi`;
-        document.getElementById('select-parent').appendChild(option);
+        option.value = hocsinh.MaHS;
+        option.textContent = `${hocsinh.MaHS}. ${hocsinh.TenHS} - ${hocsinh.Tuoi} tuổi`;
+        document.getElementById('select-student').appendChild(option);
     });
+
 
     /// xoa lien ket
 
@@ -324,12 +256,13 @@ function showParent() {
     document.querySelectorAll('.delete-button').forEach(button => {
         button.addEventListener('click', function (event) {
 
-            maPH_delete = event.target.dataset.maph;
+            maHS_delete = event.target.dataset.mahs;
 
-            ds_phuhuynh.forEach((phuHuynh) => {
-                if (phuHuynh.MaPH == maPH_delete) {
-                    document.getElementById('txt-quest-link').textContent = "Bạn chắc chắn muốn xóa liên kết phụ huynh " + maPH_delete + "." + phuHuynh.TenPH;
+            ds_hocsinh.forEach((hocsinh) => {
+                if (hocsinh.MaHS == maHS_delete) {
+                    document.getElementById('txt-quest-link').textContent = "Bạn chắc chắn muốn xóa liên kết học sinh " + maHS_delete + "." + hocsinh.TenHS;
                 }
+
             });
 
 
@@ -337,8 +270,8 @@ function showParent() {
             document.querySelector('.delete-ques-link').style.display = 'block';
         });
     });
+
 }
-// xoa lien ket
 document.getElementById('delete-cancle-link').addEventListener('click', () => {
 
     document.getElementById('modal-ques-link').style.display = 'none';
@@ -347,18 +280,20 @@ document.getElementById('delete-cancle-link').addEventListener('click', () => {
 });
 
 
+
 document.getElementById('delete-link').addEventListener('click', () => {
 
     $.ajax({
         type: 'POST',
-        url: '../jquery_ajax/ajax_deleteLinkParent.php',
+        url: '../jquery_ajax/ajax_deleteLinkStudent.php',
         data: {
-            maph: maPH_delete,
-            mahs: student_select.MaHS,
+            maph: parent_select.MaPH,
+            mahs: maHS_delete,
+
         },
         success: function (res) {
-            ds_ph_hs = JSON.parse(res);
-            showParent();
+            ds_hs_of_ph = JSON.parse(res);
+            showStudent();
         },
         error: function (xhr, status, error) {
             console.error(error);
@@ -375,21 +310,17 @@ document.getElementById('delete-link').addEventListener('click', () => {
 
 });
 
-
 document.querySelector('.close-btn').addEventListener('click', () => {
 
     document.getElementById('div-change-pass').style.display = 'none';
-
     modalBg.style.display = 'none';
-    document.getElementById('err-pass').textContent = "";
+    document.getElementById('err-pass').textContent = '';
     document.getElementById('err-username').textContent = "";
-
 
     const paragraphs = document.getElementsByTagName("p");
     while (paragraphs.length > 0) {
         paragraphs[0].parentNode.removeChild(paragraphs[0]);
     }
-    document.querySelector(".class-of-student").innerHTML = '';
 
 });
 
@@ -408,14 +339,16 @@ editButton.addEventListener('click', () => {
     document.getElementById('lb_name_edit').textContent = "";
 
     document.getElementById('lb_address_edit').textContent = "";
+
+
     document.getElementById('lb_birthday_edit').textContent = "";
 
     modalBgEdit.style.display = "block";
 
 
-    document.getElementById('sudent_name_edit').value = student_select.TenHS;
+    document.getElementById('parent_name_edit').value = parent_select.TenPH;
 
-    var gt = student_select.GioiTinh;
+    var gt = parent_select.GioiTinh;
     var selectTag = document.getElementById("gender_edit");
     for (var i = 0; i < selectTag.options.length; i++) {
         if (selectTag.options[i].value == gt) {
@@ -424,14 +357,14 @@ editButton.addEventListener('click', () => {
         }
     }
 
-    document.getElementById('birthday_edit').value = student_select.NgaySinh;
-    document.getElementById('age_edit').value = student_select.Tuoi;
-    document.getElementById('Student-id_edit').textContent = "Mã Học viên : " + student_select.MaHS;
-    document.getElementById('address_edit').value = student_select.DiaChi;
-    document.getElementById('phone_number_edit').value = student_select.SDT;
-    document.getElementById('email_edit').value = student_select.Email;
-    // document.getElementById('education_edit').value = student_select.TrinhDo;
-    document.getElementById('id_edit').value = student_select.MaHS;
+    document.getElementById('birthday_edit').value = parent_select.NgaySinh;
+    document.getElementById('age_edit').value = parent_select.Tuoi;
+    document.getElementById('parent-id_edit').textContent = "Mã Học viên : " + parent_select.MaPH;
+    document.getElementById('address_edit').value = parent_select.DiaChi;
+    document.getElementById('phone_number_edit').value = parent_select.SDT;
+    document.getElementById('email_edit').value = parent_select.Email;
+
+    document.getElementById('id_edit').value = parent_select.MaPH;
 });
 
 document.querySelector('.cancle-btn').addEventListener('click', () => {
@@ -451,16 +384,15 @@ submit_update.addEventListener('click', function (event) {
     const id = document.getElementById('id_edit').value;
     const phone_number = document.getElementById('phone_number_edit').value;
     const email = document.getElementById('email_edit').value;
-    const gender = document.getElementById('gender_edit').value;
-    const Student_name = document.getElementById('sudent_name_edit').value;
+    const parent_name = document.getElementById('parent_name_edit').value;
     const age = document.getElementById('age_edit').value;
     const address = document.getElementById('address_edit').value;
     const birthday = document.getElementById('birthday_edit').value;
+    const gender = document.getElementById('gender_edit').value;
 
-    var erorr_empty = "*Dữ liệu không để trống";
+    var erorr_empty = "*Dữ liệu không được để trống";
 
-    //Kiểm tra dữ liệu nhập vào
-    if (!Student_name) {
+    if (!parent_name) {
         document.getElementById('lb_name_edit').textContent = erorr_empty;
         check = false;
     } else
@@ -479,13 +411,13 @@ submit_update.addEventListener('click', function (event) {
     } else
         document.getElementById('lb_address_edit').textContent = "";
 
-    if (!(/^(0[0-9]{9})$/.test(phone_number)) && phone_number) {
+    if (!(/^(0[0-9]{9})$/.test(phone_number))) {
         document.getElementById('lb_phone_edit').textContent = "*Số điện thoại không chính xác (0..; 10 chữ số)";
         check = false;
     } else
         document.getElementById('lb_phone_edit').textContent = "";
 
-    if (!(/\S+@\S+\.\S+/.test(email)) && email) {
+    if (!(/\S+@\S+\.\S+/.test(email))) {
         document.getElementById('lb_email_edit').textContent = "*Email không chính xác (example@xxx.com)";
         check = false;
     } else
@@ -497,10 +429,10 @@ submit_update.addEventListener('click', function (event) {
 
     $.ajax({
         type: 'POST',
-        url: '../jquery_ajax/ajax_updateInforStudent.php',
+        url: '../jquery_ajax/ajax_updateInforParent.php',
         data: {
             id: id,
-            name: Student_name,
+            name: parent_name,
             gender: gender,
             birthday: birthday,
             age: age,
@@ -510,30 +442,33 @@ submit_update.addEventListener('click', function (event) {
         },
         success: function (res) {
 
-            ds_hocsinh = JSON.parse(res);
-            for (var i = 0; i < ds_hocsinh.length; i++) {
-                if (ds_hocsinh[i].MaHS === student_select.MaHS) {
-                    student_select = ds_hocsinh[i];
+            ds_phuhuynh = JSON.parse(res);
+
+
+            for (var i = 0; i < ds_phuhuynh.length; i++) {
+                if (ds_phuhuynh[i].MaPH === parent_select.MaPH) {
+                    parent_select = ds_phuhuynh[i];
                     break;
                 }
             }
 
-            document.getElementById('Student-name').textContent = student_select.TenHS;
-            document.getElementById('Student-gender').textContent = student_select.GioiTinh;
-            document.getElementById('Student-age').textContent = student_select.Tuoi;
+            document.getElementById('Parent-name').textContent = parent_select.TenPH;
+            document.getElementById('Parent-gender').textContent = parent_select.GioiTinh;
+            document.getElementById('Parent-age').textContent = parent_select.Tuoi;
+            document.getElementById('Parent-id').textContent = parent_select.MaPH;
+            document.getElementById('Parent-address').textContent = parent_select.DiaChi;
+            document.getElementById('Parent-date').textContent = convertDateFormat(parent_select.NgaySinh);
+            document.getElementById('Parent-phone').textContent = parent_select.SDT;
+            document.getElementById('Parent-email').textContent = parent_select.Email;
 
-            document.getElementById('Student-id').textContent = student_select.MaHS;
-            document.getElementById('Student-address').textContent = student_select.DiaChi;
-            document.getElementById('Student-date').textContent = convertDateFormat(student_select.NgaySinh);
-            document.getElementById('Student-phone').textContent = student_select.SDT;
-            document.getElementById('Student-email').textContent = student_select.Email;
-            if (student_select.GioiTinh == "Nam") {
-                img.src = "../assets/images/Student-male-icon.png";
+
+            var img = document.getElementById("img");
+            if (parent_select.GioiTinh == "Nam") {
+                img.src = "../assets/images/Parent-male-icon.png";
             } else {
-                img.src = "../assets/images/Student-female-icon.png";
+                img.src = "../assets/images/Parent-female-icon.png";
             }
             searchList();
-
 
         },
         error: function (xhr, status, error) {
@@ -542,7 +477,10 @@ submit_update.addEventListener('click', function (event) {
     });
 
     modalBgEdit.style.display = 'none';
+
+
     document.querySelector('.update-success').style.display = 'block';
+
     setTimeout(function () {
         document.querySelector('.update-success').style.display = 'none';
 
@@ -554,15 +492,15 @@ submit_update.addEventListener('click', function (event) {
 
 // Khi nhan nut Xoa
 
-function deleteStudent() {
+function deleteParent() {
     $.ajax({
-        url: '../jquery_ajax/ajax_deleteStudent.php',
+        url: '../jquery_ajax/ajax_deleteParent.php',
         type: 'POST',
         data: {
-            id: student_select.MaHS,
+            id: parent_select.MaPH,
         },
         success: function (res) {
-            ds_hocsinh = JSON.parse(res);
+            ds_phuhuynh = JSON.parse(res);
         },
         error: function (xhr, status, error) {
             console.error(error);
@@ -582,7 +520,6 @@ function deleteStudent() {
     while (paragraphs.length > 0) {
         paragraphs[0].parentNode.removeChild(paragraphs[0]);
     }
-    document.querySelector(".class-of-student").innerHTML = '';
 
 
 
@@ -610,10 +547,10 @@ document.getElementById('delete-cancle').addEventListener('click', () => {
 document.getElementById('delete').addEventListener('click', function (event) {
 
     $.ajax({
-        url: '../jquery_ajax/ajax_checkAccStudent.php',
+        url: '../jquery_ajax/ajax_checkAccParent.php',
         type: 'POST',
         data: {
-            id: student_select.MaHS,
+            id: parent_select.MaPH,
         },
         success: function (res) {
 
@@ -622,7 +559,7 @@ document.getElementById('delete').addEventListener('click', function (event) {
                 document.querySelector('.delete-ques2').style.display = 'block';
             }
             else {
-                deleteStudent();
+                deleteParent();
             }
 
         },
@@ -646,7 +583,7 @@ document.getElementById('delete-cancle2').addEventListener('click', () => {
 document.getElementById('delete2').addEventListener('click', function (event) {
 
     event.preventDefault();
-    deleteStudent();
+    deleteParent();
 
 
 
@@ -656,32 +593,33 @@ document.getElementById('delete2').addEventListener('click', function (event) {
 
 
 
+
 // Open detail tab
 document.getElementById("tab1").classList.add("show");
 
 function openTab(evt, tabName) {
-    // Declare all variables
+   
     var i, tabcontent, tablinks;
 
-    // Get all elements with class="tabcontent" and hide them
+
     tabcontent = document.getElementsByClassName("tabcontent");
     for (i = 0; i < tabcontent.length; i++) {
         tabcontent[i].classList.remove("show");
     }
 
-    // Get all elements with class="tablinks" and remove the class "active"
+   
     tablinks = document.getElementsByClassName("tablinks");
     for (i = 0; i < tablinks.length; i++) {
         tablinks[i].classList.remove("active");
     }
 
-    // Show the current tab, and add an "active" class to the button that opened the tab
+   
     document.getElementById(tabName).classList.add("show");
     evt.currentTarget.classList.add("active");
 }
 
 //  Tài khoản
-
+// ẩn hiện mk
 function togglePassword() {
     var passwordInput = document.getElementById("password");
     if (passwordInput.type === "password") {
@@ -701,9 +639,11 @@ document.getElementById('change-pass-btn').addEventListener('click', () => {
 
 document.getElementById('change').addEventListener('click', function (event) {
 
+ 
     event.preventDefault();
-    var pass = document.getElementById("new-password").value;
 
+
+    var pass = document.getElementById("new-password").value;
     var username = document.getElementById('username-login').value;
 
     var err_pass = '';
@@ -723,29 +663,29 @@ document.getElementById('change').addEventListener('click', function (event) {
     document.getElementById('err-username').textContent = err_username;
 
 
+
     if (!check) {
         return;
     }
 
 
-
     $.ajax({
-        url: '../jquery_ajax/ajax_changeAccStudent.php',
+        url: '../jquery_ajax/ajax_changeAccParent.php',
         type: 'POST',
         data: {
-            id: student_select.MaHS,
+            id: parent_select.MaPH,
             username: username,
             pass: pass,
         },
         success: function (res) {
-            ds_tk_hs = JSON.parse(res);
+            ds_tk_ph = JSON.parse(res);
 
-            for (var i = 0; i < ds_tk_hs.length; i++) {
-                if (ds_tk_hs[i].MaHS === student_select.MaHS) {
-                    document.getElementById('name-login').textContent = ds_tk_hs[i]['UserName'];
-                    document.getElementById('username-login').value = ds_tk_hs[i]['UserName'];
-                    document.getElementById('password').value = ds_tk_hs[i]['Password'];
-                    document.getElementById('date_logup').textContent = "Ngày đăng ký  :  " + convertDateFormat(ds_tk_hs[i]['NgayDK']);
+            for (var i = 0; i < ds_tk_ph.length; i++) {
+                if (ds_tk_ph[i].MaPH === parent_select.MaPH) {
+                    document.getElementById('name-login').textContent = ds_tk_ph[i]['UserName'];
+                    document.getElementById('username-login').value = ds_tk_ph[i]['UserName'];
+                    document.getElementById('password').value = ds_tk_ph[i]['Password'];
+                    document.getElementById('date_logup').textContent = "Ngày đăng ký  :  " + convertDateFormat(ds_tk_ph[i]['NgayDK']);
                     break;
                 }
             }
@@ -757,18 +697,16 @@ document.getElementById('change').addEventListener('click', function (event) {
             console.error(error);
         }
     });
+
+
     document.getElementById('div-change-pass').style.display = 'none';
     document.querySelector('.change-pass-success').style.display = 'block';
-
-
+    
 
     setTimeout(function () {
         document.querySelector('.change-pass-success').style.display = 'none';
         document.getElementById('err-pass').textContent = '';
         document.getElementById('err-username').textContent = '';
-
-
-
     }, 1000);
 });
 
@@ -780,9 +718,11 @@ document.getElementById('cancle-change-pass').addEventListener('click', () => {
 });
 
 
+// sap xep bang
 
 
-var sortDirection = {}; // Store the current sort direction for each column
+
+var sortDirection = {}; 
 
 function sortTable(columnIndex) {
     var table = document.getElementById('table-1');
@@ -793,6 +733,9 @@ function sortTable(columnIndex) {
     });
 
     rows.sort(function (a, b) {
+        var aValue = a.getElementsByTagName('td')[columnIndex].innerText.trim();
+        var bValue = b.getElementsByTagName('td')[columnIndex].innerText.trim();
+
 
 
         if (columnIndex === 4 || columnIndex === 1) {
@@ -814,11 +757,7 @@ function sortTable(columnIndex) {
             }
         }
 
-
     });
-
-
-
     rows.forEach(function (row, index) {
         var sttCell = row.getElementsByTagName('td')[0];
         sttCell.innerText = sttValues[index];
@@ -829,21 +768,19 @@ function sortTable(columnIndex) {
     });
 
 
-    // Reverse the sort direction for the clicked column
+    
     if (sortDirection[columnIndex] === 'asc') {
         sortDirection[columnIndex] = 'desc';
     } else {
         sortDirection[columnIndex] = 'asc';
     }
 
-    // Update the sort icon in the column header
+    
     updateSortIcon(columnIndex);
 
 
 
 }
-
-
 
 function removeSortIcons() {
     var table = document.getElementById('table-1');
@@ -883,10 +820,11 @@ function updateSortIcon(columnIndex) {
 }
 
 
-// them hoc sinh
+
+// them phu huynh
 
 
-document.querySelector('.add-student-button').addEventListener('click', () => {
+document.querySelector('.add-parent-button').addEventListener('click', () => {
     document.querySelector('.modal-bg-add').style.display = 'block';
 
 });
@@ -894,26 +832,20 @@ document.querySelector('.add-student-button').addEventListener('click', () => {
 
 document.querySelector('.cancle-btn-add').addEventListener('click', () => {
     document.querySelector('.modal-bg-add').style.display = 'none';
-    document.querySelector('.parent_add').selectedIndex = 0;
+    document.querySelector('.student_add').selectedIndex = 0;
 
     document.getElementById('phone_number_add').value = "";
     document.getElementById('email_add').value = "";
-    document.getElementById('student_name_add').value = "";
+    document.getElementById('parent_name_add').value = "";
     document.getElementById('age_add').value = "";
 
     document.getElementById('address_add').value = "";
     document.getElementById('birthday_add').value = "";
 
-    const parentContainer = document.getElementById('parentContainer');
-    while (parentContainer.firstChild) {
-        parentContainer.removeChild(parentContainer.firstChild);
+    const studentContainer = document.getElementById('studentContainer');
+    while (studentContainer.firstChild) {
+        studentContainer.removeChild(studentContainer.firstChild);
     }
-    document.getElementById('lb_name_add').textContent = "";
-    document.getElementById('lb_birthday_add').textContent = "";
-    
-    document.getElementById('lb_address_add').textContent = "";
-    document.getElementById('lb_phone_add').textContent = "";
-    document.getElementById('lb_email_add').textContent = "";
 
 
 });
@@ -925,7 +857,7 @@ document.getElementById('add').addEventListener('click', function (event) {
     event.preventDefault();
     const phone_number = document.getElementById('phone_number_add').value;
     const email = document.getElementById('email_add').value;
-    const name = document.getElementById('student_name_add').value;
+    const name = document.getElementById('parent_name_add').value;
     const age = document.getElementById('age_add').value;
     const gender = document.getElementById('gender_add').value;
 
@@ -955,13 +887,13 @@ document.getElementById('add').addEventListener('click', function (event) {
     } else
         document.getElementById('lb_address_add').textContent = "";
 
-    if (!(/^(0[0-9]{9})$/.test(phone_number)) && phone_number) {
+    if (!/^(0[0-9]{9})$/.test(phone_number)) {
         document.getElementById('lb_phone_add').textContent = "*Số điện thoại không chính xác (0[0-9]; 10 chữ số)";
         check = false;
     } else
         document.getElementById('lb_phone_add').textContent = "";
 
-    if (!(/\S+@\S+\.\S+/.test(email)) && email) {
+    if (!/\S+@\S+\.\S+/.test(email)) {
         document.getElementById('lb_email_add').textContent = "*Email không chính xác (example@xxx.com)";
         check = false;
     } else
@@ -970,7 +902,7 @@ document.getElementById('add').addEventListener('click', function (event) {
     if (!check)
         return;
 
-    const selects = document.querySelectorAll('.parent_add');
+    const selects = document.querySelectorAll('.student_add');
     const selectedValues = [];
     const seenValues = {}
 
@@ -986,7 +918,7 @@ document.getElementById('add').addEventListener('click', function (event) {
     });
 
     $.ajax({
-        url: '../jquery_ajax/ajax_addStudent.php',
+        url: '../jquery_ajax/ajax_addParent.php',
         type: 'POST',
         data: {
             name: name,
@@ -996,12 +928,12 @@ document.getElementById('add').addEventListener('click', function (event) {
             address: address,
             phone: phone_number,
             email: email,
-            parents: selectedValues,
+            students: selectedValues,
         },
         success: function (res) {
-            ds_hocsinh = JSON.parse(res).student;
-            ds_ph_hs = JSON.parse(res).phhs;
-            ds_tk_hs = JSON.parse(res).acc;
+            ds_phuhuynh = JSON.parse(res).parent;
+            ds_hs_of_ph = JSON.parse(res).phhs;
+            ds_tk_ph = JSON.parse(res).acc;
             searchList();
 
         },
@@ -1012,16 +944,16 @@ document.getElementById('add').addEventListener('click', function (event) {
 
     document.getElementById('phone_number_add').value = "";
     document.getElementById('email_add').value = "";
-    document.getElementById('student_name_add').value = "";
+    document.getElementById('parent_name_add').value = "";
     document.getElementById('age_add').value = "";
 
     document.getElementById('address_add').value = "";
     document.getElementById('birthday_add').value = "";
-    document.querySelector('.parent_add').selectedIndex = 0;
+    document.querySelector('.student_add').selectedIndex = 0;
 
-    const parentContainer = document.getElementById('parentContainer');
-    while (parentContainer.firstChild) {
-        parentContainer.removeChild(parentContainer.firstChild);
+    const studentContainer = document.getElementById('studentContainer');
+    while (studentContainer.firstChild) {
+        studentContainer.removeChild(studentContainer.firstChild);
     }
 
 
@@ -1049,36 +981,36 @@ function setAge() {
 
 
 function setAge2() {
+    console.log("a");
     var inputDate = document.getElementById("birthday_edit").value;
     var namHienTai = new Date().getFullYear();
     var namInput = new Date(inputDate).getFullYear();
 
     var age = namHienTai - namInput;
     document.getElementById('age_edit').value = age;
-
 }
 
-function addParent() {
-    const parentContainer = document.getElementById('parentContainer');
-    const newParent = document.createElement('div');
-    newParent.classList.add('parent');
-    newParent.style.padding = 0;
-    newParent.innerHTML = `
-      <select name="parent_add" class="parent_add" style="width: 50%;">
-        <option value="">Chọn phụ huynh</option>
+function addStudent() {
+    const studentContainer = document.getElementById('studentContainer');
+    const newstudent = document.createElement('div');
+    newstudent.classList.add('student');
+    newstudent.style.padding = 0;
+    newstudent.innerHTML = `
+      <select name="student_add" class="student_add" style="width: 50%;">
+        <option value="">Chọn học sinh</option>
       </select>
-      <button class="removeBtn"  style="background-color: lightcoral;" onclick="removeParent(this)">-</button>
+      <button class="removeBtn"  style="background-color: lightcoral;" onclick="removeStudent(this)">-</button>
     `;
 
-    parentContainer.appendChild(newParent);
+    studentContainer.appendChild(newstudent);
 
-    const newSelect = newParent.querySelector('.parent_add');
+    const newSelect = newstudent.querySelector('.student_add');
 
-    // Điền dữ liệu về phụ huynh vào select
-    ds_phuhuynh.forEach((phuHuynh) => {
+
+    ds_hocsinh.forEach((hocsinh) => {
         const option = document.createElement('option');
-        option.value = phuHuynh.MaPH;
-        option.textContent = `${phuHuynh.MaPH}. ${phuHuynh.TenPH} - ${phuHuynh.Tuoi} tuổi`;
+        option.value = hocsinh.MaHS;
+        option.textContent = `${hocsinh.MaHS}. ${hocsinh.TenHS} - ${hocsinh.Tuoi} tuổi`;
         newSelect.appendChild(option);
     });
 
@@ -1086,50 +1018,52 @@ function addParent() {
 }
 
 
-function removeParent(btn) {
-    const parentToRemove = btn.parentNode;
-    const parentContainer = document.getElementById('parentContainer');
-    parentContainer.removeChild(parentToRemove);
+function removeStudent(btn) {
+    const studentToRemove = btn.parentNode;
+    const studentContainer = document.getElementById('studentContainer');
+    studentContainer.removeChild(studentToRemove);
 }
 
-
-
-///////////////// them lien kett phu huynh
-document.getElementById('add-parent').addEventListener('click', () => {
+///////////////// them lien kett hoc sinh
+document.getElementById('add-student').addEventListener('click', () => {
     document.getElementById('modal-add-link').style.display = 'block';
 
 });
 
-function removeParent2(btn) {
-    const parentToRemove = btn.parentNode;
-    const parentContainer = document.getElementById('parentContainer2');
-    parentContainer.removeChild(parentToRemove);
+function removeStudent2(btn) {
+    const studentToRemove = btn.parentNode;
+    const studentContainer = document.getElementById('studentContainer2');
+    studentContainer.removeChild(studentToRemove);
 }
 
 
-function addLinkParent() {
-    const parentContainer = document.getElementById('parentContainer2');
-    const newParent = document.createElement('div');
-    newParent.classList.add('parent2');
-    newParent.style.padding = 0;
-    newParent.innerHTML = `
-      <select name="parent_add2" class="parent_add2" style="width: 60%;" required>
-        <option value="">Chọn phụ huynh</option>
+function addLinkStudent() {
+
+
+    const studentContainer = document.getElementById('studentContainer2');
+    const newstudent = document.createElement('div');
+    newstudent.classList.add('student2');
+    newstudent.style.padding = 0;
+    newstudent.innerHTML = `
+      <select name="student_add2" class="student_add2" style="width: 60%;">
+        <option value="">Chọn học sinh</option>
       </select>
-      <button class="removeBtn"  style="background-color: lightcoral;" onclick="removeParent2(this)">-</button>
+      <button class="removeBtn"  style="background-color: lightcoral;" onclick="removeStudent(this)">-</button>
     `;
 
-    parentContainer.appendChild(newParent);
+    studentContainer.appendChild(newstudent);
 
-    const newSelect = newParent.querySelector('.parent_add2');
+    const newSelect = newstudent.querySelector('.student_add2');
 
 
-    dsph_lk.forEach((phuHuynh) => {
+    dshs_lk.forEach((hocsinh) => {
         const option = document.createElement('option');
-        option.value = phuHuynh.MaPH;
-        option.textContent = `${phuHuynh.MaPH}. ${phuHuynh.TenPH} - ${phuHuynh.Tuoi} tuổi`;
+        option.value = hocsinh.MaHS;
+        option.textContent = `${hocsinh.MaHS}. ${hocsinh.TenHS} - ${hocsinh.Tuoi} tuổi`;
         newSelect.appendChild(option);
     });
+
+
 
 
 }
@@ -1138,18 +1072,18 @@ function addLinkParent() {
 
 document.getElementById('btn-cancle-link').addEventListener('click', () => {
     document.getElementById('modal-add-link').style.display = 'none';
-    document.querySelector('.parent_add2').selectedIndex = 0;
+    document.querySelector('.student_add2').selectedIndex = 0;
 
 
-    const parentContainer = document.getElementById('parentContainer2');
-    while (parentContainer.firstChild) {
-        parentContainer.removeChild(parentContainer.firstChild);
+    const studentContainer = document.getElementById('studentContainer2');
+    while (studentContainer.firstChild) {
+        studentContainer.removeChild(studentContainer.firstChild);
     }
 });
 
 
 document.getElementById('btn-add-link').addEventListener('click', () => {
-    const selects = document.querySelectorAll('.parent_add2');
+    const selects = document.querySelectorAll('.student_add2');
     const selectedValues = [];
     const seenValues = {}
 
@@ -1166,15 +1100,15 @@ document.getElementById('btn-add-link').addEventListener('click', () => {
 
 
     $.ajax({
-        url: '../jquery_ajax/ajax_addLinkParent.php',
+        url: '../jquery_ajax/ajax_addLinkStudent.php',
         type: 'POST',
         data: {
-            id: student_select.MaHS,
-            parents: selectedValues,
+            id: parent_select.MaPH,
+            students: selectedValues,
         },
         success: function (res) {
-            ds_ph_hs = JSON.parse(res);
-            showParent();
+            ds_hs_of_ph= JSON.parse(res);
+            showStudent();
         },
         error: function (xhr, status, error) {
             console.error(error);
@@ -1184,12 +1118,12 @@ document.getElementById('btn-add-link').addEventListener('click', () => {
 
     document.getElementById('modal-add-link').style.display = 'none';
 
-    document.querySelector('.parent_add2').selectedIndex = 0;
+    document.querySelector('.student_add2').selectedIndex = 0;
 
 
-    const parentContainer = document.getElementById('parentContainer2');
-    while (parentContainer.firstChild) {
-        parentContainer.removeChild(parentContainer.firstChild);
+    const studentContainer = document.getElementById('studentContainer2');
+    while (studentContainer.firstChild) {
+        studentContainer.removeChild(studentContainer.firstChild);
     }
 
 

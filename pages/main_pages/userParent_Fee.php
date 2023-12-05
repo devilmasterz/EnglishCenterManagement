@@ -97,7 +97,7 @@ $jslistLSTHP = json_encode($listLSTHP);
                                                                                                                 echo $_POST['keyword'];
                                                                                                             }
                                                                                                             ?>">
-                    <input type="submit" name="search" id="search" value="Tìm kiếm" style="width: 100px">
+                    <input type="submit" id="search" id="search" value="Tìm kiếm" style="width: 100px">
                     <button type="submit" id="refesh-btn" name="refesh" style="     border: none; background-color: white;"> <img style="width: 30px;" src="../../assets/images/Refresh-icon.png" alt=""></button>
 
 

@@ -21,8 +21,10 @@ h1 {
     margin: 2px 0 0 2px;
     border-radius: 0;
 }
-
-/* Thêm hiệu ứng khi hover trên các button */
+#search:hover{
+    background-color: #4CAF50;
+  }
+  
 .tab button:hover {
     background-color: #ddd;
 }

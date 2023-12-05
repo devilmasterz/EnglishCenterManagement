@@ -5,52 +5,10 @@ $listStudent = listStudent($connection);
 $listph_hs = listph_hs($connection);
 $lisths_lop = lisths_lop($connection);
 $listtk_hs = listtk_hs($connection);
-
+$listPhuHuynh =  selectAllParent($connection);
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-	if (isset($_POST['sudent_name_edit'])) {
-
-		$mahs = $_POST['id_edit'];
-		$ten = trim($_POST['sudent_name_edit']);
-		$gt = $_POST['gender_edit'];
-		$ns = $_POST['birthday_edit'];
-		$tuoi = $_POST['age_edit'];
-		$dc = trim($_POST['address_edit']);
-		$sdt = $_POST['phone_number_edit'];
-		$email = trim($_POST['email_edit']);
-		updateStudentbyID($connection, $mahs, $ten, $gt, $ns, $tuoi, $dc, $sdt, $email);
-		header("Location: manageStudent.php");
-	}
 
 	if (isset($_POST['refesh'])) {
-		header("Location: manageStudent.php");
-	}
-
-	if (isset($_POST['search'])) {
-		$key = trim($_POST['keyword']);
-		$listStudent = searchStudent($connection, $key);
-	}
-
-	if (isset($_POST['mahs_delete'])) {
-		$mahs = $_POST['mahs_delete'];
-		deletetk_hs($connection, $mahs);
-		deleteStudent_ph_hs($connection, $mahs);
-		deleteNgaydk($connection, $mahs);
-
-		deleteLKPHHS($connection, $mahs);
-		deleteDiemDanh($connection, $mahs);
-		$listMaHD = selectMaHD($connection, $mahs);
-		foreach ($listMaHD as $hd) {
-			deleteLSTHP($connection, $hd['MaHD']);
-		}
-		deleteStudent($connection, $mahs);
-		header("Location: manageStudent.php");
-	}
-
-	if (isset($_POST['username-login'])) {
-		$username = $_POST['username-login'];
-		$pass = $_POST['new-password'];
-
-		updatePassHS($connection, $username, $pass);
 		header("Location: manageStudent.php");
 	}
 }
@@ -59,7 +17,7 @@ $jsonListStudent = json_encode($listStudent);
 $jsonListph_hs = json_encode($listph_hs);
 $jsonLisths_lop = json_encode($lisths_lop);
 $jsonListtk_hs = json_encode($listtk_hs);
-
+$jsonListPhuHuynh = json_encode($listPhuHuynh);
 ?>
 
 
@@ -98,68 +56,100 @@ $jsonListtk_hs = json_encode($listtk_hs);
 
 		<h1>Quản lý Học viên</h1>
 		<div class="search-container">
+
 			<form id="form-search" method="post" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>" style="width: 50%; margin: unset;display: inline-flex;" autocomplete="off">
-				<input type="text" name="keyword" placeholder="Tìm kiếm..." style="width: 70%" value="<?php if (isset($_POST['keyword'])) {
-																											echo $_POST['keyword'];
-																										}
-																										?>">
-				<input type="submit" name="search" value="Tìm kiếm" style="width: 100px">
+				<input type="text" name="keyword" id="keyword" placeholder="Tìm kiếm..." style="width: 70% ; border-radius: 0px; border-color:black;" value="<?php if (isset($_POST['keyword'])) {
+																																	} ?>" oninput="searchList()">
+				<input type="button" id="search" value="Tìm kiếm" style="width: 100px;  background-color: #4CAF50;">
 				<button type="submit" id="refesh-btn" name="refesh" style=" background-color: currentcolor "> <img style="width: 30px;" src="../assets/images/Refresh-icon.png" alt=""></button>
 			</form>
-
+			<div>
+				<button class="add-student-button">+ Thêm học sinh</button>
+			</div>
 		</div>
 
 		<table id="table-1">
 			<thead>
 				<tr>
 					<th onclick="sortTable(0)">STT</th>
-					<th onclick="sortTable(1)">Mã học viên</th>
+					<th onclick="sortTable(1)">Mã học sinh</th>
 					<th onclick="sortTable(2)">Họ Tên</th>
 					<th onclick="sortTable(3)">Giới tính</th>
 					<th onclick="sortTable(4)">Tuổi</th>
 					<th onclick="sortTable(5)" style="width :200px">Địa chỉ</th>
-					<th onclick="sortTable(6)">Lớp đang học</th>
+
 
 
 				</tr>
 			</thead>
 			<tbody class="tbody-1">
-				<?php $i = 1;
-				$nam = 0;
-				$nu = 0;
-				if (!$listStudent) {
-					echo ' <h2>Không tìm thấy kết quả phù hợp "' . $_POST['keyword'] . '"</h2>';
-				} else {
-					foreach ($listStudent as $Student) : ?>
-						<?php if ($Student['GioiTinh'] == 'Nam') {
-							$nam++;
-						} else {
-							$nu++;
-						}
-						?>
-						<tr>
-							<td><?php echo $i++ ?></td>
-							<td><?php echo $Student['MaHS']; ?></td>
-							<td><?php echo $Student['TenHS']; ?></td>
-							<td><?php echo $Student['GioiTinh']; ?></td>
-							<td><?php echo $Student['Tuoi']; ?></td>
-							<td style="width :200px"><?php echo $Student['DiaChi']; ?></td>
-							<td><?php
-								$listClass = classOfStudent($connection, $Student['MaHS']);
-								foreach ($listClass as $class) :
-									echo $class['MaLop'] . ' ; ';
-								endforeach;
-								?></td>
-
-
-						</tr>
-				<?php endforeach;
-				} ?>
-
 
 
 			</tbody>
 		</table>
+
+		<!-- Thêm học sinh -->
+
+		<div class="modal-bg-add">
+			<div class="modal-content-add">
+				<div>
+					<form id="form_add" name="form_add" method="post">
+
+						<h1>Thêm Học sinh</h1>
+
+						<label for="student_name">Tên học sinh: <label id="lb_name_add" style="color:red; font-size:13px ; font-style: italic "></label></label>
+						<input type="text" id="student_name_add" name="student_name_add" placeholder="Nhập tên học sinh">
+
+						<label for="gender">Giới tính:</label>
+						<select id="gender_add" name="gender_add">
+							<option>Nam</option>
+							<option>Nữ</option>
+						</select>
+
+						<label for="birthday">Ngày sinh:</label>
+						<input type="date" id="birthday_add" name="birthday_add" onchange="setAge()"><label id="lb_birthday_add" style="color:red; font-size:13px ; font-style: italic "></label>
+
+						<label for="age" style="margin-left: 150px;">Tuổi:</label>
+						<input type="number" id="age_add" name="age_add" readonly> <label id="lb_age_add" style="color:red; font-size:13px ; font-style: italic "></label>
+						<br>
+
+						<label for="address">Địa chỉ: <label id="lb_address_add" style="color:red; font-size:13px ; font-style: italic "></label></label>
+						<input type="text" id="address_add" name="address_add" placeholder="Nhập địa chỉ">
+
+						<label for="phone_number">Số điện thoại: <label id="lb_phone_add" style="color:red; font-size:13px ; font-style: italic "></label></label>
+						<input type="tel" id="phone_number_add" name="phone_number_add" placeholder="Nhập số diện thoại">
+
+						<label for="email_add">Email: <label id="lb_email_add" style="color:red; font-size:13px ; font-style: italic "></label></label>
+						<input type="email" id="email_add" name="email_add" placeholder="Nhập email">
+
+
+						<label for="parent_add">Phụ huynh: <label class="lb_parent_add" style="color:red; font-size:13px; font-style: italic;"></label></label>
+						<br>
+						<select name="parent_add" class="parent_add" style="width: 50%;">
+							<option value="">Chọn phụ huynh</option>
+
+							
+							<?php foreach ($listPhuHuynh as $ph) { ?>
+								<option value="<?php echo $ph['MaPH'] ?>">
+									<?php echo $ph['MaPH'] . '. ' . $ph['TenPH'] . ' - ' . $ph['Tuoi'] . ' tuổi' ?>
+								</option>
+							<?php } ?>
+
+						</select>
+						<button type="button" style="background-color: limegreen;" onclick="addParent()" id="add_parent">+</button>
+
+						<div id="parentContainer" style="padding : 0px">
+
+						</div>
+
+
+						<input type="submit" id='add' name="add" value="Thêm">
+
+					</form>
+					<button class="cancle-btn-add" style="margin-left: 70px;">Hủy bỏ</button>
+				</div>
+			</div>
+		</div>
 
 		<!-- Thong tin chi tiet -->
 		<div class="modal-bg">
@@ -184,7 +174,9 @@ $jsonListtk_hs = json_encode($listtk_hs);
 						<div class="tab">
 							<button class="tablinks" id="tb1" onclick="openTab(event, 'tab1')">Chung</button>
 							<button class="tablinks" id="tb2" onclick="openTab(event, 'tab2')"> Lớp học</button>
+							<button class="tablinks" id="tb4" onclick="openTab(event, 'tab4')">Phụ huynh liên kết</button>
 							<button class="tablinks" id="tb3" onclick="openTab(event, 'tab3')">Tài khoản</button>
+
 						</div>
 
 						<div id="tab1" class="tabcontent">
@@ -212,10 +204,6 @@ $jsonListtk_hs = json_encode($listtk_hs);
 									<td id="Student-address" contenteditable="false"></td>
 								</tr>
 
-								<tr>
-									<th>Lớp đang học</th>
-									<td id="Student-class" contenteditable="false"></td>
-								</tr>
 
 								<tr>
 									<th>Phụ huynh:</th>
@@ -239,11 +227,15 @@ $jsonListtk_hs = json_encode($listtk_hs);
 							<div class="class-of-student">
 
 							</div>
+
 						</div>
 
 						<div id="tab3" class="tabcontent">
 							<div>
 								<table>
+									<tr>
+										<td id="date_logup"></td>
+									</tr>
 									<tr>
 										<td>
 											<h3 style="text-align: center;"> Tên đăng nhập : </h3>
@@ -264,7 +256,7 @@ $jsonListtk_hs = json_encode($listtk_hs);
 									<tr>
 										<td></td>
 										<td>
-											<button style=" background-color: peru;" id="change-pass-btn">Đổi mật khẩu</button>
+											<button style=" background-color: peru;" id="change-pass-btn">Thay đổi</button>
 										</td>
 									</tr>
 								</table>
@@ -281,6 +273,13 @@ $jsonListtk_hs = json_encode($listtk_hs);
 											<td>
 												<input type="text" id="username-login" name="username-login" readonly>
 											</td>
+
+										</tr>
+										<tr>
+											<td>
+												<h5 id="err-username" style="color: red;font-style: italic;  font-size: 14px;"></h5>
+											</td>
+
 										</tr>
 										<tr>
 
@@ -298,33 +297,31 @@ $jsonListtk_hs = json_encode($listtk_hs);
 
 										</tr>
 
-										<tr>
-											<td>
-												<label for="confirm-password">Nhập lại mật khẩu mới:</label>
-											</td>
-											<td>
-												<input type="password" id="confirm-password" name="confirm-password" autocomplete="false"><br>
-											</td>
-										</tr>
-										<tr>
-											<td>
-												<h5 id="err-repass" style="color: red;font-style: italic;  font-size: 14px;"></h5>
-											</td>
-
-										</tr>
 
 										<tr>
 											<td style="text-align :center">
 												<button type="button" id="cancle-change-pass" style=" font-size: 14px;padding: 14px 20px;">Hủy bỏ</button>
 											</td>
 											<td style="text-align :center">
-												<input type="submit" name="change" id="change" style="width: unset" value="Đổi mật khẩu">
+												<input type="submit" name="change" id="change" style="width: unset" value="Cập nhật">
 											</td>
 										</tr>
 
 									</table>
 								</form>
 							</div>
+						</div>
+
+						<div id="tab4" class="tabcontent">
+							<button id="add-parent" style="float: inline-end;border-radius: 0px;  background-color: seagreen; "> Thêm liên kết phụ huynh</button>
+
+
+							<div id="parent-infor">
+
+
+							</div>
+
+
 						</div>
 
 					</div>
@@ -336,19 +333,37 @@ $jsonListtk_hs = json_encode($listtk_hs);
 			</div>
 		</div>
 
+
+		<div id="modal-add-link">
+
+
+
+			<div id="add-link-parent">
+				<h3>Thêm liên kết phụ huynh</h3>
+				<select name="parent_add2" class="parent_add2" id="select-parent" style="width: 60%;" required>
+					<option value="">Chọn phụ huynh</option>
+
+				</select>
+				<button type="button" style="background-color: limegreen;" onclick="addLinkParent()">+</button>
+
+				<div id="parentContainer2" style="padding : 0px ">
+
+				</div>
+				<button id="btn-cancle-link" style="width: 30%;">Hủy</button>
+
+				<button id="btn-add-link" style="width: 30%;">Thêm</button>
+
+			</div>
+		</div>
+
 		<!-- Sua thong tin -->
 		<div class="modal-bg-edit">
 			<div class="modal-content-edit">
 				<div>
 					<form id="form_edit" name="form_edit" method="post">
 
-
-						<!-- <label for="Student_id">Mã giáo viên: 1</label>
-						<input type="text" id="Student_id" name="Student_id" required> -->
-
-						<button type="button" id="ss">s</button>
 						<h1>Sửa thông tin học viên</h1>
-						
+
 						<h2 id="Student-id_edit"></h2>
 						<input type="hidden" id="id_edit" name="id_edit">
 
@@ -362,16 +377,13 @@ $jsonListtk_hs = json_encode($listtk_hs);
 						</select>
 
 						<label for="birthday">Ngày sinh:</label>
-						<input type="date" id="birthday_edit" name="birthday_edit" required><label id="lb_birthday_edit" style="color:red; font-size:13px ; font-style: italic "></label>
+						<input type="date" id="birthday_edit" name="birthday_edit"  onchange="setAge2()" required><label id="lb_birthday_edit" style="color:red; font-size:13px ; font-style: italic "></label>
 
 						<label for="age" style="margin-left: 150px;">Tuổi:</label>
-						<input type="number" id="age_edit" name="age_edit" required> <label id="lb_age_edit" style="color:red; font-size:13px ; font-style: italic "></label>
+						<input type="number" id="age_edit" name="age_edit" readonly> 
 						<br>
 						<label for="address">Địa chỉ: <label id="lb_address_edit" style="color:red; font-size:13px ; font-style: italic "></label></label>
 						<input type="text" id="address_edit" name="address_edit" required>
-
-						<!-- <label for="education">Trình độ: <label id="lb_education_edit" style="color:red; font-size:13px ; font-style: italic "></label></label>
-						<input type="text" id="education_edit" name="education_edit" required> -->
 
 						<label for="phone_number">Số điện thoại: <label id="lb_phone_edit" style="color:red; font-size:13px ; font-style: italic "></label></label>
 						<input type="tel" id="phone_number_edit" name="phone_number_edit" required>
@@ -396,6 +408,12 @@ $jsonListtk_hs = json_encode($listtk_hs);
 			<img src="../assets/images/icon_success.png" alt="" style=" width: 40px;">
 			<h3>Thêm giáo viên thành công!</h3>
 		</div>
+
+		<div class="add-success" id="noti-add-link">
+			<img src="../assets/images/icon_success.png" alt="" style=" width: 40px;">
+			<h3>Thêm liên kết thành công!</h3>
+		</div>
+
 		<div class="update-success">
 			<img src="../assets/images/icon_success.png" alt="" style=" width: 40px;">
 			<h3>Thay đổi thành công!</h3>
@@ -405,31 +423,51 @@ $jsonListtk_hs = json_encode($listtk_hs);
 			<h3>Xóa thành công!</h3>
 		</div>
 
-		<div class="delete-ques">
-			<img src="../assets/images/Help-icon.png" alt="" style=" width: 40px;">
-			<h4>Bạn chắc chắn muốn xóa?</h4>
-			<div style="display:flex ;justify-content: space-evenly;align-items: center">
+		<div id="modal-ques">
+			<div class="delete-ques">
+				<img src="../assets/images/Help-icon.png" alt="" style=" width: 40px;">
+				<h4>Bạn chắc chắn muốn xóa?</h4>
+				<div style="display:flex ;justify-content: space-evenly;align-items: center">
 
-				<button style="background-color:#52a95f; height: 44px;width: 80px" id="delete-cancle">Hủy bỏ</button>
-				<form id="form-delete" action="" method="POST">
-					<input type="hidden" id="mahs_delete" name="mahs_delete">
-					<input type="submit" style="background-color: #d52828;  height: 44px;width: 80px" id="delete" name="delete" value="Xóa"></input>
-				</form>
+					<input type="submit" style="background-color:#52a95f; height: 44px;width: 80px" id="delete-cancle" value="Hủy bỏ"></input>
+					<input type="submit" style="background-color: #d52828;  height: 44px;width: 80px" id="delete" value="Xóa"></input>
+
+				</div>
+			</div>
+
+
+			<div class="delete-ques2" style="max-width: 333px;">
+				<img src="../assets/images/Help-icon.png" alt="" style=" width: 40px;">
+				<h4>Học sinh đã có nhiều dữ liệu liên quan. Việc xóa sẽ ảnh hưởng đến cơ sở dữ liệu. <br> Bạn chắc chắn muốn xóa?</h4>
+				<div style="display:flex ;justify-content: space-evenly;align-items: center">
+
+					<input type="submit" style="background-color:#52a95f; height: 44px;width: 80px" id="delete-cancle2" value="Hủy bỏ"></input>
+					<input type="submit" style="background-color: #d52828;  height: 44px;width: 80px" id="delete2" value="Xóa"></input>
+
+				</div>
+			</div>
+
+		</div>
+		<div class="change-pass-success">
+			<img src="../assets/images/icon_success.png" alt="" style=" width: 40px;">
+			<h3>Cập nhật tài khoản thành công!</h3>
+		</div>
+
+
+		<div id="modal-ques-link">
+			<div class="delete-ques-link">
+				<img src="../assets/images/Help-icon.png" alt="" style=" width: 40px;">
+				<h4 id="txt-quest-link">Bạn chắc chắn muốn xóa?</h4>
+				<div style="display:flex ;justify-content: space-evenly;align-items: center">
+					<input type="submit" style="background-color:#52a95f; height: 44px;width: 80px" id="delete-cancle-link" value="Hủy bỏ"></input>
+					<input type="submit" style="background-color: #d52828;  height: 44px;width: 80px" id="delete-link" value="Xóa"></input>
+
+				</div>
 			</div>
 		</div>
 
-		<div class="delete-cant">
-			<img src="../assets/images/Close-icon.png" alt="" style=" width: 40px;">
-			<h3>Học viên đang có lớp theo học <br> Không thể xóa!</h3>
-			<button id="close">Đóng</button>
-		</div>
 
-		<div class="change-pass-success">
-			<img src="../assets/images/icon_success.png" alt="" style=" width: 40px;">
-			<h3>Thay đổi mật khẩu thành công!</h3>
-		</div>
-
-		<p style="margin-left: 80%; font-style:italic; font-size:13px"> <?php echo '*Tổng số học viên: ' . $i - 1 . '  Nam: ' . $nam . '  Nữ: ' . $nu ?> </p>
+		<!-- <p style="margin-left: 80%; font-style:italic; font-size:13px"> <?php echo '*Tổng số học viên: ' . $i - 1 . '  Nam: ' . $nam . '  Nữ: ' . $nu ?> </p> -->
 
 
 	</main>
@@ -442,14 +480,14 @@ $jsonListtk_hs = json_encode($listtk_hs);
 	</footer>
 
 	<script>
-	ds_hocsinh = <?php print_r($jsonListStudent); ?>;
-        ds_ph_hs = <?php print_r($jsonListph_hs); ?>;
-        ds_hs_lop = <?php print_r($jsonLisths_lop); ?>;
-        ds_tk_hs = <?php print_r($jsonListtk_hs); ?>;
-
+		ds_hocsinh = <?php print_r($jsonListStudent); ?>;
+		ds_ph_hs = <?php print_r($jsonListph_hs); ?>;
+		ds_hs_lop = <?php print_r($jsonLisths_lop); ?>;
+		ds_tk_hs = <?php print_r($jsonListtk_hs); ?>;
+		ds_phuhuynh = <?php print_r($jsonListPhuHuynh); ?>;
 	</script>;
 
-<script src="../../assets/js/manageStudent.js"></script>
+	<script src="../../assets/js/manageStudent.js"></script>
 
 
 

@@ -54,7 +54,9 @@ h1 {
     background-color: #747272;
 }
 
-
+#search:hover{
+  background-color: #4CAF50;
+}
 
 table {
 
