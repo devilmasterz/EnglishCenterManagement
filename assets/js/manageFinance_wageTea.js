@@ -28,49 +28,48 @@ document.getElementById("btn-tab1-add").classList.add("active");
 
 
 
-// var a = Math.round(203000/100*24.123);
+
 
 function numberWithCommas(x) {
     return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 //Hiẹn thị bảng
-var filteredData_ds = dsHoaDon;
+var filteredData_ds;
+var selectedStatus = "";
 hienthids('', filteredData_ds);
 
-function hienthids(status,filteredData) {
+function hienthids(status, filteredData) {
     filteredData_ds = [];
     document.querySelector(".tbody-1").innerHTML = '';
     document.querySelector(".tbody-5").innerHTML = '';
-    // var filteredData = dsHoaDon;
-    if (status) {
-        // filteredData = dsHoaDon.filter(function (hoaDon) {
-        //     return hoaDon['TrangThai'] === status;
-        // });
+    var filteredData = dsHoaDon;
+    if (status !== "") {
+
         filteredData = dsHoaDon.filter(function (hoaDon) {
             return hoaDon['TrangThai'] === status;
         });
     }
-    if(filteredData.length ==0)
-    {
-        document.querySelector(".tbody-1").innerHTML = 'Không có dữ liệu phù hợp';
+    if (filteredData.length == 0) {
+        document.querySelector(".tbody-1").innerHTML = 'Không có dữ liệu phù hợp với "' + document.getElementById('keyword').value.trim() + '"';
     }
     filteredData_ds = filteredData;
 
     var html = ''; var html_last = '';
     var color = '';
-    var tongSoTien = 0; var tienChuaTT = 0;  var tienDaTT =0;var dem1 =0; var dem0 =0;
+    var tongSoTien = 0; var tienChuaTT = 0; var tienDaTT = 0; var dem1 = 0; var dem0 = 0;
     if (filteredData.length != 0) {
         for (var i = 0; i < filteredData.length; i++) {
             if (filteredData[i]['TrangThai'] === 'Đã thanh toán') {
                 color = "lightgreen";
                 tienDaTT += filteredData[i]['SoTien'];
-               
+
                 dem1++;
             }
-            else { color = "#ff9393";
-            tienChuaTT += filteredData[i]['SoTien'];
-            dem0++;
-        }
+            else {
+                color = "#ff9393";
+                tienChuaTT += filteredData[i]['SoTien'];
+                dem0++;
+            }
             // else { color = "#bcbdff" }
 
             html += '<tr onclick="handleRowClick(' + i + ')">';
@@ -93,35 +92,35 @@ function hienthids(status,filteredData) {
             html += '<td style = "background-color:' + color + '">' + filteredData[i]['TrangThai'] + '</td>';
 
             html += '</tr>';
-            
+
 
             tongSoTien += filteredData[i]['SoTien'];
         }
 
         html_last += '<tr>';
-        html_last += '<td style="width:20px ;  ">'  + '</td>';
-        html_last += '<td >' +  '</td>';
-        html_last += '<td >' +  '</td>';
-        html_last += '<td >' +  '</td>';   
-        html_last += '<td >' +  '</td>'; 
-        html_last += '<td >' +  '</td>'; 
+        html_last += '<td style="width:20px ;  ">' + '</td>';
+        html_last += '<td >' + '</td>';
+        html_last += '<td >' + '</td>';
+        html_last += '<td >' + '</td>';
+        html_last += '<td >' + '</td>';
+        html_last += '<td >' + '</td>';
         html_last += '<td >' + 'Tổng : </td>';
         html_last += '<td >' + numberWithCommas(tongSoTien) + '</td>';
-        html_last += '<td >' + 'Đã thanh toán :  </td>';
-        html_last += '<td >'  +  numberWithCommas(tienDaTT)+'('+ dem1+') </td>';
+        html_last += '<td >' + 'Đã thanh toán:  </td>';
+        html_last += '<td >' + numberWithCommas(tienDaTT) + '(' + dem1 + ') </td>';
 
         html_last += '</tr>';
         html_last += '<tr>';
-        html_last += '<td style="width:20px ;  ">'  + '</td>';
-        html_last += '<td >' +  '</td>';
-        html_last += '<td >' +  '</td>';
-        html_last += '<td >' +  '</td>';   
-        html_last += '<td >' +  '</td>'; 
-        html_last += '<td >' +  '</td>'; 
+        html_last += '<td style="width:20px ;  ">' + '</td>';
         html_last += '<td >' + '</td>';
         html_last += '<td >' + '</td>';
-        html_last += '<td >' + 'Chưa thanh toán :  </td>';
-        html_last += '<td >'  +  numberWithCommas(tienChuaTT)+'('+ dem0+') </td>';
+        html_last += '<td >' + '</td>';
+        html_last += '<td >' + '</td>';
+        html_last += '<td >' + '</td>';
+        html_last += '<td >' + '</td>';
+        html_last += '<td >' + '</td>';
+        html_last += '<td >' + 'Chưa thanh toán: </td>';
+        html_last += '<td >' + numberWithCommas(tienChuaTT) + '(' + dem0 + ') </td>';
 
         html_last += '</tr>';
         document.querySelector(".tbody-1").innerHTML = html;
@@ -133,9 +132,39 @@ function hienthids(status,filteredData) {
 
 var selectStatus = document.getElementById('select-status');
 selectStatus.addEventListener('change', function () {
-    var selectedStatus = selectStatus.value;
+    selectedStatus = selectStatus.value;
     hienthids(selectedStatus, filteredData_ds);
 });
+
+
+
+function showTableFinance(text) {
+
+    $.ajax({
+        url: '../jquery_ajax/ajax_showTableWageTea.php',
+        type: 'POST',
+        data: {
+            key: text,
+        },
+        success: function (res) {
+            dsHoaDon = JSON.parse(res);
+            hienthids(selectedStatus, filteredData_ds);
+        },
+        error: function (xhr, status, error) {
+            console.error(error);
+        }
+    });
+
+}
+
+
+function searchList() {
+    var text = document.getElementById('keyword').value;
+    showTableFinance(text);
+    removeSortIcons();
+}
+
+
 
 
 // sap xep bang
@@ -245,28 +274,39 @@ function sortTable(columnIndex) {
 
 
 
+function removeSortIcons() {
+    var table = document.getElementById('table-1');
+    var headers = table.querySelectorAll('th');
+
+    headers.forEach(function (header) {
+        var icon = header.querySelector('img');
+        if (icon) {
+            header.removeChild(icon);
+        }
+    });
+}
+
 
 function updateSortIcon(columnIndex) {
     var table = document.getElementById('table-1');
     var headers = table.querySelectorAll('th');
 
     headers.forEach(function (header) {
-        // Remove the sort icon from all column headers
         var icon = header.querySelector('img');
         if (icon) {
             header.removeChild(icon);
         }
     });
 
-    // Add the sort icon to the clicked column header
     var clickedHeader = headers[columnIndex];
     var sortIcon = document.createElement('img');
-    sortIcon.src = '../assets/images/arrow-up-down-bold-icon.png';
+    sortIcon.src = '../assets/images/iconSort.png';
     sortIcon.style.width = '20px';
     sortIcon.style.backgroundColor = 'white';
     sortIcon.style.borderRadius = '30px';
-    if (sortDirection[columnIndex] === 'asc') {
+    if (sortDirection[columnIndex] === 'desc') {
         sortIcon.style.transform = 'rotate(180deg)';
+
     }
     clickedHeader.appendChild(sortIcon);
 }
@@ -312,9 +352,9 @@ var teacherSelect = document.getElementById("bill-teacher-add");
 monthSelect.addEventListener("change", updateTeacherOptions);
 yearSelect.addEventListener("change", updateTeacherOptions);
 var addedTeachers = [];
-// Hàm cập nhật các giá trị trong select bill-teacher-add
+
 function updateTeacherOptions() {
-    // Lấy giá trị tháng và năm được chọn
+
     var selectedMonth = monthSelect.value;
     var selectedYear = yearSelect.value;
     var check = true;
@@ -324,7 +364,6 @@ function updateTeacherOptions() {
         inputs = [];
         inputsValue = [];
     }
-    // Xóa tất cả các option hiện tại trong select bill-teacher-add
     while (teacherSelect.options.length > 0) {
         teacherSelect.remove(0);
     }
@@ -358,7 +397,7 @@ function updateTeacherOptions() {
 
             if (!isTeacherAdded && check) {
                 var defaultOption = document.createElement('option');
-                defaultOption.value = 'all';
+                defaultOption.value = 'Tất cả';
                 defaultOption.textContent = 'Tất cả';
                 teacherSelect.appendChild(defaultOption);
                 check = false;
@@ -390,11 +429,11 @@ var inputsValue = [];
 
 
 select.addEventListener("change", (event) => {
-    // Xóa input đã chọn nếu có
+    //Xóa input đã chọn nếu có
     var check = true;
     const selectedOption = event.target.value;
 
-    if (selectedOption == 'all') {
+    if (selectedOption === 'Tất cả') {
         inputs.forEach(input => outputDiv.removeChild(input));
         inputs = [];
         inputsValue = [];
@@ -402,10 +441,8 @@ select.addEventListener("change", (event) => {
         for (var i = 0; i < options_All.length; i++) {
             const input = document.createElement('input');
             input.type = 'text';
-
             input.value = options_All[i].MaGV + '.' + options_All[i].TenGV;
             input.setAttribute('readonly', 'readonly');
-
 
             inputsValue.push(options_All[i].MaGV);
             inputs.push(input);
@@ -414,23 +451,19 @@ select.addEventListener("change", (event) => {
 
     }
     else {
-        inputsValue.forEach(i => {
-            if (i == selectedOption)
-                check = false;
-        });
-        if (selectedOption !== '' && check) {
+
+        if (!inputsValue.includes(selectedOption)) {
             const input = document.createElement('input');
             input.type = 'text';
             input.value = selectedOption;
             input.setAttribute('readonly', 'readonly');
 
-            var parts = selectedOption.split(".");
-            inputsValue.push(parseInt(parts[0]));
+            inputsValue.push(selectedOption);
             inputs.push(input);
             outputDiv.appendChild(input);
-
         }
     }
+
 
 
 });
@@ -440,6 +473,8 @@ document.getElementById('reset-class').addEventListener('click', () => {
     inputs = [];
     inputsValue = [];
 });
+
+
 
 document.getElementById('reset-1').addEventListener('click', () => {
     inputs.forEach(input => outputDiv.removeChild(input));
@@ -453,13 +488,23 @@ document.querySelector('.btn-close-add').addEventListener('click', () => {
     document.getElementById("btn-tab1-add").classList.add("active");
     document.getElementById("btn-tab2-add").classList.remove("active");
     document.getElementById("Tab2-add").style.display = "none";
+
+    document.getElementById('form-add-bill').reset();
+    document.getElementById('form-add-bill-ps').reset();
+
+    inputs2.forEach(input => outputDiv2.removeChild(input));
+    inputs2 = [];
+    inputsValue2 = [];
+    inputs.forEach(input => outputDiv.removeChild(input));
+    inputs = [];
+    inputsValue = [];
 });
 
 // Khi nhấn tao
 
 document.getElementById('sumit-bill-add').addEventListener('click', function (event) {
     var check = true;
-    const form1 = document.getElementById('form-add-bill')
+
     event.preventDefault();
     const name_bill = document.getElementById('bill-name-add').value;
     const month_bill = document.getElementById('bill-month-add').value;
@@ -493,62 +538,109 @@ document.getElementById('sumit-bill-add').addEventListener('click', function (ev
         document.getElementById('lb-class-add').textContent = "";
 
     document.getElementById('teacher-add-bill').value = inputsValue;
+    const teacher_bill = document.getElementById('teacher-add-bill').value;
 
     if (!check)
         return;
-    document.getElementById('tb1').innerHTML = "Đã thêm lương giáo viên tháng " + month_bill + "/" + year_bill + " thành công!";
 
+    $.ajax({
+        url: '../jquery_ajax/ajax_addWageTeacher.php',
+        type: 'POST',
+        data: {
+            name: name_bill,
+            month: month_bill,
+            year: year_bill,
+            teacher: teacher_bill,
+        },
+        success: function (res) {
+            searchList();
+        },
+        error: function (xhr, status, error) {
+            console.error(error);
+        }
+    });
+
+
+    document.getElementById('tb1').innerHTML = "Đã thêm lương giáo viên tháng " + month_bill + "/" + year_bill + " thành công!";
+    document.getElementById('form-add-bill').reset();
+    inputs.forEach(input => outputDiv.removeChild(input));
+    inputs = [];
+    inputsValue = [];
     document.querySelector('.add-success').style.display = 'block';
 
     setTimeout(function () {
         document.querySelector('.add-success').style.display = 'none';
-        form1.submit();
+
     }, 1500);
 });
 
 
 // Thêm hóa đơn cá nhân
-var classSelect = document.getElementById("bill-teacher-add-ps");
-var studentSelect = document.getElementById("name-student-add-bill");
+
 //ds giáo viên
 var inputText = document.getElementById("name-teacher-add-bill");
-var teacherListElement = document.getElementById("teacher-list");
 
-// Xử lý sự kiện khi nhấn vào một li trong danh sách
-teacherListElement.addEventListener("click", function (event) {
-    var clickedTeacher = event.target.textContent;
 
-    teacherListElement.innerHTML = "";
 
-    var parts = clickedTeacher.split(".");
-    inputText.value = parts[1];
-    document.getElementById('name-teacher-s').value = parseInt(parts[0]);
-});
+const select2 = document.getElementById("bill-teacher-add-ps");
+const outputDiv2 = document.getElementById("div-bill-class-add-ps");
+const options_All2 = document.querySelectorAll('#bill-teacher-add-ps option');
 
-// Hàm lọc và hiển thị danh sách giáo viên
-function filterTeachers() {
-    // Lấy giá trị từ input text
-    var inputValue = inputText.value.toLowerCase();
-    if (!inputValue) {
-        teacherListElement.innerHTML = "";
+var inputs2 = [];
+var inputsValue2 = [];
+
+
+
+select2.addEventListener("change", (event) => {
+    //Xóa input đã chọn nếu có
+    var check = true;
+    const selectedOption = event.target.value;
+
+    if (selectedOption === 'Tất cả') {
+        inputs2.forEach(input => outputDiv2.removeChild(input));
+        inputs2 = [];
+        inputsValue2 = [];
+        const options_All2 = dsgv;
+        for (var i = 0; i < options_All2.length; i++) {
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.value = options_All2[i].MaGV + '.' + options_All2[i].TenGV;
+            input.setAttribute('readonly', 'readonly');
+
+            inputsValue2.push(options_All2[i].MaGV);
+            inputs2.push(input);
+            outputDiv2.appendChild(input);
+        }
+
     }
     else {
-        // Lọc danh sách giáo viên dựa trên tên
-        var filteredTeachers = dsgv.filter(function (teacher) {
-            return teacher.TenGV.toLowerCase().includes(inputValue);
-        });
 
-        // Hiển thị kết quả lọc
-        teacherListElement.innerHTML = "";
+        if (!inputsValue2.includes(selectedOption)) {
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.value = selectedOption;
+            input.setAttribute('readonly', 'readonly');
 
-        // Tạo phần tử li cho mỗi giáo viên
-        filteredTeachers.forEach(function (teacher) {
-            var liElement = document.createElement("li");
-            liElement.textContent = teacher.MaGV + '.' + teacher.TenGV;
-            teacherListElement.appendChild(liElement);
-        });
+            inputsValue2.push(selectedOption);
+            inputs2.push(input);
+            outputDiv2.appendChild(input);
+        }
     }
-}
+});
+
+document.getElementById('reset-class-ps').addEventListener('click', () => {
+    inputs2.forEach(input => outputDiv2.removeChild(input));
+    inputs2 = [];
+    inputsValue2 = [];
+});
+
+document.getElementById('reset-2').addEventListener('click', () => {
+    inputs2.forEach(input => outputDiv2.removeChild(input));
+    inputs2 = [];
+    inputsValue2 = [];
+})
+
+
 
 function formatNumber(input) {
     let value = input.value;
@@ -584,39 +676,27 @@ document.getElementById('sumit-bill-add-ps').addEventListener('click', function 
     var check = true;
 
 
-    const form1 = document.getElementById('form-add-bill-ps');
+
     event.preventDefault();
     const name_bill = document.getElementById('bill-name-add-ps').value;
-
-    const name_teacher = document.getElementById('name-teacher-add-bill').value;
     const money = document.getElementById('money-add-bill').value;
 
 
 
-
     //Kiểm tra dữ liệu nhập vào
+    if (inputsValue2.length === 0) {
+        document.getElementById('lb-class-add-ps').textContent = "*Chưa chọn giáo viên";
+        check = false;
+    } else
+        document.getElementById('lb-class-add-ps').textContent = "";
+
+
 
     if (!name_bill) {
         document.getElementById('lb-name-add-ps').textContent = "*Chưa nhập tên hóa đơn";
         check = false;
     } else
         document.getElementById('lb-name-add-ps').textContent = "";
-    var check_name = false;
-    for (var i = 0; i < dsgv.length; i++) {
-        if (dsgv[i].TenGV == document.getElementById('name-teacher-add-bill').value) {
-            check_name = true;
-        }
-    }
-    if (!name_teacher) {
-        document.getElementById('lb-class-add-ps').textContent = "*Chưa nhập tên giáo viên ";
-        check = false;
-    } else if (!check_name) {
-
-        document.getElementById('lb-class-add-ps').textContent = "Nhập sai tên";
-        check = false;
-    }
-    else
-        document.getElementById('lb-class-add-ps').textContent = '';
 
     if (!money) {
         document.getElementById('lb-money-add-ps').textContent = "*Chưa số tiền";
@@ -627,14 +707,34 @@ document.getElementById('sumit-bill-add-ps').addEventListener('click', function 
     if (!check)
         return;
 
+    document.getElementById('teacher-add-bill-ps').value = inputsValue2;
+    const teacher_bill_ps = document.getElementById('teacher-add-bill-ps').value;
 
-    document.getElementById('tb1').innerHTML = "Đã thêm hóa đơn " + name_bill + " của giáo  viên " + name_teacher + " thành công! ";
+    $.ajax({
+        url: '../jquery_ajax/ajax_addWageTeacherps.php',
+        type: 'POST',
+        data: {
+            name: name_bill,
+            money: money,
+            teacher: teacher_bill_ps,
+        },
+        success: function (res) {
+            searchList();
+        },
+        error: function (xhr, status, error) {
+            console.error(error);
+        }
+    });
 
+
+    document.getElementById('tb1').innerHTML = "Đã thêm hóa đơn " + name_bill + " cho giáo  viên thành công! ";
+
+    document.getElementById('form-add-bill-ps').reset();
     document.querySelector('.add-success').style.display = 'block';
 
     setTimeout(function () {
         document.querySelector('.add-success').style.display = 'none';
-        form1.submit();
+
     }, 1500);
 });
 
@@ -652,7 +752,7 @@ var lsthp = [];
 function handleRowClick(index) {
     // Xử lý sự kiện khi bấm vào một dòng
     // var selectedRow = rows[index].cells[1];
-    
+
     var selectedRow = filteredData_ds[index];
 
 
@@ -671,21 +771,20 @@ function handleRowClick(index) {
 
     document.getElementById('id-bill-detail').textContent = maHD_select;
     document.getElementById('name-bill-detail').textContent = hoaDon_select.TenHD;
-    // document.getElementById('class-bill-detail').textContent = hoaDon_select.Lop;
+
     document.getElementById('id-st-detail').textContent = hoaDon_select.MaGV;
     document.getElementById('name-st-bill-detail').textContent = hoaDon_select.TenGV;
     document.getElementById('time-bill-detail').textContent = hoaDon_select.ThoiGian;
     document.getElementById('st-bill-detail').textContent = numberWithCommas(hoaDon_select.SoTien);
-    if (hoaDon_select.ThoiGianTT !=null)
+    if (hoaDon_select.ThoiGianTT != null)
         document.getElementById('time-tt-bill-detail').textContent = convertDateFormat(hoaDon_select.ThoiGianTT);
-    else{
+    else {
         document.getElementById('time-tt-bill-detail').textContent = '';
 
     }
-  
-    var tt = hoaDon_select.TrangThai;
 
-    if (tt == 'Đã thanh toán') {
+
+    if (hoaDon_select.TrangThai == 'Đã thanh toán') {
         select_tt.value = 'Đã thanh toán';
         select_tt.style.color = 'green';
     }
@@ -699,7 +798,7 @@ function handleRowClick(index) {
     var month = parts[0]; // "7"
     var year = parts[1];
     var html = '';
-    if (hoaDon_select.Lop != null) {
+    if (hoaDon_select.Lop != "") {
 
 
         for (var i = 0; i < dssoBuoiDay.length; i++) {
@@ -707,13 +806,17 @@ function handleRowClick(index) {
                 html += dssoBuoiDay[i].MaLop + ': ' + dssoBuoiDay[i].SoBuoiDay + ' buổi             (' + numberWithCommas(dssoBuoiDay[i].TienTraGV) + ' / buổi)' + '<br>';
             }
         }
+
+        document.getElementById('edit-button').hidden = true;
+    }else{
+        document.getElementById('edit-button').hidden = false;
     }
 
     document.getElementById('class-bill-detail').innerHTML = html;
 
+    
 
-    document.getElementById('mahd-delete').value = hoaDon_select.MaLuong;
-    document.getElementById('mahd-delete-2').value = hoaDon_select.MaLuong;
+
     modalBg.style.display = 'block';
 
 
@@ -732,9 +835,46 @@ select_tt.addEventListener("change", function () {
 document.getElementById('update-tt').addEventListener('click', function (event) {
 
 
-    const form = document.getElementById('form-update-status');
-
     event.preventDefault();
+
+    const status = document.getElementById('status-detail').value;
+    $.ajax({
+        url: '../jquery_ajax/ajax_updateStatusWage.php',
+        type: 'POST',
+        data: {
+            id: hoaDon_select.MaLuong,
+            status: status,
+        },
+        success: function (res) {
+            dsHoaDon = JSON.parse(res);
+
+            for (var i = 0; i < dsHoaDon.length; i++) {
+                if (hoaDon_select.MaLuong == dsHoaDon[i].MaLuong)
+                    hoaDon_select = dsHoaDon[i];
+            }
+
+
+            if (hoaDon_select.TrangThai == 'Đã thanh toán') {
+                select_tt.value = 'Đã thanh toán';
+                select_tt.style.color = 'green';
+            }
+            else {
+                select_tt.value = 'Chưa thanh toán';
+                select_tt.style.color = 'red';
+            }
+
+            if (hoaDon_select.ThoiGianTT != null)
+                document.getElementById('time-tt-bill-detail').textContent = convertDateFormat(hoaDon_select.ThoiGianTT);
+            else {
+                document.getElementById('time-tt-bill-detail').textContent = '';
+            }
+
+            searchList();
+        },
+        error: function (xhr, status, error) {
+            console.error(error);
+        }
+    });
 
     document.getElementById('tb1').innerHTML = "Đã cập nhật trạng thái  thành công! ";
     document.getElementById('id-wage').value = maHD_select;
@@ -742,7 +882,7 @@ document.getElementById('update-tt').addEventListener('click', function (event) 
 
     setTimeout(function () {
         document.querySelector('.add-success').style.display = 'none';
-        form.submit();
+
     }, 1500);
 
 });
@@ -750,25 +890,251 @@ document.getElementById('update-tt').addEventListener('click', function (event) 
 document.querySelector('.close-btn').addEventListener('click', () => {
 
     modalBg.style.display = 'none';
+    
+});
 
 
+
+////Sua thong tin hoa don
+const editButton = document.getElementById('edit-button');
+
+
+const modalBgEdit = document.querySelector('.modal-bg-edit');
+const modalContentEdit = document.querySelector('.modal-content-edit');
+
+// Khi  nhấn vào nút "Sửa"
+editButton.addEventListener('click', () => {
+
+    document.getElementById('id-bill-edit').value = hoaDon_select.MaLuong;
+    document.getElementById('bill-name-edit').value = hoaDon_select.TenHD;
+    var time = hoaDon_select.ThoiGian;
+    var tt = hoaDon_select.TrangThai;
+
+    numbers = time.split("/");
+
+
+    var month = parseInt(numbers[0]);
+    var year = parseInt(numbers[1]);
+
+    var select = document.getElementById("bill-month-edit");
+    for (var i = 0; i < select.options.length; i++) {
+        var option = select.options[i];
+        if (parseInt(option.value) === month) {
+            option.selected = true;
+        }
+    }
+    select = document.getElementById("bill-year-edit");
+    for (var i = 0; i < select.options.length; i++) {
+        var option = select.options[i];
+        if (parseInt(option.value) === year) {
+            option.selected = true;
+        }
+    }
+
+    select = document.getElementById("bill-status-edit");
+    for (var i = 0; i < select.options.length; i++) {
+        var option = select.options[i];
+        if (option.value == tt) {
+            option.selected = true;
+        }
+    }
+
+    select = document.getElementById("teacher-edit");
+    for (var i = 0; i < select.options.length; i++) {
+        var option = select.options[i];
+        if (option.value == hoaDon_select.MaGV) {
+            option.selected = true;
+        }
+    }
+
+    document.getElementById('money-edit-bill').value = numberWithCommas(hoaDon_select.SoTien);
+
+
+    if (hoaDon_select.ThoiGianTT != null)
+        document.getElementById('time-tt-edit-bill').value = hoaDon_select.ThoiGianTT;
+    else {
+        document.getElementById('time-tt-edit-bill').value = '';
+    }
+
+
+    modalBgEdit.style.display = "block";
+});
+
+
+
+document.querySelector('.cancle-btn').addEventListener('click', () => {
+    modalBgEdit.style.display = 'none';
+
+    document.getElementById('lb-name-edit').textContent = "";
+    document.getElementById('lb-time-edit').textContent = "";
+    document.getElementById('lb-time-tt-edit').textContent = "";
+    document.getElementById('lb-money-edit').textContent = "";
+    document.getElementById('form-edit-bill').reset();
+    
 
 });
 
+
+// Cap nhat sua hoa don
+document.getElementById('update-bill-edit').addEventListener('click', function (event) {
+    var check = true;
+
+
+    event.preventDefault();
+
+    const name_bill = document.getElementById('bill-name-edit').value;
+    const month_bill = document.getElementById('bill-month-edit').value;
+    const year_bill = document.getElementById('bill-year-edit').value;
+    const teacher_bill = document.getElementById('teacher-edit').value;
+    const money = document.getElementById('money-edit-bill').value;
+    const time_tt = document.getElementById('time-tt-edit-bill').value;
+    const status = document.getElementById('bill-status-edit').value;
+
+
+    //Kiểm tra dữ liệu nhập vào
+
+    if (!name_bill) {
+        document.getElementById('lb-name-edit').textContent = "*Chưa nhập tên hóa đơn";
+        check = false;
+    } else
+        document.getElementById('lb-name-edit').textContent = "";
+
+    if (!month_bill) {
+        document.getElementById('lb-time-edit').textContent = "*Chưa chọn thời gian";
+        check = false;
+    } else {
+
+        if (!year_bill) {
+            document.getElementById('lb-time-edit').textContent = "*Chưa chọn thời gian";
+            check = false;
+        } else
+            document.getElementById('lb-time-edit').textContent = "";
+    }
+
+    if (!money) {
+
+        document.getElementById('lb-money-edit').textContent = "*Chưa ghi số tiền";
+        check = false;
+    } else
+        document.getElementById('lb-money-edit').textContent = "";
+
+    if (!teacher_bill) {
+
+        document.getElementById('lb-time-edit').textContent = "*Chưa ghi số tiền";
+        check = false;
+    } else
+        document.getElementById('lb-time-edit').textContent = "";
+
+    if (status == 'Đã thanh toán') {
+        if (!time_tt) {
+
+            document.getElementById('lb-time-tt-edit').textContent = "*Chưa cập nhật thời gian thanh toán";
+            check = false;
+        } else
+            document.getElementById('lb-time-tt-edit').textContent = "";
+
+    }
+
+    if (!check)
+        return;
+
+
+    $.ajax({
+        url: '../jquery_ajax/ajax_updateWageTeacher.php',
+        type: 'POST',
+        data: {
+            id: hoaDon_select.MaLuong,
+            name: name_bill,
+            month: month_bill,
+            year: year_bill,
+            teacher: teacher_bill,
+            money: money,
+            time: time_tt,
+            status: status,
+        },
+        success: function (res) {
+            dsHoaDon = JSON.parse(res);
+
+            for (var i = 0; i < dsHoaDon.length; i++) {
+                if (hoaDon_select.MaLuong == dsHoaDon[i].MaLuong)
+                    hoaDon_select = dsHoaDon[i];
+            }
+
+            document.getElementById('id-bill-detail').textContent = hoaDon_select.MaLuong;
+            document.getElementById('name-bill-detail').textContent = hoaDon_select.TenHD;
+            document.getElementById('id-st-detail').textContent = hoaDon_select.MaGV;
+            document.getElementById('name-st-bill-detail').textContent = hoaDon_select.TenGV;
+            document.getElementById('time-bill-detail').textContent = hoaDon_select.ThoiGian;
+            document.getElementById('st-bill-detail').textContent = numberWithCommas(hoaDon_select.SoTien);
+            if (hoaDon_select.ThoiGianTT != null)
+                document.getElementById('time-tt-bill-detail').textContent = convertDateFormat(hoaDon_select.ThoiGianTT);
+            else {
+                document.getElementById('time-tt-bill-detail').textContent = '';
+
+            }
+
+            if (hoaDon_select.TrangThai == 'Đã thanh toán') {
+                select_tt.value = 'Đã thanh toán';
+                select_tt.style.color = 'green';
+            }
+            else {
+                select_tt.value = 'Chưa thanh toán';
+                select_tt.style.color = 'red';
+
+            }
+
+            var parts = hoaDon_select.ThoiGian.split("/");
+            var month = parts[0]; // "7"
+            var year = parts[1];
+            var html = '';
+            if (hoaDon_select.Lop != null) {
+
+
+                for (var i = 0; i < dssoBuoiDay.length; i++) {
+                    if (dssoBuoiDay[i].MaGV == hoaDon_select.MaGV && dssoBuoiDay[i].Thang == month && dssoBuoiDay[i].Nam == year) {
+                        html += dssoBuoiDay[i].MaLop + ': ' + dssoBuoiDay[i].SoBuoiDay + ' buổi             (' + numberWithCommas(dssoBuoiDay[i].TienTraGV) + ' / buổi)' + '<br>';
+                    }
+                }
+            }
+
+            document.getElementById('class-bill-detail').innerHTML = html;
+
+            searchList();
+        },
+        error: function (xhr, status, error) {
+            console.error(error);
+        }
+    });
+
+
+
+
+    modalBgEdit.style.display = 'none';
+    document.getElementById('tb1').innerHTML = 'Đã cập nhật sửa đổi  hóa đơn "' + name_bill + '"' + " thành công!";
+   
+    document.querySelector('.add-success').style.display = 'block';
+
+    setTimeout(function () {
+        document.querySelector('.add-success').style.display = 'none';
+
+    }, 1500);
+
+});
 
 
 // Xoa hoa don
 
 document.getElementById('btn-delete-bill').addEventListener('click', () => {
     document.querySelector('.delete-bill-ques').style.display = 'block';
+    document.querySelector('#modal-ques').style.display = 'block';
 });
 
 document.getElementById('btn-cancle-delete-bill').addEventListener('click', () => {
     document.querySelector('.delete-bill-ques').style.display = 'none';
+    document.querySelector('#modal-ques').style.display = 'none';
 });
 document.getElementById('delete-bill').addEventListener('click', function (event) {
 
-    const form = document.getElementById('form-delete-bill');
 
     event.preventDefault();
 
@@ -777,34 +1143,63 @@ document.getElementById('delete-bill').addEventListener('click', function (event
     if (hoaDon_select.TrangThai == 'Đã thanh toán') {
         document.querySelector('.delete-bill-ques-2').style.display = 'block';
         return;
-
     }
 
+
+    $.ajax({
+        url: '../jquery_ajax/ajax_deleteWage.php',
+        type: 'POST',
+        data: {
+           mahd:hoaDon_select.MaLuong,
+        },
+        success: function (res) {
+            searchList();
+        },
+        error: function (xhr, status, error) {
+            console.error(error);
+        }
+    });
+
+    document.querySelector('#modal-ques').style.display = 'none';
+    modalBg.style.display = 'none';
     document.querySelector('.delete-success').style.display = 'block';
     setTimeout(function () {
         document.querySelector('.delete-success').style.display = 'none';
-        form.submit();
+        
     }, 1500);
 
 });
 
 document.getElementById('btn-cancle-delete-bill-2').addEventListener('click', () => {
     document.querySelector('.delete-bill-ques-2').style.display = 'none';
+    document.querySelector('#modal-ques').style.display = 'none';
 });
 
 
 document.getElementById('delete-bill-2').addEventListener('click', function (event) {
 
-    const form = document.getElementById('form-delete-bill-2');
-
     event.preventDefault();
 
-    document.querySelector('.delete-bill-ques-2').style.display = 'none';
+    $.ajax({
+        url: '../jquery_ajax/ajax_deleteWage.php',
+        type: 'POST',
+        data: {
+           mahd:hoaDon_select.MaLuong,
+        },
+        success: function (res) {
+            searchList();
+        },
+        error: function (xhr, status, error) {
+            console.error(error);
+        }
+    });
 
+    document.querySelector('.delete-bill-ques-2').style.display = 'none';
+    document.querySelector('#modal-ques').style.display = 'none';
+    modalBg.style.display = 'none';
     document.querySelector('.delete-success').style.display = 'block';
     setTimeout(function () {
-        document.querySelector('.delete-success').style.display = 'none';
-        form.submit();
+        document.querySelector('.delete-success').style.display = 'none';   
     }, 1500);
 
 });

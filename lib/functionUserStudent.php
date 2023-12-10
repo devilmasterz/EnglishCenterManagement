@@ -63,6 +63,29 @@ function listDD($connection, $mahs, $tt)
     }
 }
 
+///
+function listDD_HD($connection, $mahs)
+{
+    $a ="Đang mở";
+    $b= "Chưa mở";
+    $sql = 'SELECT hs_lop.MaHS , hs_lop.MaLop , TenLop , LuaTuoi, ThoiGian,SLHS, SLHSToiDa,  SoBuoiDaToChuc, lop.HocPhi,SoBuoi,SoBuoiDaToChuc, SoBuoiNghi, GiamHocPhi FROM lop INNER JOIN hs_lop WHERE lop.MaLop =  hs_lop.MaLop AND hs_lop.MaHS = ? AND (TrangThai = ? or TrangThai = ?)';
+    try {
+        $connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        $statement =  $connection->prepare($sql);
+        $statement->bindParam(1, $mahs);
+        $statement->bindParam(2, $a);
+        $statement->bindParam(3, $b);
+        $statement->execute();
+
+        $list  = $statement->fetchAll(PDO::FETCH_ASSOC);
+
+        $connection = null;
+        return $list;
+    } catch (PDOException $e) {
+        echo $e->getMessage();
+    }
+}
+
 
 ///
 function listNgayNghi($connection,$mahs)
@@ -83,9 +106,50 @@ function listNgayNghi($connection,$mahs)
     }
 }
 
+
+// select hoc sinh cua phu huynh
+function studentOfParent($connection, $maph)
+{
+    $sql = "SELECT ph_hs.MaHS, hocsinh.TenHS, hocsinh.GioiTinh, hocsinh.NgaySinh, hocsinh.Tuoi, hocsinh.DiaChi, hocsinh.SDT, hocsinh.Email  FROM ph_hs INNER JOIN hocsinh WHERE ph_hs.MaHS =  hocsinh.MaHS AND ph_hs.MaPH = ?";
+    try {
+        $connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        $statement =  $connection->prepare($sql);
+        $statement->execute([$maph]);
+
+        $list  = $statement->fetchAll(PDO::FETCH_ASSOC);
+
+        $connection = null;
+        return $list;
+    } catch (PDOException $e) {
+        echo $e->getMessage();
+    }
+}
+
+
+// // select ds lienket phuhuynh hoc sinh 
+function selectdslk2($connection, $magv)
+{
+
+    $sql = 'SELECT yeucaulienket.MaHS,yeucaulienket.MaPH, TenHS,TenPH  FROM yeucaulienket , hocsinh , phuhuynh WHERE yeucaulienket.MaHS = hocsinh.MaHS and yeucaulienket.MaPH =  phuhuynh.MaPH and  nyc = "hs" and  yeucaulienket.MaPH = ? ';
+
+    try {
+        $connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        $statement =  $connection->prepare($sql);
+        $statement->bindParam(1, $magv);
+        $statement->execute();
+
+        $list = $statement->fetchAll(PDO::FETCH_ASSOC);
+
+        $connection = null;
+        return $list;
+    } catch (PDOException $e) {
+        echo $e->getMessage();
+    }
+}
+
 function listSchedules($connection)
 {
-    $sql = "SELECT schedules_class.idSchedules ,schedules_class.MaLop ,schedules.day_of_week , schedules.start_time, schedules.end_time FROM schedules_class INNER JOIN schedules WHERE schedules_class.idSchedules = schedules.idSchedules;";
+    $sql = "SELECT lop_lichhoc.MaLich ,lop_lichhoc.MaLop ,lichhoc.Ngay , lichhoc.TGBatDau, lichhoc.TGKetThuc FROM lop_lichhoc INNER JOIN lichhoc WHERE lop_lichhoc.MaLich = lichhoc.MaLich;";
     try {
         $connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         $statement =  $connection->prepare($sql);
@@ -142,17 +206,16 @@ function listMaPH($connection)
 
 
 // insert yeucaulienket
-function insertLienKet($mahs, $maph, $tenhs, $tenph,$nyc, $connection)
+function insertLienKet($mahs, $maph,$nyc, $connection)
 {
-    $sql = "insert into yeucaulienket values(?,?,?,?,?)";
+    $sql = "insert into yeucaulienket(MaHS,MaPH,nyc) values(?,?,?)";
     try {
         $statement = $connection->prepare($sql);
 
         $statement->bindParam(1, $mahs);
         $statement->bindParam(2, $maph);
-        $statement->bindParam(3, $tenhs);
-        $statement->bindParam(4, $tenph);
-        $statement->bindParam(5, $nyc);
+   
+        $statement->bindParam(3, $nyc);
         $statement->execute();
     } catch (PDOException $e) {
         echo $e->getMessage();
@@ -163,7 +226,7 @@ function insertLienKet($mahs, $maph, $tenhs, $tenph,$nyc, $connection)
 function selectdslk($connection, $magv)
 {
 
-    $sql = 'SELECT * FROM yeucaulienket WHERE nyc = "ph" and  MaHS = ? ';
+    $sql = 'SELECT yeucaulienket.MaHS,yeucaulienket.MaPH, TenHS,TenPH  FROM yeucaulienket , hocsinh , phuhuynh WHERE yeucaulienket.MaHS = hocsinh.MaHS and yeucaulienket.MaPH =  phuhuynh.MaPH and  nyc = "ph" and  yeucaulienket.MaHS = ? ';
 
     try {
         $connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);

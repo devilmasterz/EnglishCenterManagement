@@ -1,8 +1,8 @@
 <?php
 
 
-$path_dir = __DIR__.'/../../lib';  
-include $path_dir.'/function.php';
+$path_dir = __DIR__ . '/../../lib';
+include $path_dir . '/function.php';
 
 
 $name = $gender = $date = $address = $age = $phone = $email = $mahs = "";
@@ -62,29 +62,28 @@ if (isset($_POST['submit'])) {
         }
     }
 
+    $ns = new DateTime($date);
+    $age = $ns->diff(new DateTime())->y;
+
+    $check_empty = false;
+        $check_empty = empty($error_name) && empty($error_gender) && empty($error_address) && empty($error_date) && empty($error_phone) && empty($error_check) && empty($error_email);
+
+
+    if ($check_empty) {
     
+
+        if (empty($email)) $email = ' ';
+        setcookie('name', $name);
+        setcookie('gender', $gender);
+        setcookie('date', $date);
+        setcookie('age', $age);
+        setcookie('address', $address);
+        setcookie('phone', $phone);
+        setcookie('email', $email);
+        header('Location: RegisterParent2.php');
+    }
 }
 
-$check_empty = false;
-if (isset($_POST['submit'])) {
-    $check_empty = empty($error_name) && empty($error_gender) && empty($error_address) && empty($error_age) && empty($error_date) && empty($error_phone) && empty($error_check) && empty($error_email);
-}
-
-if ($check_empty) {
-
-    
-    if (empty($email)) $email = ' ';
-
-   
-    setcookie('name', $name);
-    setcookie('gender', $gender);
-    setcookie('date', $date);
-    setcookie('age', $age);
-    setcookie('address', $address);
-    setcookie('phone', $phone);
-    setcookie('email', $email);
-    header('Location: RegisterParent2.php');
-}
 
 
 
@@ -105,11 +104,11 @@ if ($check_empty) {
     <div class="login-star">
         <img src="/assets/images/login_stars.png" alt="">
     </div>
-    <div id="contain" style="  height: 97vh;">
+    <div id="contain" style=" height: 97vh;">
         <div class="login-student">
             <div class="login-student-img">
 
-            <a href="../home/home.php"><img src="../../assets/images/logo-web.png" alt=""></a>
+                <a href="../home/home.php"><img src="../../assets/images/logo-web.png" alt=""></a>
             </div>
 
             <div style="padding: 0 100px;" class="login-student-form">
@@ -118,7 +117,8 @@ if ($check_empty) {
                         <h1>Nhập thông tin phụ huynh</h1>
                     </div>
                     <div class="login-student-form-center">
-                        <input class="login-student-form-input" type="text" name="name" placeholder="Họ và tên :" value="<?php echo $name ?>">
+                        <p class="label">Họ tên:</p>
+                        <input class="login-student-form-input" type="text" name="name" placeholder="Nhập họ tên..." value="<?php echo $name ?>">
                     </div>
                     <p style="color:red;font-size : 18px">
                         <?php
@@ -127,14 +127,15 @@ if ($check_empty) {
                     </p>
 
                     <div style="display: flex; " class="login-student-form-center">
-                        <div>
-                            <h1 style="font-size : 25px; margin-right: 120px">Giới tính </h1>
-                            <select name="gender" style="font-size: 20px;">
-                                <option value="Nam">Nam</option>
-                                <option value="Nữ">Nữ</option>
-                        
-                            </select>
-                        </div>
+
+                        <p class="label">Giới tính:</p>
+
+                        <select name="gender" style="font-size: 18px;">
+                            <option value="Nam">Nam</option>
+                            <option value="Nữ">Nữ</option>
+
+                        </select>
+
 
                     </div>
                     <p style="color:red;font-size : 18px">
@@ -144,7 +145,8 @@ if ($check_empty) {
                     </p>
 
                     <div class="login-student-form-center">
-                        <input class="login-student-form-input" type="date" name="date" placeholder="Ngày sinh :" value="<?php echo $date ?>">
+                        <p class="label">Ngày sinh:</p>
+                        <input class="login-student-form-input" type="date" name="date" placeholder="" value="<?php echo $date ?>">
                     </div>
 
                     <p style="color:red;font-size : 18px">
@@ -153,18 +155,11 @@ if ($check_empty) {
                         ?>
                     </p>
 
-                    <div class="login-student-form-center">
-                        <input class="login-student-form-input" type="text" name="age" placeholder="Tuổi:" value="<?php echo $age ?>">
-                    </div>
-
-                    <p style="color:red;font-size : 18px">
-                        <?php
-                        echo $error_age;
-                        ?>
-                    </p>
+               
 
                     <div>
-                        <input name="address" class="login-student-form-input" type="text" placeholder="Địa Chỉ : " value="<?php echo $address ?>">
+                        <p class="label">Địa chỉ:</p>
+                        <input name="address" class="login-student-form-input" type="text" placeholder="Nhập địa chỉ..." value="<?php echo $address ?>">
                     </div>
                     <p style="color:red;font-size : 18px">
                         <?php
@@ -173,7 +168,8 @@ if ($check_empty) {
                     </p>
 
                     <div>
-                        <input name="phone" class="login-student-form-input" type="text" placeholder="Số điện thoại : " value="<?php echo $phone ?>">
+                        <p class="label">SĐT:</p>
+                        <input name="phone" class="login-student-form-input" type="text" placeholder="Nhập số điện thoại..." value="<?php echo $phone ?>">
                     </div>
                     <p style="color:red;font-size : 18px">
                         <?php
@@ -182,7 +178,8 @@ if ($check_empty) {
                     </p>
 
                     <div>
-                        <input name="email" class="login-student-form-input" type="text" placeholder="Email (nếu có) : " value="<?php echo $email ?>">
+                        <p class="label">Email:</p>
+                        <input name="email" class="login-student-form-input" type="text" placeholder="Nhập email (nếu có) : " value="<?php echo $email ?>">
                     </div>
 
                     <p style="color:red;font-size : 18px">
@@ -190,7 +187,7 @@ if ($check_empty) {
                         echo $error_email;
                         ?>
                     </p>
-                  
+
                     <p style="color:red;font-size : 18px">
                         <?php
                         if (isset($_POST['submit']))

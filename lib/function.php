@@ -182,14 +182,15 @@ function registerTableStudent($name, $gender, $date, $age, $address, $phone, $em
 }
 
 // đăng kí tài khoản Học sinh
-function registerAcountStudent($userName, $passWord, $MaHS, $connection)
+function registerAcountStudent($userName, $passWord, $MaHS,$ngaydk, $connection)
 {
-    $sql = "insert into TK_HS values(?,?,?)";
+    $sql = "insert into TK_HS values(?,?,?,?)";
     try {
         $statement = $connection->prepare($sql);
         $statement->bindParam(1, $userName);
         $statement->bindParam(2, $passWord);
         $statement->bindParam(3, $MaHS);
+        $statement->bindParam(4, $ngaydk);
         $student = $statement->execute();
         if ($student) {
             return true;
@@ -247,14 +248,15 @@ function registerTableParents($name, $gender, $date, $age, $address, $phone, $em
 }
 
 // đăng kí tài khoản phụ huynh
-function registerAcountParents($userName, $passWord, $Maph, $connection)
+function registerAcountParents($userName, $passWord, $Maph,$ngaydk, $connection)
 {
-    $sql = "insert into tk_ph values(?,?,?)";
+    $sql = "insert into tk_ph values(?,?,?,?)";
     try {
         $statement = $connection->prepare($sql);
         $statement->bindParam(1, $userName);
         $statement->bindParam(2, $passWord);
         $statement->bindParam(3, $Maph);
+        $statement->bindParam(4, $ngaydk);
         $Parents = $statement->execute();
         if ($Parents) {
             return true;

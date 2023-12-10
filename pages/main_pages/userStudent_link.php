@@ -3,7 +3,6 @@ require '../../lib/functionUserStudent.php';
 
 session_start();
 $ma = $_SESSION['MaHS'];
-
 $maHS = $ma['MaHS'];
 
 $tenHS = selecttenHS($connection, $maHS);
@@ -19,31 +18,8 @@ $jslistRequest = json_encode($listRequest);
 $jsdetailStudent = json_encode($detailStudent);
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    if (isset($_POST['maPH-link'])) {
-        $maph = $_POST['maPH-link'];
-        $tenhs =  $tenHS[0]['TenHS'];
-        $tenph  = $_POST['name-parent'];
-    
-        insertLienKet($maHS, $maph, $tenhs, $tenph, 'hs', $connection);
-        header("Location: userStudent_link.php");
-      }
-
-      if (isset($_POST['accept-maPH'])) {
-        $maph = $_POST['accept-maPH'];
-        deletedslk($connection,$maHS,$maph);
-        insertPHHS($maHS,$maph,$connection);
-        header("Location: userStudent_link.php");
-      }
-
-      if (isset($_POST['refuse-maPH'])) {
-        $maph = $_POST['refuse-maPH'];
-        
-        deletedslk($connection,$maHS,$maph);
-       
-        header("Location: userStudent_link.php");
-      }
+   
       if (isset($_POST['btn-logout'])) {
-
         session_start();
         session_unset();
         session_destroy();
@@ -59,15 +35,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- bootstrap.css-->
-    <!-- <link rel="stylesheet" href="../../plugins/bootstrap-5.2.3-dist/css/bootstrap.min.css" /> -->
-    <!--slick.css-->
+   
     <link rel="stylesheet" href="../../plugins/slick-1.8.1/slick/slick.css" />
     <link rel="stylesheet" href="../../assets/css/home.css" />
-    <!--Animated css-->
+    
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
     <link rel="stylesheet" href="/assets/css/userStudent_link.css">
     <link rel="stylesheet" href="../../assets/css/common.css">
+    <script src="https://code.jquery.com/jquery-3.6.4.js"></script>
 
 
     <title>Học viên</title>
@@ -82,23 +57,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <div id="parent-container">
             <div style="width:80%">
                 <h2>Phụ huynh đã liên kết</h2>
-                <?php if (!$listParent) {
-                    echo ' <p style="font-style: italic;"> Phụ huynh chưa liên kết đến học viên nào ~</p>';
-                } else {
-                    foreach ($listParent as $parent) :
-                        echo '<div id="parent">
-                        <table style="width:100%">
-                            <tr>
-                                <td>Tên:' . ' ' . $parent['MaPH'] . ' - ' . $parent['TenPH'] . '</td>
-                                </tr>
-                                <tr>
-                                    <td style="width: 210px">Giới tính:' . ' ' . $parent['GioiTinh'] . '</td>
-                                    <td>Tuổi:' . ' ' . $parent['Tuoi'] . '</td>
-                                    </tr>
-                                </table>
-                            </div>';
-                    endforeach;
-                } ?>
+                <div id="div-parent">
+             
+                
+                </div>
+               
 
             </div>
 
@@ -137,6 +100,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     var ds_maPH = <?php print_r($jslistMaPH); ?>;
     var ds_yeuCau = <?php print_r($jslistRequest); ?>;
     var detailStudent = <?php print_r($jsdetailStudent); ?>;
+
+   
 
     const authMenuBarHTMl = ` <div class="PageMenuBar" style ="position:absolute">
 <a class="PageLogoWrap" href="../main_pages/homeStudent.php">

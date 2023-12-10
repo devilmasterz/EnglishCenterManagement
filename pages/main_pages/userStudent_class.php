@@ -10,7 +10,7 @@ $maHS = $ma['MaHS'];
 
 $tenHS = selecttenHS($connection, $maHS);
 
-$listClassOpen = listDD($connection, $maHS, 'Đang mở');
+$listClassOpen = listDD_HD($connection,$maHS);
 $listClassClose = listDD($connection, $maHS, 'Đã đóng');
 $listAbsent = listNgayNghi($connection,$maHS);
 $listSchedules =  listSchedules($connection);
@@ -101,7 +101,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   var ds_absent = <?php print_r($jslistAbsent); ?>;
   var ds_schedule = <?php print_r($jslistSchedules); ?>;
 
-  
 
 
 

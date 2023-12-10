@@ -225,7 +225,13 @@ a:hover , input[type="submit"]:hover {
   cursor: pointer;
 }
 
-
+.label{
+  font-size: 20px;
+  width: 125px;
+  color: lavenderblush;
+  text-align: center;
+  
+}
   
  
   

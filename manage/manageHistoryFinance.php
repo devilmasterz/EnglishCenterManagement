@@ -12,15 +12,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         header("Location: manageHistoryFinance.php");
     }
 
-    if (isset($_POST['search'])) {
-        $key = trim($_POST['keyword']);
-        $listBill = searchHistory($connection, $key);
-    }
+   
 }
-
 $jslistBill = json_encode($listBill);
-
-
 
 ?>
 
@@ -35,6 +29,7 @@ $jslistBill = json_encode($listBill);
     <title>Quản lý hệ thống giáo dục</title>
     <link rel="stylesheet" href="../assets/css/manage.css">
     <link rel="stylesheet" href="../assets/css/manageFinance_History.css">
+	<script src="https://code.jquery.com/jquery-3.6.4.js"></script>
 
 </head>
 

@@ -15,32 +15,11 @@ $jsaccountStudent = json_encode($accountStudent);
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
-    if (isset($_POST['name-input'])) {
-        $mahs = $_POST['id-input'];
-        $ten = trim($_POST['name-input']);
-        $gt = $_POST['gender-input'];
-        $ns = $_POST['birthday-input'];
-        $tuoi = $_POST['age-input'];
-       
-        $dc = trim($_POST['address-input']);
-
-        $sdt = $_POST['phone-input'];
-        $email = trim($_POST['email-input']);
-
-
-        updateStudentbyID($connection,$mahs,$ten,$gt,$ns,$tuoi,$dc,$sdt,$email);
-        header("Location: personal_Student.php");
-    }
-
-
-
-
-
     if (isset($_POST['new-pass'])) {
         $username = $_POST['username'];
         $pass = $_POST['new-pass'];
 
-       
+
         updatePassHS($connection, $username, $pass);
         header("Location: personal_Student.php");
     }
@@ -50,8 +29,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         session_unset();
         session_destroy();
         header("Location: ../home/home.php");
-      }
-
+    }
 }
 
 
@@ -69,7 +47,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <link rel="stylesheet" href="../../assets/css/home.css" />
     <link rel="stylesheet" href="../../plugins/bootstrap-5.2.3-dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="../../assets/css/common.css">
-
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
     <title>Thông tin cá nhân</title>
 </head>
 
@@ -78,7 +56,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <div id="menu-bar"></div>
 
         <div class="personal-bg-wrap">
-        <h2 style="margin-left:40%;  margin-top: 10px;">  Thông tin cá nhân</h2>
+            <h2 style="margin-left:40%;  margin-top: 10px;"> Thông tin cá nhân</h2>
         </div>
         <div class="personal-inner">
             <div class="personal-avt-wrap">
@@ -117,19 +95,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 
                     <div class="personal-inner-item">
-                        <div class="personal-inner-key">Ngày sinh : <strong style="color: red; font-size: 12px;font-style: italic;" id="err-birthday"></strong></div>
+                        <div class="personal-inner-key">Ngày sinh : <strong style="color: red; font-size: 12px;font-style: italic;" id="err-birthday"></strong> </div>
                         <div id="birthday" class="personal-inner-value personal-inner-value-info">11-12-2122</div>
                     </div>
-                    <input id="birthday-input" name="birthday-input" class="personal-inner-edit-range personal-inner-edit-range-info" type="date" required></input>
+                    <input id="birthday-input" name="birthday-input" class="personal-inner-edit-range personal-inner-edit-range-info" type="date" onchange="setAge()"></input>
 
                     <div class="personal-inner-item">
                         <div class="personal-inner-key">Tuổi : <strong style="color: red; font-size: 12px;font-style: italic;" id="err-age"></strong></div>
                         <div id="age" class="personal-inner-value personal-inner-value-info">12</div>
                     </div>
-                    <input id="age-input" name="age-input" class="personal-inner-edit-range personal-inner-edit-range-info" type="number" placeholder="Nhập tuổi" required></input>
+                    <input id="age-input" name="age-input" class="personal-inner-edit-range personal-inner-edit-range-info" type="number" placeholder="Nhập tuổi" readonly></input>
 
 
-              
+
                     <div class="personal-inner-item">
                         <div class="personal-inner-key">Địa chỉ : <strong style="color: red; font-size: 12px;font-style: italic;" id="err-address"></strong></div>
                         <div id="address" class="personal-inner-value personal-inner-value-info">Longabc@gmail.com</div>
@@ -137,7 +115,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <input id="address-input" name="address-input" class="personal-inner-edit-range personal-inner-edit-range-info" type="tetxt" placeholder="Nhập dịa chỉ" required></input>
 
 
-                  
+
 
                     <div class="personal-inner-item">
                         <div class="personal-inner-key">Email: <strong style="color: red; font-size: 12px;font-style: italic;" id="err-email"></strong></div>
@@ -195,17 +173,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </div>
 
     </div>
-    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
-    <!--boostrap.js-->
+
+
     <script src="../../plugins/bootstrap-5.2.3-dist/js/bootstrap.bundle.min.js"></script>
-    <!--slick.js-->
-    <!-- <script src="./personal.js"></script> -->
-    <!-- <script src="../common/menubar.js"></script> -->
+
+
     <script>
-          var detailStudent = <?php print_r($jsdetailStudent); ?>;
-    var accountStudent = <?php print_r($jsaccountStudent); ?>;
- 
-    const authMenuBarHTMl = ` <div class="PageMenuBar" style ="position:absolute">
+        var detailStudent = <?php print_r($jsdetailStudent); ?>;
+        var accountStudent = <?php print_r($jsaccountStudent); ?>;
+
+        const authMenuBarHTMl = ` <div class="PageMenuBar" style ="position:absolute">
 <a class="PageLogoWrap" href="../main_pages/homeStudent.php">
     <img src="../../assets/images/logo-web.png" class="PageLogoImg"/>
 </a>
@@ -215,7 +192,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
   <div class="menubar-info-wrap">
     <div class="menubar-info">
-      <div class="menubar-name">` +  detailStudent[0].TenHS + `</div>
+      <div class="menubar-name">` + detailStudent[0].TenHS + `</div>
      
       <div class="menubar-dropdown">
           <button class="menubar-avt-wrap menubar-drop-btn">
@@ -232,79 +209,70 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </div>
 
 </div>`
-  //isAuthentication === true
-  document.querySelector("#menu-bar").innerHTML = authMenuBarHTMl
-  var $ = document.querySelector.bind(document)
-var $$ = document.querySelectorAll.bind(document)
+        //isAuthentication === true
+        document.querySelector("#menu-bar").innerHTML = authMenuBarHTMl
+        // var $ = document.querySelector.bind(document)
+        // var $$ = document.querySelectorAll.bind(document)
 
 
 
-$(".menubar-drop-btn").onclick = ()=>{
-   
-    $(".menubar-dropdown-menu").classList.toggle("menubar-show")
- 
-}
+        $(".menubar-drop-btn").onclick = () => {
+
+            $(".menubar-dropdown-menu").classList.toggle("menubar-show")
+
+        }
     </script>
 </body>
 
 <script>
-  
+    showInfor();
 
-
-    document.getElementById('id').innerHTML = detailStudent[0].MaHS;
-    document.getElementById('id-inp').innerHTML = detailStudent[0].MaHS;
-
-    document.getElementById('name').innerHTML = detailStudent[0].TenHS;
-    document.getElementById('name-input').value = detailStudent[0].TenHS;
-
-    document.getElementById('gender').innerHTML = detailStudent[0].GioiTinh;
-    var img = document.querySelector(".personal-avt");
-    var img2 = document.querySelector(".menubar-avt");
-    if (detailStudent[0].GioiTinh == "Nam") {
-        img.src = "../../assets/images/Student-male-icon.png";
-        img2.src =  "../../assets/images/Student-male-icon.png";
-    } else {
-        img.src = "../../assets/images/Student-female-icon.png";
-        img2.src =  "../../assets/images/Student-female-icon.png";
-    }
-
-    var selectTag = document.getElementById("gender-input");
-    for (var i = 0; i < selectTag.options.length; i++) {
-        if (selectTag.options[i].value == detailStudent[0].GioiTinh) {
-            selectTag.options[i].selected = true;
-            break;
-        }
-    }
-
-    document.getElementById('birthday').innerHTML = formatDate(detailStudent[0].NgaySinh);
-    document.getElementById('birthday-input').value = detailStudent[0].NgaySinh;
-
-    document.getElementById('age').innerHTML = detailStudent[0].Tuoi;
-    document.getElementById('age-input').value = detailStudent[0].Tuoi;
-
-
-
-    document.getElementById('address').innerHTML = detailStudent[0].DiaChi;
-    document.getElementById('address-input').value = detailStudent[0].DiaChi;
-
-
-
-    document.getElementById('email').innerHTML = detailStudent[0].Email;
-    document.getElementById('email-input').value = detailStudent[0].Email;
-
-    document.getElementById('phone').innerHTML = detailStudent[0].SDT;
-    document.getElementById('phone-input').value = detailStudent[0].SDT;
-
-    document.getElementById('password').value = accountStudent[0].Password;
-
-    function togglePassword() {
-        var passwordInput = document.getElementById("password");
-        if (passwordInput.type === "password") {
-            passwordInput.type = "text";
+    function showInfor() {
+        document.getElementById('id').innerHTML = detailStudent[0].MaHS;
+        document.getElementById('id-inp').innerHTML = detailStudent[0].MaHS;
+        document.getElementById('name').innerHTML = detailStudent[0].TenHS;
+        document.getElementById('name-input').value = detailStudent[0].TenHS;
+        document.getElementById('gender').innerHTML = detailStudent[0].GioiTinh;
+        var img = document.querySelector(".personal-avt");
+        var img2 = document.querySelector(".menubar-avt");
+        if (detailStudent[0].GioiTinh == "Nam") {
+            img.src = "../../assets/images/Student-male-icon.png";
+            img2.src = "../../assets/images/Student-male-icon.png";
         } else {
-            passwordInput.type = "password";
+            img.src = "../../assets/images/Student-female-icon.png";
+            img2.src = "../../assets/images/Student-female-icon.png";
+        }
+
+        var selectTag = document.getElementById("gender-input");
+        for (var i = 0; i < selectTag.options.length; i++) {
+            if (selectTag.options[i].value == detailStudent[0].GioiTinh) {
+                selectTag.options[i].selected = true;
+                break;
+            }
+        }
+
+        document.getElementById('birthday').innerHTML = formatDate(detailStudent[0].NgaySinh);
+        document.getElementById('birthday-input').value = detailStudent[0].NgaySinh;
+        document.getElementById('age').innerHTML = detailStudent[0].Tuoi;
+        document.getElementById('age-input').value = detailStudent[0].Tuoi;
+        document.getElementById('address').innerHTML = detailStudent[0].DiaChi;
+        document.getElementById('address-input').value = detailStudent[0].DiaChi;
+        document.getElementById('email').innerHTML = detailStudent[0].Email;
+        document.getElementById('email-input').value = detailStudent[0].Email;
+        document.getElementById('phone').innerHTML = detailStudent[0].SDT;
+        document.getElementById('phone-input').value = detailStudent[0].SDT;
+        document.getElementById('password').value = accountStudent[0].Password;
+
+        function togglePassword() {
+            var passwordInput = document.getElementById("password");
+            if (passwordInput.type === "password") {
+                passwordInput.type = "text";
+            } else {
+                passwordInput.type = "password";
+            }
         }
     }
+
 
     function formatDate(dateString) {
         var dateParts = dateString.split('-'); // Tách ngày, tháng, năm thành mảng
@@ -316,13 +284,25 @@ $(".menubar-drop-btn").onclick = ()=>{
         return formattedDate;
     }
 
+    function setAge() {
+        var inputDate = document.getElementById("birthday-input").value;
+        var namHienTai = new Date().getFullYear();
+        var namInput = new Date(inputDate).getFullYear();
+
+        var age = namHienTai - namInput;
+        document.getElementById('age-input').value = age;
+
+    }
+
+
+
     // Khi nhấn nút Cập nhật
     const submit_update = document.getElementById('btn-update');
     submit_update.addEventListener('click', function(event) {
 
         var check = true;
 
-        const form1 = document.getElementById('form-update')
+
 
         event.preventDefault();
 
@@ -333,7 +313,7 @@ $(".menubar-drop-btn").onclick = ()=>{
         const gender = document.getElementById('gender-input').value;
         const birthday = document.getElementById('birthday-input').value;
         const age = document.getElementById('age-input').value;
-        
+
         const address = document.getElementById('address-input').value;
 
 
@@ -367,23 +347,21 @@ $(".menubar-drop-btn").onclick = ()=>{
         } else
             document.getElementById('err-age').textContent = "";
 
-      
         if (!address) {
 
             document.getElementById('err-address').textContent = erorr_empty;
             check = false;
         } else
             document.getElementById('err-address').textContent = "";
-     
 
 
-        if (!(/^(0[0-9]{9})$/.test(phone))) {
+        if (!(/^(0[0-9]{9})$/.test(phone)) && phone) {
             document.getElementById('err-phone').textContent = "*Số điện thoại không chính xác (0..; 10 chữ số)";
             check = false;
         } else
             document.getElementById('err-phone').textContent = "";
 
-        if (!(/\S+@\S+\.\S+/.test(email))) {
+        if (!(/\S+@\S+\.\S+/.test(email)) && email) {
             document.getElementById('err-email').textContent = "*Email không chính xác (example@xxx.com)";
             check = false;
         } else
@@ -392,13 +370,32 @@ $(".menubar-drop-btn").onclick = ()=>{
         if (!check)
             return;
 
+        // $.ajax({
+        //     type: 'POST',
+        //     url: '../jquery_ajax/ajax_updateInfor.php',
+        //     data: {
+        //         id: detailStudent[0].MaHS,
+        //         name: name,
+        //         gender: gender,
+        //         birthday: birthday,
+        //         age: age,
+        //         address: address,
+        //         phone: phone,
+        //         email: email,
+        //         user: "student",
+        //     },
+        //     success: function(res) {
+        //         detailStudent = JSON.parse(res);
+        //         showInfor();
+        //         onChangeEditType(!isEdit, "info");
+        //     },
+        //     error: function(xhr, status, error) {
+        //         console.error(error);
+        //     }
+        // });
 
-        document.getElementById('id-input').value = detailStudent[0].MaHS;
-        form1.submit();
-
-        // Gửi form đi nếu tất cả dữ liệu hợp lệ
-
-    });
+        });
+    
 
 
     document.getElementById('btn-change').addEventListener('click', function(event) {
@@ -466,9 +463,10 @@ $(".menubar-drop-btn").onclick = ()=>{
             })
             // khởi tạo giá trị của input khi chuyển sang dạng edit
             if (opt === "info") {
-                console.log("active")
+
 
             }
+
         } else {
             $$(`.personal-inner-edit-range-${opt}`).forEach((item) => {
                 item.classList.remove("personal-active")
@@ -492,14 +490,14 @@ $(".menubar-drop-btn").onclick = ()=>{
 
     $(".info-cancel").onclick = () => {
         onChangeEditType(false, "info");
-      
-            document.getElementById('err-name').textContent = "";    
-            document.getElementById('err-gender').textContent = "";
-            document.getElementById('err-birthday').textContent = "";
-            document.getElementById('err-age').textContent = "";
-            document.getElementById('err-address').textContent = "";
-            document.getElementById('err-phone').textContent = "";
-            document.getElementById('err-email').textContent = "";
+
+        document.getElementById('err-name').textContent = "";
+        document.getElementById('err-gender').textContent = "";
+        document.getElementById('err-birthday').textContent = "";
+        document.getElementById('err-age').textContent = "";
+        document.getElementById('err-address').textContent = "";
+        document.getElementById('err-phone').textContent = "";
+        document.getElementById('err-email').textContent = "";
     }
     $(".password-cancel").onclick = () => {
         onChangeEditType(false, "pass");

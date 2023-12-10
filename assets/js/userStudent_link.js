@@ -1,3 +1,43 @@
+
+showParent();
+showRequest();
+
+function showRequest() {
+     document.getElementById('div-nofi').innerHTML="";
+    ds_yeuCau.forEach(function (yeuCau) {
+      
+        var nofiDiv = document.createElement('div');
+        nofiDiv.id = 'nofi';
+        nofiDiv.innerHTML = '<p>Phụ huynh ' + yeuCau.TenPH + ' đã gửi yêu cầu liên kết với bạn</p>' +
+            '<button onclick="tuChoi(' + yeuCau.MaHS + ',' + yeuCau.MaPH + ')">Từ chối</button>' +
+            '<button onclick="chapNhan(' + yeuCau.MaHS + ',' + yeuCau.MaPH + ')">Chấp nhận</button>';
+
+            document.getElementById('div-nofi').appendChild(nofiDiv);
+    });
+    
+}
+
+function showParent() {
+
+    var html = '';
+
+    if (!ds_ph || ds_ph.length === 0) {
+        html += '<p style="font-style: italic;">Bạn chưa liên kết đến phụ huynh nào ~</p>';
+    } else {
+        ds_ph.forEach(function (parent) {
+            html += '<div id="parent">';
+            html += '<table style="width:100%">';
+            html += '<tr><td>Tên: ' + parent['MaPH'] + ' - ' + parent['TenPH'] + '</td></tr>';
+            html += '<tr><td style="width: 210px">Giới tính: ' + parent['GioiTinh'] + '</td>';
+            html += '<td>Tuổi: ' + parent['Tuoi'] + '</td></tr>';
+            html += '</table></div>';
+        });
+    }
+
+    document.getElementById('div-parent').innerHTML = html;
+
+}
+
 document.getElementById('btn-link').addEventListener('click', function (event) {
     var check = true;
     var check_value = false;
@@ -5,10 +45,10 @@ document.getElementById('btn-link').addEventListener('click', function (event) {
 
     event.preventDefault();
 
-    const form = document.getElementById('form-link');
+
 
     var maph = document.getElementById('maPH-link').value;
-
+    var tenph;
     for (var i = 0; i < ds_ph.length; i++) {
         if (ds_ph[i].MaPH == maph) {
             var check_has = true;
@@ -18,7 +58,7 @@ document.getElementById('btn-link').addEventListener('click', function (event) {
     for (var i = 0; i < ds_maPH.length; i++) {
         if (ds_maPH[i].MaPH == maph) {
             check_value = true;
-            document.getElementById('name-parent').value = ds_maPH[i].TenPH;
+            tenph = ds_maPH[i].TenPH;
         }
     }
     if (!maph) {
@@ -36,13 +76,33 @@ document.getElementById('btn-link').addEventListener('click', function (event) {
     if (!check)
         return;
 
-    document.getElementById('tb1').innerHTML = "Đã gửi yêu cầu liên kết !";
 
+    $.ajax({
+        url: '../../jquery_ajax/ajax_sentRequest.php',
+        type: 'POST',
+        data: {
+            maph: maph,
+            mahs: detailStudent[0].MaHS,
+            nyc : "hs"
+        },
+        success: function (res) {
+
+            
+        },
+        error: function (xhr, status, error) {
+            console.error(error);
+        }
+    });
+
+
+
+    document.getElementById('tb1').innerHTML = "Đã gửi yêu cầu liên kết !";
+    document.getElementById('maPH-link').value = "";
     document.querySelector('.add-success').style.display = 'block';
 
     setTimeout(function () {
         document.querySelector('.add-success').style.display = 'none';
-        form.submit();
+
     }, 1500);
 
 });
@@ -52,56 +112,66 @@ document.getElementById('btn-link').addEventListener('click', function (event) {
 var button = document.getElementById('btn-nofi');
 var hiddenDiv = document.getElementById('div-nofi');
 
-button.addEventListener('click', function() {
+button.addEventListener('click', function () {
     hiddenDiv.style.display = hiddenDiv.style.display === 'block' ? 'none' : 'block';
- 
+
 });
 
 
-var divNofiContainer = document.getElementById('div-nofi');
 
-ds_yeuCau.forEach(function(yeuCau) {
 
-  var nofiDiv = document.createElement('div');
-  nofiDiv.id = 'nofi';
-  nofiDiv.innerHTML = '<p>Phụ huynh ' + yeuCau.TenPH + ' đã gửi yêu cầu liên kết với bạn</p>' +
-                      '<button onclick="tuChoi(' + yeuCau.MaHS + ',' + yeuCau.MaPH + ')">Từ chối</button>' +
-                      '<button onclick="chapNhan(' + yeuCau.MaHS + ',' + yeuCau.MaPH + ')">Chấp nhận</button>';
 
-  divNofiContainer.appendChild(nofiDiv);
-});
+
 
 function tuChoi(maHS, maPH) {
-    var form = document.createElement('form');
+    
 
-    form.method = 'POST';
-      form.name = 'refuse-form'
-   
-    var input = document.createElement('input');
-    input.type = 'hidden';
-    input.name = 'refuse-maPH';
-    input.value = maPH;
-    form.appendChild(input);
-  
-    document.body.appendChild(form);
-    form.submit();
-  
+    $.ajax({
+        url: '../../jquery_ajax/ajax_replyRequest.php',
+        type: 'POST',
+        data: {
+            maph: maPH,
+            mahs: maHS,
+            rep: "refuse",
+            nyc : "hs",
+        },
+        success: function (res) {
+            ds_ph = JSON.parse(res).listParent;
+            ds_yeuCau = JSON.parse(res).listRequest;
+            console.log(ds_ph);
+            console.log(ds_yeuCau);
+            showRequest();
+            showParent();
+        },
+        error: function (xhr, status, error) {
+            console.error(error);
+        }
+    });
+
+
 }
 
 function chapNhan(maHS, maPH) {
 
 
-  var form = document.createElement('form');
-
-  form.method = 'POST';
-    form.name = 'accept-form'
+    $.ajax({
+        url: '../../jquery_ajax/ajax_replyRequest.php',
+        type: 'POST',
+        data: {
+            maph: maPH,
+            mahs: maHS,
+            rep: "accept",
+            nyc : "hs",
+        },
+        success: function (res) {
+            ds_ph = JSON.parse(res).listParent;
+            ds_yeuCau = JSON.parse(res).listRequest;
+            showRequest();
+            showParent();
  
-  var input = document.createElement('input');
-  input.type = 'hidden';
-  input.name = 'accept-maPH';
-  input.value = maPH;
-  form.appendChild(input);
-
-  document.body.appendChild(form);
-  form.submit();
+        },
+        error: function (xhr, status, error) {
+            console.error(error);
+        }
+    });
 }

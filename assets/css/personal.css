@@ -163,7 +163,7 @@ body{
     margin-left: 10px;
     background-color: white;
     position: absolute;
-    z-index: 1000;
+    z-index: 100;
     top: 20px;
     right: 201px;
     background-color: unset;
@@ -183,7 +183,7 @@ body{
     background-color: lavender;
     overflow-y: auto;
     border: ridge;
-    z-index: 1000;
+    z-index: 100;
     top: 47px;
     right: 225px;
   }

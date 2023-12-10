@@ -72,7 +72,7 @@ $jsonlistClassActive = json_encode($listClassActive);
 
 
 			<div>
-				<button class="add-teacher-button">Thêm giáo viên</button>
+				<button class="add-teacher-button">+ Thêm giáo viên</button>
 			</div>
 		</div>
 

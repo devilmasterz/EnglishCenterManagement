@@ -80,7 +80,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       margin-left: 10px;
       background-color: white;
       position: absolute;
-      z-index: 1000;
+      z-index: 100;
       top: 20px;
       right: 201px;
       background-color: unset;

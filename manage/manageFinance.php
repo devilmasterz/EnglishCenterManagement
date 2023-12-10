@@ -10,187 +10,29 @@ $lisths_lopxHS = lisths_lopxHS($connection);
 $listLSTHP = listLSTHP($connection);
 $listHS_GHP = selecths_hocPhi($connection);
 $listDD = listDD($connection);
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
-	if (isset($_POST['bill-name-add'])) {
+	// if (isset($_POST['id-bill-edit'])) {
 
-		$ten = trim($_POST['bill-name-add']);
-		$thang = $_POST['bill-month-add'];
-		$nam = $_POST['bill-year-add'];
-		$thoiGian = $thang . "/" . $nam;
-		if (!empty($_POST['class-add-bill'])) {
-			$class = $_POST['class-add-bill'];
+	// 	$mahd = $_POST['id-bill-edit'];
+	// 	$ten = trim($_POST['name-bill-edit']);
+	// 	$thang = $_POST['month-bill-edit'];
+	// 	$nam = $_POST['year-bill-edit'];
+	// 	$tt = $_POST['status-bill-edit'];
 
-			$arrayClass = explode(",", $class);
-		}
-		$listDD = attendOfMonth($connection, $thang, $nam);
+	// 	$thoiGian = $thang . "/" . $nam;
 
+	// 	updateHoaDonHocPhi($connection, $ten, $thoiGian, $tt, $mahd);
 
-
-		foreach ($listDD as $dd) {
-			foreach ($listHS_GHP as $ghp) {
-				foreach ($arrayClass as $a) {
-					if (($dd['MaHS'] === $ghp['MaHS']) && ($dd['MaLop'] === $ghp['MaLop']) && ($dd['MaLop'] === $a)) {
-
-						$soTien = $dd['SoBuoiDiemDanh'] * $ghp['HocPhi'];
-						$soTienGiam = round($soTien * $ghp['GiamHocPhi'] / 100);
-						$SoTienPhaiDong = $soTien - $soTienGiam;
-						insertHDHocPhi($connection, $ten, $dd['MaLop'], $dd['MaHS'], $thoiGian, $soTien, $ghp['GiamHocPhi'], $soTienGiam, $SoTienPhaiDong);
-					}
-				}
-			}
-		}
-		header("Location: manageFinance.php");
-	}
-
-
-	if (isset($_POST['id-bill-edit'])) {
-
-		$mahd = $_POST['id-bill-edit'];
-		$ten = trim($_POST['name-bill-edit']);
-		$thang = $_POST['month-bill-edit'];
-		$nam = $_POST['year-bill-edit'];
-		$tt = $_POST['status-bill-edit'];
-
-
-		$thoiGian = $thang . "/" . $nam;
-
-
-		updateHoaDonHocPhi($connection, $ten, $thoiGian, $tt, $mahd);
-
-
-		header("Location: manageFinance.php");
-	}
-
-	if (isset($_POST['bill-name-add-ps'])) {
-
-		$ten = trim($_POST['bill-name-add-ps']);
-		$thang = $_POST['bill-month-add-ps'];
-		$nam = $_POST['bill-year-add-ps'];
-		$mahs = $_POST['name-student-add-bill'];
-		$malop = $_POST['bill-class-add-ps'];
-		$thoiGian = $thang . "/" . $nam;
-
-
-
-		$listDD = attendOfMonth($connection, $thang, $nam);
-		$listHS_GHP = selecths_hocPhi($connection);
-
-
-		foreach ($listDD as $dd) {
-			if (($dd['MaHS'] == $mahs) && ($dd['MaLop'] == $malop)) {
-				$diemDanh = $dd['SoBuoiDiemDanh'];
-			}
-		}
-		foreach ($listHS_GHP as $aa) {
-			if (($aa['MaHS'] == $mahs) && ($aa['MaLop'] == $malop)) {
-				$hocPhi = $aa['HocPhi'];
-				$giamHocPhi = $aa['GiamHocPhi'];
-			}
-		}
-		if ($diemDanh)
-			$soTien = $diemDanh * $hocPhi;
-		$soTienGiam = round($soTien * $giamHocPhi / 100);
-		$SoTienPhaiDong = $soTien - $soTienGiam;
-
-
-		insertHDHocPhi($connection, $ten, $malop, $mahs, $thoiGian, $soTien, $giamHocPhi, $soTienGiam, $SoTienPhaiDong);
-
-
-		header("Location: manageFinance.php");
-	}
+	// 	header("Location: manageFinance.php");
+	// }
 
 	if (isset($_POST['refesh'])) {
 		header("Location: manageFinance.php");
 	}
-
-	if (isset($_POST['search'])) {
-		$key = trim($_POST['keyword']);
-		$listBill = searchHDHocPhi($connection, $key);
-	}
-
-	if (isset($_POST['mahd-delete'])) {
-
-		$mahd = $_POST['mahd-delete'];
-		echo $mahd;
-		deleteHDHocPhi($connection, $mahd);
-		header("Location: manageFinance.php");
-	}
-
-	if (isset($_POST['mahd-delete-2'])) {
-
-		$mahd = $_POST['mahd-delete-2'];
-		deleteLSTHPbyMaHD($connection, $mahd);
-		deleteHDHocPhi($connection, $mahd);
-
-		header("Location: manageFinance.php");
-	}
-
-	if (isset($_POST['money-add-trans'])) {
-
-		$mahd = $_POST['id-add-trans'];
-
-		$soTien = $_POST['money-add-trans'];
-
-		$date = $_POST['date-add-trans'];
-
-
-		$listss = selectSTPD_NPCL($connection, $mahd);
-		$soTienDaDong = $listss[0]['SoTienDaDong'];
-		$SoTienPhaiDong = $listss[0]['SoTienPhaiDong'];
-		$NoPhiConLai  = $listss[0]['NoPhiConLai'];
-
-		$soTien =  str_replace(',', '', $soTien);
-		$stdd = $soTienDaDong + $soTien;
-		$npcl = $SoTienPhaiDong - $stdd;
-		if ($npcl <= 0) {
-			$tt = 'Hoàn thành';
-		} else {
-			$tt = 'Còn nợ';
-		}
-		insertlsthp($mahd, $date, $soTien, $connection);
-		updateHDTHP_addLSTHP($connection, $stdd, $npcl, $tt, $mahd);
-
-		header("Location: manageFinance.php");
-	}
-	if (isset($_POST['totalAmount'])) {
-
-		$updatedData = json_decode($_POST['updatedData'], true);
-		$totalAmount = $_POST['totalAmount'];
-		$remainingFee = $_POST['remainingFee'];
-
-		$mahd = $_POST['maHD'];
-
-		$listTHPbyMaHD = selectLSTHPbyMaHD($connection, $mahd);
-
-		foreach ($listTHPbyMaHD as $a) {
-			$check = true;
-			foreach ($updatedData as $data) {
-				$maGD = $data['maGD'];
-				$ngay = $data['ngay'];
-				$soTien = $data['soTien'];
-				if ($a['MaGD'] == $maGD) {
-					updateLSTHP($connection, $ngay, $soTien, $maGD);
-					$check = false;
-				}
-			}
-			if ($check) {
-				deleteLSTHPbyMaGD($connection, $a['MaGD']);
-			}
-		}
-		if ($totalAmount == 0) {
-			$tt = 'Chưa đóng';
-		} else {
-			if ($remainingFee <= 0) {
-				$tt = 'Hoàn thành';
-			} else {
-				$tt = 'Còn nợ';
-			}
-		}
-		updateHDTHP_addLSTHP($connection, $totalAmount, $remainingFee, $tt, $mahd);
-
-		header("Location: manageFinance.php");
-	}
+	
+	
 }
 
 $jslisths_lopxHS = json_encode($lisths_lopxHS);
@@ -198,8 +40,8 @@ $jslistBill = json_encode($listBill);
 $jslistStudent = json_encode($listStudent);
 $jslistClassOpen = json_encode($listClassOpen);
 $jslistLSTHP = json_encode($listLSTHP);
-$jslistHS_GHP =  json_encode($listHS_GHP);
-$jslistDD =  json_encode($listDD);
+$jslistHS_GHP = json_encode($listHS_GHP);
+$jslistDD = json_encode($listDD);
 
 ?>
 
@@ -214,6 +56,7 @@ $jslistDD =  json_encode($listDD);
 	<title>Quản lý hệ thống giáo dục</title>
 	<link rel="stylesheet" href="../assets/css/manage.css">
 	<link rel="stylesheet" href="../assets/css/manageFinance.css">
+	<script src="https://code.jquery.com/jquery-3.6.4.js"></script>
 
 </head>
 
@@ -257,8 +100,8 @@ $jslistDD =  json_encode($listDD);
 			<h1>Thu Học phí</h1>
 			<div class="search-container">
 				<form id="form-search" method="post" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>" style="width: 50%; margin: unset;display: inline-flex;" autocomplete="off">
-				<input type="text" name="keyword" id="keyword" placeholder="Tìm kiếm..." style="width: 70% ; border-radius: 0px; border-color:black;"  value="<?php if (isset($_POST['keyword'])) {echo $_POST['keyword'];}?>" oninput="searchList()">
-			<input type="button" id="search"  value="Tìm kiếm" style="width: 100px;  background-color: #4CAF50;">	
+					<input type="text" name="keyword" id="keyword" placeholder="Tìm kiếm..." style="width: 70% ; border-radius: 0px; border-color:black;"  oninput="searchList()">
+					<input type="button" id="search" value="Tìm kiếm" style="width: 100px;  background-color: #4CAF50;">
 					<button type="submit" id="refesh-btn" name="refesh" style=" background-color: currentcolor "> <img style="width: 30px;" src="../assets/images/Refresh-icon.png" alt=""></button>
 				</form>
 				<div style="display:inline-flex">
@@ -280,11 +123,7 @@ $jslistDD =  json_encode($listDD);
 
 			<div>
 				<table id="table-1">
-					<?php $i = 1;
-					if (!$listBill) {
-						echo ' <h2>Không tìm thấy kết quả phù hợp "' . $_POST['keyword'] . '"</h2>';
-					}
-					?>
+
 					<thead id="thead-1">
 						<tr>
 							<th data-column="0" style="width:20px" onclick="sortTable(0)">STT</th>
@@ -331,7 +170,7 @@ $jslistDD =  json_encode($listDD);
 							<form id="form-add-bill" name="form-add-bill" method="post">
 
 
-							
+
 								<table>
 									<tbody style="max-height:fit-content; overflow:unset">
 										<td>
@@ -527,7 +366,7 @@ $jslistDD =  json_encode($listDD);
 
 				<div id="tab-3-1" class="tabcontent-3">
 					<h2>Thông tin hóa đơn</h2>
-					<button id="edit-button" style="position: absolute;top: 75px;right: 60px;">Sửa</button>
+					<button id="edit-button" style="position: absolute;top: 75px;right: 60px;" hidden>Sửa</button>
 
 					<button id="btn-delete-bill" style="position: absolute;top: 75px;right: 11px; background-color: #e90000">Xóa</button>
 
@@ -645,35 +484,36 @@ $jslistDD =  json_encode($listDD);
 						</tbody>
 					</table>
 
-
-					<!-- Them giao dich -->
-					<div id="div-add-trans">
-						<h1>Thêm giao dịch</h1>
-						<form id="form-add-trans" name="form-add-trans" method="post">
-							<input type="hidden" id="id-add-trans" name="id-add-trans">
-
-							<br>
-							<label>Thời gian : <label id="lb-time-add-trans" style="color:red; font-size:13px ; font-style: italic "></label></label>
-
-
-
-							<input style="font-size: 16px;" type="date" id="date-add-trans" name="date-add-trans" required>
-							<br>
-							<br>
-							<label for="money-add-trans">Số tiền : </label>
-							<input style="height: 30px; font-size: 15px; width:50%" type="text" id="money-add-trans" name="money-add-trans" pattern="[0-9,]+" oninput="formatNumber(this)">
-							<br>
-							<label id="lb-money-add-trans" style="color:red; font-size:13px ; font-style: italic "></label>
-							<br>
-							<button type="button" style=" background-color: teal;margin: 25px 0px 8px; padding: 15px 20px;margin-left: 50px;" id="canle-add-trans">Huỷ bỏ</button>
-
-							<input style="font-size: 14px;background-color: teal; margin-top: 25px;width: fit-content;margin-left: 120px;  padding: 15px 25px;" type="submit" id="submit-add-trans" value="Thêm">
-
-						</form>
-					</div>
 				</div>
 				<div id="tab-3-3" class="tabcontent-3">3</div>
 				<button class="close-btn">Đóng</button>
+			</div>
+		</div>
+		<!-- Them giao dich -->
+		<div id="modal-add-trans">
+			<div id="div-add-trans">
+				<h1>Thêm giao dịch</h1>
+				<form id="form-add-trans" name="form-add-trans" method="post">
+					<input type="hidden" id="id-add-trans" name="id-add-trans">
+
+					<br>
+					<label>Thời gian : <label id="lb-time-add-trans" style="color:red; font-size:13px ; font-style: italic "></label></label>
+
+
+
+					<input style="font-size: 16px;" type="date" id="date-add-trans" name="date-add-trans" required>
+					<br>
+					<br>
+					<label for="money-add-trans">Số tiền : </label>
+					<input style="height: 30px; font-size: 15px; width:50%" type="text" id="money-add-trans" name="money-add-trans" pattern="[0-9,]+" oninput="formatNumber(this)">
+					<br>
+					<label id="lb-money-add-trans" style="color:red; font-size:13px ; font-style: italic "></label>
+					<br>
+					<button type="button" style=" background-color: teal;margin: 25px 0px 8px; padding: 15px 20px;margin-left: 50px;" id="canle-add-trans">Huỷ bỏ</button>
+
+					<input style="font-size: 14px;background-color: teal; margin-top: 25px;width: fit-content;margin-left: 120px;  padding: 15px 25px;" type="submit" id="submit-add-trans" value="Thêm">
+
+				</form>
 			</div>
 		</div>
 
@@ -818,68 +658,57 @@ $jslistDD =  json_encode($listDD);
 		</div>
 
 		<!-- xóa hóa đơn -->
-		<div class="delete-bill-ques">
-			<img src="../assets/images/Help-icon.png" alt="" style=" width: 40px;">
-			<h4>Bạn chắc chắn muốn xóa?</h4>
-			<div style="display:flex ;justify-content: space-evenly;align-items: center">
+		<div id="modal-ques">
+			<div class="delete-bill-ques">
+				<img src="../assets/images/Help-icon.png" alt="" style=" width: 40px;">
+				<h4>Bạn chắc chắn muốn xóa?</h4>
+				<div style="display:flex ;justify-content: space-evenly;align-items: center">
 
-				<button style="background-color:#52a95f; height: 44px;width: 80px" id="btn-cancle-delete-bill">Hủy bỏ</button>
-				<form id="form-delete-bill" action="" method="POST">
-					<input type="hidden" id="mahd-delete" name="mahd-delete">
-					<input type="submit" style="background-color: #d52828;  height: 44px;width: 80px" id="delete-bill" name="delete=bill" value="Xóa"></input>
-				</form>
+					<button style="background-color:#52a95f; height: 44px;width: 80px" id="btn-cancle-delete-bill">Hủy bỏ</button>
+					<form id="form-delete-bill" action="" method="POST">
+						<input type="hidden" id="mahd-delete" name="mahd-delete">
+						<input type="submit" style="background-color: #d52828;  height: 44px;width: 80px" id="delete-bill" name="delete=bill" value="Xóa"></input>
+					</form>
+				</div>
+			</div>
+
+			<div class="delete-bill-ques-2">
+				<img src="../assets/images/warning-icon.png" alt="" style=" width: 40px;">
+				<h4>Hóa đơn đã có dữ liệu thanh toán</h4>
+				<h4>Bạn chắc chắn muốn xóa?</h4>
+				<div style="display:flex ;justify-content: space-evenly;align-items: center">
+
+					<button style="background-color:#52a95f; height: 44px;width: 80px" id="btn-cancle-delete-bill-2">Hủy bỏ</button>
+					<form id="form-delete-bill-2" action="" method="POST">
+						<input type="hidden" id="mahd-delete-2" name="mahd-delete-2">
+						<input type="submit" style="background-color: #d52828;  height: 44px;width: 80px" id="delete-bill-2" name="delete=bill-2" value="Xóa"></input>
+					</form>
+				</div>
 			</div>
 		</div>
-
-		<div class="delete-bill-ques-2">
-			<img src="../assets/images/warning-icon.png" alt="" style=" width: 40px;">
-			<h4>Hóa đơn đã có dữ liệu đóng tiền</h4>
-			<h4>Bạn chắc chắn muốn xóa?</h4>
-			<div style="display:flex ;justify-content: space-evenly;align-items: center">
-
-				<button style="background-color:#52a95f; height: 44px;width: 80px" id="btn-cancle-delete-bill-2">Hủy bỏ</button>
-				<form id="form-delete-bill-2" action="" method="POST">
-					<input type="hidden" id="mahd-delete-2" name="mahd-delete-2">
-					<input type="submit" style="background-color: #d52828;  height: 44px;width: 80px" id="delete-bill-2" name="delete=bill-2" value="Xóa"></input>
-				</form>
-			</div>
-		</div>
-
 		<div class="delete-success">
 			<img src="../assets/images/icon_success.png" alt="" style=" width: 40px;">
 			<h3>Xóa thành công!</h3>
 		</div>
 
-		<!-- <div class="delete-ques">
-			<img src="../assets/images/Help-icon.png" alt="" style=" width: 40px;">
-			<h4>Bạn chắc chắn muốn xóa?</h4>
-			<div style="display:flex ;justify-content: space-evenly;align-items: center">
-
-				<button style="background-color:#52a95f; height: 44px;width: 80px" id="btn-cancle-delete-bill">Hủy bỏ</button>
-				<form id="form-delete-bill" action="" method="POST">
-					<input type="hidden" id="mahd-delete" name="mahd-delete">
-					<input type="submit" style="background-color: #d52828;  height: 44px;width: 80px" id="delete-bill" name="delete=bill" value="Xóa"></input>
-				</form>
-			</div>
-		</div> -->
-		<!--  -->
 
 		<div class="delete-cant">
 			<img src="../assets/images/Close-icon.png" alt="" style=" width: 40px;">
 			<h3 id='tb2'> <br> </h3>
 			<button id="close">Đóng</button>
 		</div>
+		<div id="modal-ques-trans">
+			<div class="delete-ques-trans">
+				<img src="../assets/images/Help-icon.png" alt="" style=" width: 40px;">
+				<h4>Bạn chắc chắn muốn xóa?</h4>
+				<div style="display:flex ;justify-content: space-evenly;align-items: center">
 
-		<div class="delete-ques-trans">
-			<img src="../assets/images/Help-icon.png" alt="" style=" width: 40px;">
-			<h4>Bạn chắc chắn muốn xóa?</h4>
-			<div style="display:flex ;justify-content: space-evenly;align-items: center">
-
-				<button style="background-color:#52a95f; height: 44px;width: 80px " id="btn-cancle-delete-trans">Hủy bỏ</button>
+					<button style="background-color:#52a95f; height: 44px;width: 80px " id="btn-cancle-delete-trans">Hủy bỏ</button>
 
 
-				<button type="button" style="background-color: #d52828;  height: 44px;width: 80px;border-radius: 7px;" id="delete-trans">Xóa</button>
+					<button type="button" style="background-color: #d52828;  height: 44px;width: 80px;border-radius: 7px;" id="delete-trans">Xóa</button>
 
+				</div>
 			</div>
 		</div>
 	</main>

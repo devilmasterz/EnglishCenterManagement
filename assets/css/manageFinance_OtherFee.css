@@ -529,3 +529,15 @@ div.btn-tab-3{
 #form-add-bill td{
   text-align: unset;
 }
+
+
+#modal-ques {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: none;
+  z-index: 150;
+}
