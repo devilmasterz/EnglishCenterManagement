@@ -2,7 +2,7 @@
 require '../../lib/functionPersonal.php';
 
 session_start();
-$magv= $_SESSION['MaGV'];
+$magv = $_SESSION['MaGV'];
 
 $detailTeacher = selectTeacher($connection, $magv);
 $accountTeacher = selectAcountTeacher($connection, $magv);
@@ -43,7 +43,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         session_unset();
         session_destroy();
         header("Location: ../home/home.php");
-      }
+    }
 }
 
 
@@ -70,11 +70,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <div id="menu-bar"></div>
 
         <div class="personal-bg-wrap">
-        <h2 style="margin-left:40%;  margin-top: 10px;">  Thông tin cá nhân</h2>
+            <h2 style="margin-left:40%;  margin-top: 10px;"> Thông tin cá nhân</h2>
         </div>
         <div class="personal-inner">
             <div class="personal-avt-wrap">
-                <img  alt="" class="personal-avt">
+                <img alt="" class="personal-avt">
             </div>
             <div class="personal-inner-name"></div>
             <div class="personal-inner-info">
@@ -165,9 +165,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     </button>
                 </div>
 
-                <div class="personal-inner-item personal-inner-item-first">
+                <div class="personal-inner-item personal-inner-item-first personal-pass-flex">
                     <div class="personal-inner-key">Mật khẩu: <strong style="color: red; font-size: 12px;font-style: italic;" id="err-pass"></strong></div>
-                    <input id='password' class="personal-inner-value personal-inner-value-pass" type="password" readonly></input>
+                    <input id='password' class="personal-inner-value personal-inner-value-pass personal-inner-value-pass-input" type="password" readonly></input>
 
                     <button style="width:25px ; margin-top:2px;  height:25px; margin-left:90%; background-image: url(https://icons.veryicon.com/png/o/miscellaneous/hekr/action-hide-password.png);background-size: cover; " onclick="togglePassword()" class="personal-inner-value personal-inner-value-pass"></button>
                 </div>
@@ -194,66 +194,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </form>
             </div>
         </div>
-<a href="../main_pages/homeTeacher.php"></a>
+        <a href="../main_pages/homeTeacher.php"></a>
     </div>
     <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
     <!--boostrap.js-->
     <script src="../../plugins/bootstrap-5.2.3-dist/js/bootstrap.bundle.min.js"></script>
     <!--slick.js-->
     <!-- <script src="./personal.js"></script> -->
-    <!-- <script src="../common/menubar.js"></script> -->
+    <script src="../common/menubar.js"></script>
     <script>
         var detailTeacher = <?php print_r($jsdetailTeacher); ?>;
-    var accountTeacher = <?php print_r($jsaccountTeacher); ?>;
-    const authMenuBarHTMl = ` <div style= "position: absolute" class="PageMenuBar">
-<a class="PageLogoWrap">
-    <img src="../../assets/images/logo-web.png" class="PageLogoImg"/>
-</a>
-<div class="menubar-left">
-  <a class="menubar-nav"  href="../main_pages/homeTeacher.php" >Thông tin lớp dạy</a>
-  <a class="menubar-nav last-nav"  href="../main_pages/userTeacher_wage.php">Lịch sử lương</a>
- 
-  
-  <div class="menubar-info-wrap">
-    <div class="menubar-info">
-      <div class="menubar-name">` + detailTeacher[0].TenGV+ `</div>
-      
-      
-      <div class="menubar-dropdown">
-          <button class="menubar-avt-wrap menubar-drop-btn">
-            <img src="../../assets/images/Student-male-icon.png" alt="" class="menubar-avt">
-          </button>
-          <ul class="menubar-dropdown-menu" id ="a123">
-              <li class="menubar-dropdown-item"><a  href="../personal/personal_Teacher.php">Thông tin cá nhân</a></li>
-      
-              <li class="menubar-dropdown-item">  <form action="" method="post"> <input type="submit" name ="btn-logout"  id ="btn-logout" value ="Đăng xuất" style="border: none;background-color: unset;"></form></li>          </ul>
-          </ul>
-        </div>
-        
-
-    </div>
-  </div>
-</div>
-  
-</div>`
-    //isAuthentication === true
-    document.querySelector("#menu-bar").innerHTML = authMenuBarHTMl
-
-var $ = document.querySelector.bind(document)
-var $$ = document.querySelectorAll.bind(document)
-
-$(".menubar-drop-btn").onclick = ()=>{
-   
-    $(".menubar-dropdown-menu").classList.toggle("menubar-show")
- 
-}
-
+        var accountTeacher = <?php print_r($jsaccountTeacher); ?>;
+        menubarv2(detailTeacher[0].TenGV, detailTeacher[0].GioiTinh, "teacher", "../main_pages")
     </script>
 </body>
 <script>
-    
-
-
     document.getElementById('id').innerHTML = detailTeacher[0].MaGV;
     document.getElementById('id-inp').innerHTML = detailTeacher[0].MaGV;
 

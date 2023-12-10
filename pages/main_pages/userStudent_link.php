@@ -129,6 +129,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 
 </body>
+<script src="../common/menubar.js"></script>
 
 
 <script>
@@ -138,51 +139,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     var ds_yeuCau = <?php print_r($jslistRequest); ?>;
     var detailStudent = <?php print_r($jsdetailStudent); ?>;
 
-    const authMenuBarHTMl = ` <div class="PageMenuBar" style ="position:absolute">
-<a class="PageLogoWrap" href="../main_pages/homeStudent.php">
-    <img src="../../assets/images/logo-web.png" class="PageLogoImg"/>
-</a>
-<div class="menubar-left">
-  <a class="menubar-nav"  href="./userStudent_class.php">Thông tin lớp học</a>
-  <a class="menubar-nav  last-nav" href="./userStudent_link.php"  style="color:darkcyan" >Liên kết với phụ huynh</a>
-
-  <div class="menubar-info-wrap">
-    <div class="menubar-info">
-      <div class="menubar-name">` + tenHS[0].TenHS + `</div>
-      <div class="menubar-dropdown">
-          <button class="menubar-avt-wrap menubar-drop-btn">
-            <img src="../../assets/images/Student-male-icon.png" alt="" class="menubar-avt">
-          </button>
-          <ul class="menubar-dropdown-menu" id ="a123">
-              <li class="menubar-dropdown-item"><a  href="../personal/personal_Student.php">Thông tin cá nhân</a></li>
-      
-              <li class="menubar-dropdown-item">  <form action="" method="post"> <input type="submit" name ="btn-logout"  id ="btn-logout" value ="Đăng xuất" style="border: none;background-color: unset;"></form></li>          </ul>
-          </ul>
-        </div>
-    </div>
-  </div>
-</div>
-
-</div>`
-    //isAuthentication === true
-    document.querySelector("#menu-bar").innerHTML = authMenuBarHTMl
-    var $ = document.querySelector.bind(document)
-var $$ = document.querySelectorAll.bind(document)
-
-$(".menubar-drop-btn").onclick = ()=>{
-   
-    $(".menubar-dropdown-menu")[0].classList.toggle("menubar-show")
- 
-}
-
-var img2 = document.querySelector(".menubar-avt");
-    if (detailStudent[0].GioiTinh == "Nam") {
-    
-        img2.src = "../../assets/images/Student-male-icon.png";
-    } else {
-        
-        img2.src = "../../assets/images/Student-female-icon.png";
-    }
+    menubarv2(tenHS[0].TenHS,detailStudent[0].GioiTinh)
     
 </script>
 

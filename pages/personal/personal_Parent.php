@@ -5,7 +5,7 @@ session_start();
 $ma = $_SESSION['MaPH'];
 
 
-$maPH= $ma['MaPH'];
+$maPH = $ma['MaPH'];
 
 
 
@@ -61,25 +61,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
     if (isset($_POST['accept-maHS'])) {
         $mahs = $_POST['accept-maHS'];
-        deletedslk($connection,$mahs,$maPH);
-        insertPHHS($mahs,$maPH,$connection);
+        deletedslk($connection, $mahs, $maPH);
+        insertPHHS($mahs, $maPH, $connection);
         header("Location: personal_Parent.php");
-      }
-    
-      if (isset($_POST['refuse-maHS'])) {
+    }
+
+    if (isset($_POST['refuse-maHS'])) {
         $mahs = $_POST['refuse-maHS'];
-        
-        deletedslk($connection,$mahs,$maPH);
-       
+
+        deletedslk($connection, $mahs, $maPH);
+
         header("Location: personal_Parent.php");
-      }
-      if (isset($_POST['btn-logout'])) {
+    }
+    if (isset($_POST['btn-logout'])) {
 
         session_start();
         session_unset();
         session_destroy();
         header("Location: ../home/home.php");
-      }
+    }
 }
 ?>
 
@@ -188,11 +188,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     </button>
                 </div>
 
-                <div class="personal-inner-item personal-inner-item-first">
+                <div class="personal-inner-item personal-inner-item-first personal-inner-password personal-pass-flex">
                     <div class="personal-inner-key">Mật khẩu: <strong style="color: red; font-size: 12px;font-style: italic;" id="err-pass"></strong></div>
-                    <input id='password' class="personal-inner-value personal-inner-value-pass" type="password" readonly></input>
+                    <input id='password' class="personal-inner-value personal-inner-value-pass personal-inner-value-pass-input" type="password" readonly></input>
 
-                    <button style="width:25px ; margin-top:2px;  height:25px; margin-left:90%; background-image: url(https://icons.veryicon.com/png/o/miscellaneous/hekr/action-hide-password.png);background-size: cover; " onclick="togglePassword()" class="personal-inner-value personal-inner-value-pass"></button>
+                    <button style="width:25px ; margin-top:2px;  height:25px; margin-left:90%; background-image: url(https://icons.veryicon.com/png/o/miscellaneous/hekr/action-hide-password.png);background-size: cover; " onclick="togglePassword()" class="personal-inner-value personal-inner-value-pass-btn"></button>
                 </div>
 
 
@@ -230,57 +230,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <script src="../../plugins/bootstrap-5.2.3-dist/js/bootstrap.bundle.min.js"></script>
     <!--slick.js-->
     <!-- <script src="./personal.js"></script> -->
-    <!-- <script src="../common/menubar.js"></script> -->\
+    <script src="../common/menubar.js"></script>
+
     <script>
         var detailParent = <?php print_r($jsdetailParent); ?>;
         var accountParent = <?php print_r($jsaccountParent); ?>;
-
-
         var ds_yeuCau = <?php print_r($jslistRequest); ?>;
         var dsHoaDon_CD = <?php print_r($jslistBill_CD); ?>;
         var dsHoaDon_CN = <?php print_r($jslistBill_CN); ?>;
-
-        const authMenuBarHTMl = ` <div class="PageMenuBar" style ="position:absolute">
-<a class="PageLogoWrap" href="../main_pages/homeParent.php">
-    <img src="../../assets/images/logo-web.png" class="PageLogoImg"/>
-</a>
-<div class="menubar-left">
-  <a class="menubar-nav"  href="../main_pages/userParent_child.php">Thông tin của con</a>
-  <a class="menubar-nav  last-nav"  href="../main_pages/userParent_Fee.php">Học phí của con</a>
-  
-  <div class="menubar-info-wrap">
-    <div class="menubar-info">
-      <div class="menubar-name">` + detailParent[0].TenPH + `</div>
-
-
-      <div class="menubar-dropdown">
-          <button class="menubar-avt-wrap menubar-drop-btn">
-            <img src="../../assets/images/Student-male-icon.png" alt="" class="menubar-avt">
-          </button>
-          <ul class="menubar-dropdown-menu" id ="a123">
-              <li class="menubar-dropdown-item"><a  href="../personal/personal_Parent.php">Thông tin cá nhân</a></li>
-      
-              <li class="menubar-dropdown-item">  <form action="" method="post"> <input type="submit" name ="btn-logout"  id ="btn-logout" value ="Đăng xuất" style="border: none;background-color: unset;"></form></li>          </ul>
-          </ul>
-        </div>
-
-    
-    </div>
-  </div>
-</div>
-
-</div>`
-        //isAuthentication === true
-        document.querySelector("#menu-bar").innerHTML = authMenuBarHTMl
-
-        var $ = document.querySelector.bind(document)
-        var $$ = document.querySelectorAll.bind(document)
-
-        $(".menubar-drop-btn").onclick = () => {
-
-            $(".menubar-dropdown-menu").classList.toggle("menubar-show")
-
-        }
+        menubarv2(detailParent[0].TenPH, detailParent[0].GioiTinh, "parent", "../main_pages");
     </script>
 </body>
 
@@ -542,86 +500,87 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 
     var button = document.getElementById('btn-nofi');
-var hiddenDiv = document.getElementById('div-nofi');
+    var hiddenDiv = document.getElementById('div-nofi');
 
-button.addEventListener('click', function() {
-    hiddenDiv.style.display = hiddenDiv.style.display === 'block' ? 'none' : 'block';
- 
-});
+    button.addEventListener('click', function() {
+        hiddenDiv.style.display = hiddenDiv.style.display === 'block' ? 'none' : 'block';
 
-
-var divNofiContainer = document.getElementById('div-nofi');
-
-ds_yeuCau.forEach(function(yeuCau) {
-
-  var nofiDiv = document.createElement('div');
-  nofiDiv.id = 'nofi';
-  nofiDiv.innerHTML = '<p>Học viên ' + yeuCau.TenHS + ' đã gửi yêu cầu liên kết với bạn</p>' +
-                      '<button onclick="tuChoi(' + yeuCau.MaHS + ',' + yeuCau.MaPH + ')">Từ chối</button>' +
-                      '<button onclick="chapNhan(' + yeuCau.MaHS + ',' + yeuCau.MaPH + ')">Chấp nhận</button>';
-
-  divNofiContainer.appendChild(nofiDiv);
+    });
 
 
-});
+    var divNofiContainer = document.getElementById('div-nofi');
 
-dsHoaDon_CD.forEach(function(yeuCau) {yeuCau
+    ds_yeuCau.forEach(function(yeuCau) {
 
-    var nofiDiv = document.createElement('div');
-    nofiDiv.id = 'nofi';
-    nofiDiv.innerHTML = '<p> Hóa đơn '+ yeuCau.TenHD + ' (' + numberWithCommas(yeuCau.SoTienPhaiDong) +  ' VND) của  Học viên ' +yeuCau.TenHS +  '  chưa được thanh toán</p>'
-    divNofiContainer.appendChild(nofiDiv);
-  });
+        var nofiDiv = document.createElement('div');
+        nofiDiv.id = 'nofi';
+        nofiDiv.innerHTML = '<p>Học viên ' + yeuCau.TenHS + ' đã gửi yêu cầu liên kết với bạn</p>' +
+            '<button onclick="tuChoi(' + yeuCau.MaHS + ',' + yeuCau.MaPH + ')">Từ chối</button>' +
+            '<button onclick="chapNhan(' + yeuCau.MaHS + ',' + yeuCau.MaPH + ')">Chấp nhận</button>';
 
-
-
-  dsHoaDon_CN.forEach(function(yeuCau) {
-
-    var nofiDiv = document.createElement('div');
-    nofiDiv.id = 'nofi';
-    nofiDiv.innerHTML = '<p> Hóa đơn '+ yeuCau.TenHD + ' còn nợ (' + numberWithCommas(yeuCau.NoPhiConLai) +  ' VND) của  Học viên ' +yeuCau.TenHS +  '  chưa được thanh toán</p>'
-    divNofiContainer.appendChild(nofiDiv);
-  });
+        divNofiContainer.appendChild(nofiDiv);
 
 
-  function tuChoi(maHS, maPH) {
-    var form = document.createElement('form');
+    });
 
-    form.method = 'POST';
-      form.name = 'refuse-form'
-   
-    var input = document.createElement('input');
-    input.type = 'hidden';
-    input.name = 'refuse-maHS';
-    input.value = maHS;
-    form.appendChild(input);
-  
-    document.body.appendChild(form);
-    form.submit();
-  
-}
+    dsHoaDon_CD.forEach(function(yeuCau) {
+        yeuCau
 
-function chapNhan(maHS, maPH) {
+        var nofiDiv = document.createElement('div');
+        nofiDiv.id = 'nofi';
+        nofiDiv.innerHTML = '<p> Hóa đơn ' + yeuCau.TenHD + ' (' + numberWithCommas(yeuCau.SoTienPhaiDong) + ' VND) của  Học viên ' + yeuCau.TenHS + '  chưa được thanh toán</p>'
+        divNofiContainer.appendChild(nofiDiv);
+    });
 
 
-  var form = document.createElement('form');
 
-  form.method = 'POST';
-    form.name = 'accept-form'
- 
-  var input = document.createElement('input');
-  input.type = 'hidden';
-  input.name = 'accept-maHS';
-  input.value = maHS;
-  form.appendChild(input);
+    dsHoaDon_CN.forEach(function(yeuCau) {
 
-  document.body.appendChild(form);
-  form.submit();
-}
-function numberWithCommas(x) {
-    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-}
+        var nofiDiv = document.createElement('div');
+        nofiDiv.id = 'nofi';
+        nofiDiv.innerHTML = '<p> Hóa đơn ' + yeuCau.TenHD + ' còn nợ (' + numberWithCommas(yeuCau.NoPhiConLai) + ' VND) của  Học viên ' + yeuCau.TenHS + '  chưa được thanh toán</p>'
+        divNofiContainer.appendChild(nofiDiv);
+    });
 
+
+    function tuChoi(maHS, maPH) {
+        var form = document.createElement('form');
+
+        form.method = 'POST';
+        form.name = 'refuse-form'
+
+        var input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = 'refuse-maHS';
+        input.value = maHS;
+        form.appendChild(input);
+
+        document.body.appendChild(form);
+        form.submit();
+
+    }
+
+    function chapNhan(maHS, maPH) {
+
+
+        var form = document.createElement('form');
+
+        form.method = 'POST';
+        form.name = 'accept-form'
+
+        var input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = 'accept-maHS';
+        input.value = maHS;
+        form.appendChild(input);
+
+        document.body.appendChild(form);
+        form.submit();
+    }
+
+    function numberWithCommas(x) {
+        return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    }
 </script>
 
 </html>

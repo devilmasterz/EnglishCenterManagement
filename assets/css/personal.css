@@ -2,6 +2,9 @@ body{
     margin:0;
     padding:0;
 }
+.personal-title-page{
+    color: #fff;
+}
 .personal-active{
     display: block!important;
 }
@@ -43,7 +46,7 @@ body{
 
 }
 .menubar-nav:hover {
-    background-color: turquoise;
+   
 }
 .personal-inner{
     transform: translateY(-120px);
@@ -74,6 +77,7 @@ body{
     margin-top: 24px;
 }
 .personal-inner-item{
+    display: flex;
     max-width: 300px;
     margin-top: 16px;
 }
@@ -84,7 +88,24 @@ body{
     font-size: 15px;
     line-height: 22px;
     color: #484848;
-    min-width: 120px;
+    min-width: 100px;
+}
+.personal-inner-value.personal-inner-value-pass-btn{
+    border-radius: 8px;
+    border:none
+}
+.personal-inner-value-pass-input {
+    padding: 6px;
+    border-radius: 6px;
+    border: 1px solid rgb(182, 182, 182);
+}
+.personal-pass-flex{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.personal-inner-password{
+    
 }
 .personal-inner-value{
     display: inline;
@@ -141,7 +162,7 @@ body{
     border-radius: 16px;
 }
 .personal-cancel{
-    background-color: rgb(182, 182, 182);
+    background-color: rgb(228, 128, 128);
     color: #fff;
     font-size: 15px;
     font-weight: 700;

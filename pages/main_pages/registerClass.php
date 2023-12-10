@@ -14,10 +14,10 @@ if (isset($_SESSION['MaHS'])) {
     $check = true;
     $maHS = $_SESSION['MaHS'];
     $tenHS = selecttenHS($connection, $maHS['MaHS']);
-$detailStudent = selectStudent($connection, $maHS['MaHS']);
-$jstenHS = json_encode($tenHS);
-$jsdetailStudent = json_encode($detailStudent);
-$jscheck = json_encode($check);
+    $detailStudent = selectStudent($connection, $maHS['MaHS']);
+    $jstenHS = json_encode($tenHS);
+    $jsdetailStudent = json_encode($detailStudent);
+    $jscheck = json_encode($check);
 }
 
 
@@ -28,6 +28,7 @@ $dataClass = dataClassById($malop, $connection);
 $dataSchedules = dataSchedulesByMaLop($malop, $connection);
 $nameTeacher = dataTeacherByMaLop($malop, $connection);
 $result = listSchedules($connection);
+$schedule = scheduleOfClass($malop, $connection);
 $nameCondition = '';
 if ($dataClass['TrangThai'] == 'Chưa mở') {
     $nameCondition = 'Chưa mở';
@@ -42,16 +43,15 @@ if (isset($_POST['check'])) {
         $maph = checkExitPH_HS($mahs, $connection);
         if ($maph) {
 
-           
+
             $checkregister = createTabHS_LOP($mahs, $malop, $connection);
-            
+
             $stRegister = $dataClass['SLHS'];
             setHSDANGKI($stRegister, $malop, $connection);
 
             if ($stRegister + 1 == $dataClass['SLHSToiDa']) {
                 setSLHSToiDa($malop, $connection);
             }
-          
         }
     } else {
         header("Location: ../login_pages/login.php");
@@ -191,20 +191,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
 
-        .menubar-nav:hover {
-            background-color: turquoise;
-        }
-        #btn-logout{
-        all:unset;
-      
-    border: none;
-    background-color: unset;
 
-    }
-    #btn-logout:hover{
-        cursor: pointer;
-        background-color: #0d7cd0;
-    }
+        #btn-logout {
+            all: unset;
+
+            border: none;
+            background-color: unset;
+
+        }
+
+        #btn-logout:hover {
+            cursor: pointer;
+            background-color: #0d7cd0;
+        }
     </style>
 </head>
 
@@ -315,7 +314,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             <td style="color: #0088cc" id="teacher-id"><?php echo $malop; ?></td>
                         </tr>
                         <tr>
-                            <th style="color: #ffd95c">Tên lớp:</th>
+                            <th style="color: #0088cc">Tên lớp:</th>
                             <td style="color: #0088cc" id="teacher-gender" contenteditable="false"><?php echo $dataClass['TenLop']; ?></td>
                         </tr>
                         <tr>
@@ -323,22 +322,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             <td style="color: #0088cc" id="" contenteditable="false"><?php echo $dataClass['LuaTuoi']; ?></td>
                         </tr>
                         <tr>
-                            <th style="color:#ffd95c">Thời gian bắt đầu khóa học:</th>
+                            <th style="color:#0088cc">Thời gian bắt đầu khóa học:</th>
                             <td style="color: #0088cc" id="teacher-date" contenteditable="false"><?php echo convertDateFormat($dataClass['ThoiGian']); ?></td>
                         </tr>
                         <tr>
                             <th style="color:#0088cc">Lịch học:</th>
                             <td style="color: #0088cc" id="teacher-age" contenteditable="false">
                                 <?php
-                                foreach ($dataSchedules as $listschedules) {
-                                    echo  $listschedules['day_of_week'] . ' - ' . $listschedules['start_time'] . '-' . $listschedules['end_time'];
-                                    echo "<br>";
+                                foreach ($schedule as $listschedules) {
+                                    echo  $listschedules['Ngay'] . ' - ' . $listschedules['TGBatDau'] . '-' . $listschedules['TGKetThuc'];
+                                    echo "<br/>";
                                 }
                                 ?></p>
                             </td>
                         </tr>
                         <tr>
-                            <th style="color:#ffd95c">Học phí:</th>
+                            <th style="color:#0088cc">Học phí:</th>
                             <td style="color: #0088cc" id="teacher-qq" contenteditable="false"><?php echo numberWithCommas($dataClass['HocPhi']); ?>VND</td>
                         </tr>
                         <tr>
@@ -346,7 +345,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             <td style="color: #0088cc" id="" contenteditable="false"><?php echo $dataClass['SoBuoiDaToChuc']; ?></td>
                         </tr>
                         <tr>
-                            <th style="color:#ffd95c">Tổng số buổi dạy:</th>
+                            <th style="color:#0088cc">Tổng số buổi dạy:</th>
                             <td style="color: #0088cc" id="" contenteditable="false"><?php echo $dataClass['SoBuoi']; ?></td>
                         </tr>
                         <tr>
@@ -354,7 +353,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             <td style="color: #0088cc" id="" contenteditable="false"><?php echo $dataClass['SLHS']; ?></td>
                         </tr>
                         <tr>
-                            <th style="color:#ffd95c">Số lượng học sinh tối đa:</th>
+                            <th style="color:#0088cc">Số lượng học sinh tối đa:</th>
                             <td style="color: #0088cc" id="" contenteditable="false"><?php echo $dataClass['SLHSToiDa']; ?></td>
                         </tr>
                         <tr>
@@ -368,7 +367,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             </td>
                         </tr>
                         <tr>
-                            <th style="color:#ffd95c">Trình đồ giáo viên :</th>
+                            <th style="color:#0088cc">Trình đồ giáo viên :</th>
                             <td style="color: #0088cc">
                                 <?php
                                 foreach ($nameTeacher as $nameTeachers) {
@@ -386,7 +385,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                 if (empty($discount['GiamHocPhi'])) {
                                     echo '0%';
                                 } else {
-                                    echo $discount['GiamHocPhi'] . '%'.'    &emsp; &emsp; (Từ '.$discount['TGBatDau'].' đến '.$discount['TGKetThuc'].')';
+                                    echo $discount['GiamHocPhi'] . '%' . '    &emsp; &emsp; (Từ ' . $discount['TGBatDau'] . ' đến ' . $discount['TGKetThuc'] . ')';
                                 }
                                 ?>
                             </td>
@@ -402,58 +401,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <p>© 2023 Hệ thống quản lý giáo dục. All rights reserved.</p>
     </footer>
 </body>
+<script src="../common/menubar.js"></script>
+
 <script>
     var check = <?php print_r($jscheck); ?>;
     var tenHS = <?php print_r($jstenHS); ?>;
     var detailStudent = <?php print_r($jsdetailStudent); ?>;
     if (check) {
-        const authMenuBarHTMl = ` <div class="PageMenuBar" style ="position:absolute">
-<a class="PageLogoWrap" href="../main_pages/homeStudent.php">
-    <img src="../../assets/images/logo-web.png" class="PageLogoImg"/>
-</a>
-<div class="menubar-left">
-  <a class="menubar-nav"  href="./userStudent_class.php" >Thông tin lớp học</a>
-  <a class="menubar-nav  last-nav" href="./userStudent_link.php">Liên kết với phụ huynh</a>
-
-  <div class="menubar-info-wrap">
-    <div class="menubar-info">
-      <div class="menubar-name">` + tenHS[0].TenHS + `</div>
-     
-      <div class="menubar-dropdown">
-          <button class="menubar-avt-wrap menubar-drop-btn">
-            <img alt="" class="menubar-avt">
-          </button>
-          <ul class="menubar-dropdown-menu" id ="a123">
-              <li class="menubar-dropdown-item"><a  href="../personal/personal_Student.php">Thông tin cá nhân</a></li>
-      
-              <li class="menubar-dropdown-item">  <form action="" method="post"> <input type="submit" name ="btn-logout"  id ="btn-logout" value ="Đăng xuất" style="border: none;background-color: unset;"></form></li>          </ul>
-          </ul>
-        </div>
-    </div>
-  </div>
-</div>
-
-</div>`
-        //isAuthentication === true
-        document.querySelector("#menu-bar").innerHTML = authMenuBarHTMl
-
-
-
-        document.querySelector(".menubar-drop-btn").onclick = () => {
-
-            document.querySelector(".menubar-dropdown-menu").classList.toggle("menubar-show")
-
-        }
-
-        var img2 = document.querySelector(".menubar-avt");
-        if (detailStudent[0].GioiTinh == "Nam") {
-
-            img2.src = "../../assets/images/Student-male-icon.png";
-        } else {
-
-            img2.src = "../../assets/images/Student-female-icon.png";
-        }
-}
+        menubarv2(tenHS[0].TenHS, detailStudent[0].GioiTinh, "student")
+    }
 </script>
 <script>
     const openBtn = document.getElementById('checkLoginButton');

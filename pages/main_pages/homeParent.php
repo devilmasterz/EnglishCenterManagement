@@ -71,9 +71,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       color: #fff;
     }
 
-    .menubar-nav:hover {
-      background-color: turquoise;
-    }
+    
 
     #btn-nofi {
       border: none;
@@ -123,9 +121,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       cursor: pointer;
     }
 
-    .menubar-nav:hover {
-      background-color: turquoise;
-    }
+    
   </style>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <!-- <link rel="stylesheet" href="path-to-the-file/splide.min.css"> -->
@@ -777,7 +773,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
     ?> </button>
   </div>
-
+  <script src="../common/menubar.js"></script>
   <script>
     var tenPH = <?php print_r($jstenPH); ?>;
     var detailParent = <?php print_r($jsdetailParent); ?>;
@@ -785,53 +781,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     var ds_yeuCau = <?php print_r($jslistRequest); ?>;
     var dsHoaDon_CD = <?php print_r($jslistBill_CD); ?>;
     var dsHoaDon_CN = <?php print_r($jslistBill_CN); ?>;
+    menubarv2(tenPH[0].TenPH, detailParent[0].GioiTinh,"parent");
 
-    const authMenuBarHTMl = ` <div class="PageMenuBar" style ="position:absolute">
-<a class="PageLogoWrap" href="../main_pages/homeParent.php">
-    <img src="../../assets/images/logo-web.png" class="PageLogoImg"/>
-</a>
-<div class="menubar-left">
-  <a class="menubar-nav"  href="./userParent_child.php" >Thông tin của con</a>
-  <a class="menubar-nav  last-nav"  href="./userParent_Fee.php" >Học phí của con</a>
-
-  <div class="menubar-info-wrap">
-    <div class="menubar-info">
-      <div class="menubar-name">` + tenPH[0].TenPH + `</div>
-      <div class="menubar-dropdown">
-          <button class="menubar-avt-wrap menubar-drop-btn">
-            <img src="../../assets/images/Student-male-icon.png" alt="" class="menubar-avt">
-          </button>
-          <ul class="menubar-dropdown-menu" >
-              <li class="menubar-dropdown-item"><a  href="../personal/personal_Parent.php">Thông tin cá nhân</a></li>
-
-            <li class="menubar-dropdown-item">  <form action="" method="post"> <input type="submit" name ="btn-logout"  id ="btn-logout" value ="Đăng xuất" style="border: none;background-color: unset;"></form></li>
-          </ul>
-        </div>
-    </div>
-  </div>
-</div>
-
-</div>`
-    //isAuthentication === true
-    document.querySelector("#menu-bar").innerHTML = authMenuBarHTMl
-    var $ = document.querySelector.bind(document)
-    var $$ = document.querySelectorAll.bind(document)
-
-    $(".menubar-drop-btn").onclick = () => {
-
-      $(".menubar-dropdown-menu").classList.toggle("menubar-show")
-
-    }
-
-
-    var img2 = document.querySelector(".menubar-avt");
-    if (detailParent[0].GioiTinh == "Nam") {
-
-      img2.src = "../../assets/images/Parent-male-icon.png";
-    } else {
-
-      img2.src = "../../assets/images/Parent-female-icon.png";
-    }
+    
   </script>
   <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
   <!--boostrap.js-->
@@ -841,7 +793,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   <script type="text/javascript" src="../../plugins/slick-1.8.1/slick/slick.min.js">
   </script>
   <script src="../home/home.js"></script>
-  <!-- <script src="../common/menubar.js"></script> -->
+
 
   <script>
     var button = document.getElementById('btn-nofi');

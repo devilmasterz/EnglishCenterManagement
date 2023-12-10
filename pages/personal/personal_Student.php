@@ -21,14 +21,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $gt = $_POST['gender-input'];
         $ns = $_POST['birthday-input'];
         $tuoi = $_POST['age-input'];
-       
+
         $dc = trim($_POST['address-input']);
 
         $sdt = $_POST['phone-input'];
         $email = trim($_POST['email-input']);
 
 
-        updateStudentbyID($connection,$mahs,$ten,$gt,$ns,$tuoi,$dc,$sdt,$email);
+        updateStudentbyID($connection, $mahs, $ten, $gt, $ns, $tuoi, $dc, $sdt, $email);
         header("Location: personal_Student.php");
     }
 
@@ -40,7 +40,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $username = $_POST['username'];
         $pass = $_POST['new-pass'];
 
-       
+
         updatePassHS($connection, $username, $pass);
         header("Location: personal_Student.php");
     }
@@ -50,8 +50,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         session_unset();
         session_destroy();
         header("Location: ../home/home.php");
-      }
-
+    }
 }
 
 
@@ -78,7 +77,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <div id="menu-bar"></div>
 
         <div class="personal-bg-wrap">
-        <h2 style="margin-left:40%;  margin-top: 10px;">  Thông tin cá nhân</h2>
+            <h2 class="personal-title-page" style="margin-left:40%;  margin-top: 10px;"> Thông tin cá nhân</h2>
         </div>
         <div class="personal-inner">
             <div class="personal-avt-wrap">
@@ -129,7 +128,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <input id="age-input" name="age-input" class="personal-inner-edit-range personal-inner-edit-range-info" type="number" placeholder="Nhập tuổi" required></input>
 
 
-              
+
                     <div class="personal-inner-item">
                         <div class="personal-inner-key">Địa chỉ : <strong style="color: red; font-size: 12px;font-style: italic;" id="err-address"></strong></div>
                         <div id="address" class="personal-inner-value personal-inner-value-info">Longabc@gmail.com</div>
@@ -137,7 +136,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <input id="address-input" name="address-input" class="personal-inner-edit-range personal-inner-edit-range-info" type="tetxt" placeholder="Nhập dịa chỉ" required></input>
 
 
-                  
+
 
                     <div class="personal-inner-item">
                         <div class="personal-inner-key">Email: <strong style="color: red; font-size: 12px;font-style: italic;" id="err-email"></strong></div>
@@ -163,11 +162,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     </button>
                 </div>
 
-                <div class="personal-inner-item personal-inner-item-first">
+                <div class="personal-inner-item personal-inner-item-first personal-inner-password personal-pass-flex">
                     <div class="personal-inner-key">Mật khẩu: <strong style="color: red; font-size: 12px;font-style: italic;" id="err-pass"></strong></div>
-                    <input id='password' class="personal-inner-value personal-inner-value-pass" type="password" readonly></input>
-
-                    <button style="width:25px ; margin-top:2px;  height:25px; margin-left:90%; background-image: url(https://icons.veryicon.com/png/o/miscellaneous/hekr/action-hide-password.png);background-size: cover; " onclick="togglePassword()" class="personal-inner-value personal-inner-value-pass"></button>
+                    <input id='password' class="personal-inner-value personal-inner-value-pass personal-inner-value-pass-input" type="password" readonly></input>
+                    <div class="">
+                        <button style="width:25px ; margin-top:2px;  height:25px; margin-left:90%; background-image: url(https://icons.veryicon.com/png/o/miscellaneous/hekr/action-hide-password.png);background-size: cover; " onclick="togglePassword()" class="personal-inner-value personal-inner-value-pass"></button>
+                    </div>
                 </div>
 
 
@@ -178,7 +178,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <button type="button" class="personal-btn personal-cancel password-cancel">Hủy</button>
 
                         <input type="hidden" name="username" id="username">
+
                         <button class="personal-btn personal-accept password-accept" id="btn-change">Lưu</button>
+
 
 
                     </div>
@@ -200,57 +202,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <script src="../../plugins/bootstrap-5.2.3-dist/js/bootstrap.bundle.min.js"></script>
     <!--slick.js-->
     <!-- <script src="./personal.js"></script> -->
-    <!-- <script src="../common/menubar.js"></script> -->
+    <script src="../common/menubar.js"></script>
     <script>
-          var detailStudent = <?php print_r($jsdetailStudent); ?>;
-    var accountStudent = <?php print_r($jsaccountStudent); ?>;
- 
-    const authMenuBarHTMl = ` <div class="PageMenuBar" style ="position:absolute">
-<a class="PageLogoWrap" href="../main_pages/homeStudent.php">
-    <img src="../../assets/images/logo-web.png" class="PageLogoImg"/>
-</a>
-<div class="menubar-left">
-  <a class="menubar-nav"  href="../main_pages/userStudent_class.php" >Thông tin lớp học</a>
-  <a class="menubar-nav  last-nav" href="../main_pages/userStudent_link.php">Liên kết với phụ huynh</a>
+        var detailStudent = <?php print_r($jsdetailStudent); ?>;
+        var accountStudent = <?php print_r($jsaccountStudent); ?>;
 
-  <div class="menubar-info-wrap">
-    <div class="menubar-info">
-      <div class="menubar-name">` +  detailStudent[0].TenHS + `</div>
-     
-      <div class="menubar-dropdown">
-          <button class="menubar-avt-wrap menubar-drop-btn">
-            <img alt="" class="menubar-avt">
-          </button>
-          <ul class="menubar-dropdown-menu" id ="a123">
-              <li class="menubar-dropdown-item"><a  href="../personal/personal_Student.php">Thông tin cá nhân</a></li>
-      
-              <li class="menubar-dropdown-item">  <form action="" method="post"> <input type="submit" name ="btn-logout"  id ="btn-logout" value ="Đăng xuất" style="border: none;background-color: unset;"></form></li>          </ul>
-          </ul>
-        </div>
-    </div>
-  </div>
-</div>
-
-</div>`
-  //isAuthentication === true
-  document.querySelector("#menu-bar").innerHTML = authMenuBarHTMl
-  var $ = document.querySelector.bind(document)
-var $$ = document.querySelectorAll.bind(document)
-
-
-
-$(".menubar-drop-btn").onclick = ()=>{
-   
-    $(".menubar-dropdown-menu").classList.toggle("menubar-show")
- 
-}
+        menubarv2(detailStudent[0].TenHS, detailStudent[0].GioiTinh, "student", "../main_pages")
     </script>
 </body>
 
 <script>
-  
-
-
     document.getElementById('id').innerHTML = detailStudent[0].MaHS;
     document.getElementById('id-inp').innerHTML = detailStudent[0].MaHS;
 
@@ -262,10 +223,10 @@ $(".menubar-drop-btn").onclick = ()=>{
     var img2 = document.querySelector(".menubar-avt");
     if (detailStudent[0].GioiTinh == "Nam") {
         img.src = "../../assets/images/Student-male-icon.png";
-        img2.src =  "../../assets/images/Student-male-icon.png";
+        img2.src = "../../assets/images/Student-male-icon.png";
     } else {
         img.src = "../../assets/images/Student-female-icon.png";
-        img2.src =  "../../assets/images/Student-female-icon.png";
+        img2.src = "../../assets/images/Student-female-icon.png";
     }
 
     var selectTag = document.getElementById("gender-input");
@@ -333,7 +294,7 @@ $(".menubar-drop-btn").onclick = ()=>{
         const gender = document.getElementById('gender-input').value;
         const birthday = document.getElementById('birthday-input').value;
         const age = document.getElementById('age-input').value;
-        
+
         const address = document.getElementById('address-input').value;
 
 
@@ -367,14 +328,14 @@ $(".menubar-drop-btn").onclick = ()=>{
         } else
             document.getElementById('err-age').textContent = "";
 
-      
+
         if (!address) {
 
             document.getElementById('err-address').textContent = erorr_empty;
             check = false;
         } else
             document.getElementById('err-address').textContent = "";
-     
+
 
 
         if (!(/^(0[0-9]{9})$/.test(phone))) {
@@ -492,14 +453,14 @@ $(".menubar-drop-btn").onclick = ()=>{
 
     $(".info-cancel").onclick = () => {
         onChangeEditType(false, "info");
-      
-            document.getElementById('err-name').textContent = "";    
-            document.getElementById('err-gender').textContent = "";
-            document.getElementById('err-birthday').textContent = "";
-            document.getElementById('err-age').textContent = "";
-            document.getElementById('err-address').textContent = "";
-            document.getElementById('err-phone').textContent = "";
-            document.getElementById('err-email').textContent = "";
+
+        document.getElementById('err-name').textContent = "";
+        document.getElementById('err-gender').textContent = "";
+        document.getElementById('err-birthday').textContent = "";
+        document.getElementById('err-age').textContent = "";
+        document.getElementById('err-address').textContent = "";
+        document.getElementById('err-phone').textContent = "";
+        document.getElementById('err-email').textContent = "";
     }
     $(".password-cancel").onclick = () => {
         onChangeEditType(false, "pass");

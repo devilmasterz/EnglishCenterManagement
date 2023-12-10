@@ -5,9 +5,9 @@ session_start();
 $ma = $_SESSION['MaPH'];
 
 
-$maPH= $ma['MaPH'];
+$maPH = $ma['MaPH'];
 
-$listBill = searchHDHocPhi($connection,'', $maPH);
+$listBill = searchHDHocPhi($connection, '', $maPH);
 
 $tenPH = selecttenPH($connection, $maPH);
 $detailParent = selectParent($connection, $maPH);
@@ -35,25 +35,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
     if (isset($_POST['accept-maHS'])) {
         $mahs = $_POST['accept-maHS'];
-        deletedslk($connection,$mahs,$maPH);
-        insertPHHS($mahs,$maPH,$connection);
+        deletedslk($connection, $mahs, $maPH);
+        insertPHHS($mahs, $maPH, $connection);
         header("Location: userParent_Fee.php");;
-      }
-    
-      if (isset($_POST['refuse-maHS'])) {
+    }
+
+    if (isset($_POST['refuse-maHS'])) {
         $mahs = $_POST['refuse-maHS'];
-        
-        deletedslk($connection,$mahs,$maPH);
-       
+
+        deletedslk($connection, $mahs, $maPH);
+
         header("Location: userParent_Fee.php");
-      }
-      if (isset($_POST['btn-logout'])) {
+    }
+    if (isset($_POST['btn-logout'])) {
 
         session_start();
         session_unset();
         session_destroy();
         header("Location: ../home/home.php");
-      }
+    }
 }
 $jstenPH = json_encode($tenPH);
 $jslistBill = json_encode($listBill);
@@ -173,7 +173,7 @@ $jslistLSTHP = json_encode($listLSTHP);
                         <p style="margin-right: 20px;">Trạng thái :
                         <p id="tt-lsthp"></p>
                         </p>
-                    </div>  
+                    </div>
 
                     <button id="btn-add-trans" style="margin-bottom:5px">Thanh toán</button>
                     <form action="" method="POST" id="form-edit-trans"></form>
@@ -185,15 +185,17 @@ $jslistLSTHP = json_encode($listLSTHP);
                                 <th>Mã giao dịch</th>
                                 <th>Thời gian</th>
                                 <th>Số tiền</th>
-                                
+
                             </tr>
                         </thead>
                         <tbody id="tbody-lsthp">
 
-                        <tr> <td><strong id="bill-empty" style="color: tomato;"></strong>s</td></tr>
+                            <tr>
+                                <td><strong id="bill-empty" style="color: tomato;"></strong>s</td>
+                            </tr>
                         </tbody>
-                     
-                       
+
+
                     </table>
 
 
@@ -205,16 +207,17 @@ $jslistLSTHP = json_encode($listLSTHP);
 
     </div>
     <button type="button" id="btn-nofi"><img id="img-nofi" width="30px" src=<?php if (!$listRequest && !$listBill_CD && !$listBill_CN) echo '"../../assets/images/bell.png"';
-                                                                                else echo '"../../assets/images/bell-1.png"' ?> alt=""></button>
- <div id="div-nofi">
-  <?php if (!$listRequest && !$listBill_CD && !$listBill_CN) echo 'Không có thông báo mới!' ?> </button>
-  </div>
+                                                                            else echo '"../../assets/images/bell-1.png"' ?> alt=""></button>
+    <div id="div-nofi">
+        <?php if (!$listRequest && !$listBill_CD && !$listBill_CN) echo 'Không có thông báo mới!' ?> </button>
+    </div>
 
 
 
 
 </body>
 
+<script src="../common/menubar.js"></script>
 
 <script>
     var tenPH = <?php print_r($jstenPH); ?>;
@@ -224,56 +227,8 @@ $jslistLSTHP = json_encode($listLSTHP);
 
     var ds_yeuCau = <?php print_r($jslistRequest); ?>;
     var dsHoaDon_CD = <?php print_r($jslistBill_CD); ?>;
-  var dsHoaDon_CN = <?php print_r($jslistBill_CN); ?>;
-    const authMenuBarHTMl = ` <div class="PageMenuBar" style ="position:absolute">
-<a class="PageLogoWrap" href="../main_pages/homeParent.php">
-    <img src="../../assets/images/logo-web.png" class="PageLogoImg"/>
-</a>
-<div class="menubar-left">
-  <a class="menubar-nav"  href="./userParent_child.php" >Thông tin của con</a>
-  <a class="menubar-nav  last-nav"  href="./userParent_Fee.php" style="color:darkcyan">Học phí của con</a>
-
-  <div class="menubar-info-wrap">
-    <div class="menubar-info">
-      <div class="menubar-name">` + tenPH[0].TenPH + `</div>
-      <div class="menubar-dropdown">
-          <button class="menubar-avt-wrap menubar-drop-btn">
-            <img src="../../assets/images/Student-male-icon.png" alt="" class="menubar-avt">
-          </button>
-          <ul class="menubar-dropdown-menu" id ="a123">
-              <li class="menubar-dropdown-item"><a  href="../personal/personal_Parent.php">Thông tin cá nhân</a></li>
-      
-              <li class="menubar-dropdown-item">  <form action="" method="post"> <input type="submit" name ="btn-logout"  id ="btn-logout" value ="Đăng xuất" style="border: none;background-color: unset;"></form></li>          </ul>
-          </ul>
-        </div>
-    </div>
-  </div>
-</div>
-
-</div>`
-    //isAuthentication === true
-    document.querySelector("#menu-bar").innerHTML = authMenuBarHTMl
-    var $ = document.querySelector.bind(document)
-var $$ = document.querySelectorAll.bind(document)
-
-$(".menubar-drop-btn").onclick = ()=>{
-   
-    $(".menubar-dropdown-menu")[0].classList.toggle("menubar-show")
- 
-}
-
-
-var img2 = document.querySelector(".menubar-avt");
-    if (detailParent[0].GioiTinh == "Nam") {
-    
-        img2.src = "../../assets/images/Parent-male-icon.png";
-    } else {
-        
-        img2.src = "../../assets/images/Parent-female-icon.png";
-    }
-
-  
-
+    var dsHoaDon_CN = <?php print_r($jslistBill_CN); ?>;
+    menubarv2(tenPH[0].TenPH, detailParent[0].GioiTinh, "parent");
 </script>
 
 <script src="../../assets/js/userParent_Fee.js"></script>
