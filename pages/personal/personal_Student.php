@@ -77,7 +77,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <div id="menu-bar"></div>
 
         <div class="personal-bg-wrap">
-            <h2 class="personal-title-page" style="margin-left:40%;  margin-top: 10px;"> Thông tin cá nhân</h2>
+            <h2 class="personal-title-page" style="margin-top: 10px;"> Thông tin cá nhân</h2>
         </div>
         <div class="personal-inner">
             <div class="personal-avt-wrap">

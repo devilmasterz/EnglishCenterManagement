@@ -45,8 +45,8 @@ const authMenuBarHTMl = ` <div class="PageMenuBar">
 function menubarv2(tenHS,gioitinh,obj = "student",preDirectLink = "."){
   let pathname = window.location.pathname;
   
-  const authMenuBarHTMl = ` <div class="PageMenuBar" style ="position:absolute">
-<a class="PageLogoWrap" href="../main_pages/homeStudent.php">
+  const authMenuBarHTMl = ` <div class="PageMenuBar">
+<a class="PageLogoWrap" href="../main_pages/${obj === "teacher" ? "homeTeacher" :""}${obj === "student" ? "homeStudent" :""}${obj === "parent" ? "homeParent" :""}.php">
     <img src="../../assets/images/logo-web.png" class="PageLogoImg"/>
 </a>
 <div class="menubar-left">
@@ -70,7 +70,7 @@ function menubarv2(tenHS,gioitinh,obj = "student",preDirectLink = "."){
             <img alt="" class="menubar-avt">
           </button>
           <ul class="menubar-dropdown-menu" id ="a123">
-              <li class="menubar-dropdown-item"><a  href="../personal/personal_Student.php">Thông tin cá nhân</a></li>
+              <li class="menubar-dropdown-item"><a  href="../personal/${obj === "teacher" ? "personal_Teacher" :""}${obj === "student" ? "personal_Student" :""}${obj === "parent" ? "personal_Parent" :""}.php">Thông tin cá nhân</a></li>
       
               <li class="menubar-dropdown-item">  <form action="" method="post"> <input type="submit" name ="btn-logout"  id ="btn-logout" value ="Đăng xuất" style="border: none;background-color: unset;"></form></li>          </ul>
           </ul>

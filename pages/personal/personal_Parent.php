@@ -103,7 +103,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <div id="menu-bar"></div>
 
         <div class="personal-bg-wrap">
-            <h2 style="margin-left:40%;  margin-top: 10px;"> Thông tin cá nhân</h2>
+            <h2 class="personal-title-page" style=" margin-top: 10px;"> Thông tin cá nhân</h2>
         </div>
 
         <div class="personal-inner">
@@ -192,7 +192,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <div class="personal-inner-key">Mật khẩu: <strong style="color: red; font-size: 12px;font-style: italic;" id="err-pass"></strong></div>
                     <input id='password' class="personal-inner-value personal-inner-value-pass personal-inner-value-pass-input" type="password" readonly></input>
 
-                    <button style="width:25px ; margin-top:2px;  height:25px; margin-left:90%; background-image: url(https://icons.veryicon.com/png/o/miscellaneous/hekr/action-hide-password.png);background-size: cover; " onclick="togglePassword()" class="personal-inner-value personal-inner-value-pass-btn"></button>
+                    <div class="">
+                        <button style="width:25px ; margin-top:2px;  height:25px; margin-left:90%; background-image: url(https://icons.veryicon.com/png/o/miscellaneous/hekr/action-hide-password.png);background-size: cover; " onclick="togglePassword()" class="personal-inner-value personal-inner-value-pass"></button>
+                    </div>
                 </div>
 
 

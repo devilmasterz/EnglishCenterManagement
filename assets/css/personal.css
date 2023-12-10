@@ -27,6 +27,8 @@ body{
     flex-direction: column;
 }
 .personal-bg-wrap{
+    display: flex;
+    justify-content: center;
     width: 100%;
     background-color: #6db5f0;
     position: relative;

@@ -1,0 +1,73 @@
+.container-dialog{
+    border-radius: 12px;
+}
+.container-title{
+    margin-top: 12px;
+    text-align: center;
+    color: #0088cc;
+    font-size: 24px;
+}
+.regiter-class-btn-now{
+    padding: 8px;
+    border-radius: 30px;
+    border: none;
+    border: 1px solid #0088cc;
+    font-size: 17px;
+    background-color: #ffd95c;
+    color: #0088cc;
+}
+.register-back-wrap{
+    position: absolute;
+    left: 40px;
+    top: 60px;
+    padding: 8px;
+}
+.register-back-btn{
+    border: 1px solid #0088cc;
+    font-size: 21px;
+    background-color: #ffd95c;
+    color: #0088cc;
+
+}
+.container-border{
+    border-radius: 12px;
+    padding-bottom: 24px;
+}
+.register-now-btn-bottom{
+    border: 1px solid #0088cc;
+    background-color: #ffd95c;
+    color: #0088cc;
+    width: 100%;
+    border-radius: 36px;
+    margin-top: 12px;
+    font-size: 24px;
+    text-align: center;
+    font-weight: 600;
+    padding: 12px;
+}
+#showButtons.register-now-btn-bottom{
+    font-size: 21px;
+}
+.register-class-bg{
+    height: 59%;
+    position: absolute;
+    bottom: -5px;
+    right: 0;
+    left: 0;
+}
+.register-class-bg img {
+    height: 100%;
+    object-fit: cover;
+
+}
+.register-main{
+    position: relative;
+    padding: 40px 0 60px;
+    margin-top: 45px;
+}
+.register-content-wrap{
+    position: relative;
+}
+.hidden-wrap{
+    display: none;
+}
