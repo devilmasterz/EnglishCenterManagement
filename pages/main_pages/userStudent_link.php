@@ -8,23 +8,23 @@ $maHS = $ma['MaHS'];
 $tenHS = selecttenHS($connection, $maHS);
 $listParent = parentOfStudent($connection, $maHS);
 $listMaPH = listMaPH($connection);
-$listRequest  = selectdslk($connection,$maHS);
+$listRequest  = selectdslk($connection, $maHS);
 $detailStudent = selectStudent($connection, $maHS);
 
 $jstenHS = json_encode($tenHS);
 $jslistParent = json_encode($listParent);
-$jslistMaPH= json_encode($listMaPH);
+$jslistMaPH = json_encode($listMaPH);
 $jslistRequest = json_encode($listRequest);
 $jsdetailStudent = json_encode($detailStudent);
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-   
-      if (isset($_POST['btn-logout'])) {
+
+    if (isset($_POST['btn-logout'])) {
         session_start();
         session_unset();
         session_destroy();
         header("Location: ../home/home.php");
-      }
+    }
 }
 
 ?>
@@ -35,10 +35,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-   
+
     <link rel="stylesheet" href="../../plugins/slick-1.8.1/slick/slick.css" />
     <link rel="stylesheet" href="../../assets/css/home.css" />
-    
+
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
     <link rel="stylesheet" href="/assets/css/userStudent_link.css">
     <link rel="stylesheet" href="../../assets/css/common.css">
@@ -58,10 +58,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <div style="width:80%">
                 <h2>Phụ huynh đã liên kết</h2>
                 <div id="div-parent">
-             
-                
+
+
                 </div>
-               
+
 
             </div>
 
@@ -73,7 +73,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <form action="" id="form-link" method="POST">
                 <input type="text" id="maPH-link" name="maPH-link" placeholder="Nhập mã phụ huynh">
                 <button type="submit" id="btn-link">Liên kết</button>
-                <button type="button" id="btn-nofi"><img id="img-nofi" width="30px" src=<?php if(!$listRequest) echo '"../../assets/images/bell.png"'; else echo '"../../assets/images/bell-1.png"' ?> alt=""></button>
+                <button type="button" id="btn-nofi"><img id="img-nofi" width="30px" src=<?php if (!$listRequest) echo '"../../assets/images/bell.png"';
+                                                                                        else echo '"../../assets/images/bell-1.png"' ?> alt=""></button>
                 <input type="hidden" id="name-parent" name="name-parent">
             </form>
             <p id="err" style="color:red ; font-style:italic; margin-left: 80px;"></p>
@@ -82,13 +83,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </div>
 
     <div id="div-nofi">
-       
+
     </div>
 
     <div class="add-success">
-    <img src="../../assets/images/icon_success.png" alt="" style=" width: 40px;">
-    <h3 id='tb1'></h3>
-  </div>
+        <img src="../../assets/images/icon_success.png" alt="" style=" width: 40px;">
+        <h3 id='tb1'></h3>
+    </div>
 
 
 </body>
@@ -101,7 +102,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     var ds_yeuCau = <?php print_r($jslistRequest); ?>;
     var detailStudent = <?php print_r($jsdetailStudent); ?>;
 
-   
+
 
     const authMenuBarHTMl = ` <div class="PageMenuBar" style ="position:absolute">
 <a class="PageLogoWrap" href="../main_pages/homeStudent.php">
@@ -132,23 +133,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     //isAuthentication === true
     document.querySelector("#menu-bar").innerHTML = authMenuBarHTMl
     var $ = document.querySelector.bind(document)
-var $$ = document.querySelectorAll.bind(document)
+    var $$ = document.querySelectorAll.bind(document)
 
-$(".menubar-drop-btn").onclick = ()=>{
-   
-    $(".menubar-dropdown-menu")[0].classList.toggle("menubar-show")
- 
-}
+    $(".menubar-drop-btn").onclick = () => {
 
-var img2 = document.querySelector(".menubar-avt");
+        $(".menubar-dropdown-menu")[0].classList.toggle("menubar-show")
+
+    }
+
+    var img2 = document.querySelector(".menubar-avt");
     if (detailStudent[0].GioiTinh == "Nam") {
-    
+
         img2.src = "../../assets/images/Student-male-icon.png";
     } else {
-        
+
         img2.src = "../../assets/images/Student-female-icon.png";
     }
-    
 </script>
 
 <script src="../../assets/js/userStudent_link.js"></script>

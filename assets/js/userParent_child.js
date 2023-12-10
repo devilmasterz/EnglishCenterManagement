@@ -34,7 +34,20 @@ document.getElementById('tab3').classList.add("active");
 
 document.getElementById('btn-class-active').classList.add("active");
 
+showChild();
+function showChild(){
+    var html = "";
 
+    if (!ds_con) {
+        html += '<p style="font-style: italic;"> Phụ huynh chưa liên kết đến học viên nào ~</p>';
+    } else {
+        ds_con.forEach(function(child) {
+            html += '<p class="name-child">' + child.TenHS + '</p>';
+      });
+    }
+
+    document.getElementById("div-child").innerHTML = html;
+}
 
 // Mở tab đầu tiên mặc định
 document.getElementById("tabpane1").style.display = "block";
@@ -118,7 +131,7 @@ for (var i = 0; i < nameChildElements.length; i++) {
         for (var i = 0; i < ds_classClose.length; i++) {
             if (ds_classClose[i].MaHS == child_select.MaHS) {
                 check_1 = false;
-                console.log(ds_classClose[i].MaLop);
+               
 
                 html_class_close += ' <div class="class"><table style="width: 100%;"> <tbody id="tbody-class"><tr style="width: 100%;">';
                 html_class_close += '<td style="width:30%">Mã lớp: <span style="font-weight: bold;">' + ds_classClose[i].MaLop + '</span></td>';
@@ -292,20 +305,7 @@ function showNotification() {
         document.getElementById('div-nofi').innerHTML = "<p>Không có thông báo mới!</p>";
     }
 }
-showChild();
-function showChild(){
-    var html = "";
 
-    if (!ds_con) {
-        html += '<p style="font-style: italic;"> Phụ huynh chưa liên kết đến học viên nào ~</p>';
-    } else {
-        ds_con.forEach(function(child) {
-            html += '<p class="name-child">' + child.TenHS + '</p>';
-      });
-    }
-
-    document.getElementById("div-child").innerHTML = html;
-}
 
 
 

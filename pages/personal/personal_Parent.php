@@ -5,7 +5,7 @@ session_start();
 $ma = $_SESSION['MaPH'];
 
 
-$maPH= $ma['MaPH'];
+$maPH = $ma['MaPH'];
 
 
 
@@ -31,55 +31,31 @@ $jslistRequest = json_encode($listRequest);
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
-    if (isset($_POST['name-input'])) {
-        $maph = $_POST['id-input'];
-        $ten = trim($_POST['name-input']);
-        $gt = $_POST['gender-input'];
-        $ns = $_POST['birthday-input'];
-        $tuoi = $_POST['age-input'];
-
-        $dc = trim($_POST['address-input']);
-
-        $sdt = $_POST['phone-input'];
-        $email = trim($_POST['email-input']);
-
-        updateParentbyID($connection, $maph, $ten, $gt, $ns, $tuoi, $dc, $sdt, $email);
-
-        header("Location: personal_Parent.php");
-    }
 
 
 
 
-
-    if (isset($_POST['new-pass'])) {
-        $username = $_POST['username'];
-        $pass = $_POST['new-pass'];
-
-        updatePassPH($connection, $username, $pass);
-        header("Location: personal_Parent.php");
-    }
     if (isset($_POST['accept-maHS'])) {
         $mahs = $_POST['accept-maHS'];
-        deletedslk($connection,$mahs,$maPH);
-        insertPHHS($mahs,$maPH,$connection);
+        deletedslk($connection, $mahs, $maPH);
+        insertPHHS($mahs, $maPH, $connection);
         header("Location: personal_Parent.php");
-      }
-    
-      if (isset($_POST['refuse-maHS'])) {
+    }
+
+    if (isset($_POST['refuse-maHS'])) {
         $mahs = $_POST['refuse-maHS'];
-        
-        deletedslk($connection,$mahs,$maPH);
-       
+
+        deletedslk($connection, $mahs, $maPH);
+
         header("Location: personal_Parent.php");
-      }
-      if (isset($_POST['btn-logout'])) {
+    }
+    if (isset($_POST['btn-logout'])) {
 
         session_start();
         session_unset();
         session_destroy();
         header("Location: ../home/home.php");
-      }
+    }
 }
 ?>
 
@@ -146,13 +122,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <div class="personal-inner-key">Ngày sinh : <strong style="color: red; font-size: 12px;font-style: italic;" id="err-birthday"></strong></div>
                         <div id="birthday" class="personal-inner-value personal-inner-value-info">11-12-2122</div>
                     </div>
-                    <input id="birthday-input" name="birthday-input" class="personal-inner-edit-range personal-inner-edit-range-info" type="date" required></input>
+                    <input id="birthday-input" name="birthday-input" class="personal-inner-edit-range personal-inner-edit-range-info" type="date" onchange="setAge()"></input>
 
                     <div class="personal-inner-item">
                         <div class="personal-inner-key">Tuổi : <strong style="color: red; font-size: 12px;font-style: italic;" id="err-age"></strong></div>
                         <div id="age" class="personal-inner-value personal-inner-value-info">12</div>
                     </div>
-                    <input id="age-input" name="age-input" class="personal-inner-edit-range personal-inner-edit-range-info" type="number" placeholder="Nhập tuổi" required></input>
+                    <input id="age-input" name="age-input" class="personal-inner-edit-range personal-inner-edit-range-info" type="number" readonly></input>
 
 
 
@@ -220,12 +196,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </div>
 
     </div>
-    <button type="button" id="btn-nofi"><img id="img-nofi" width="30px" src=<?php if (!$listRequest && !$listBill_CD && !$listBill_CN) echo '"../../assets/images/bell.png"';
-                                                                            else echo '"../../assets/images/bell-1.png"' ?> alt=""></button>
-    <div id="div-nofi">
-        <?php if (!$listRequest && !$listBill_CD && !$listBill_CN) echo 'Không có thông báo mới!' ?> </button>
+    <div class="add-success">
+        <img src="../../assets/images/icon_success.png" alt="" style=" width: 40px;">
+        <h5 id='tb1'></h5>
     </div>
+    <button type="button" id="btn-nofi"><img id="img-nofi" width="30px" alt=""></button>
+    <div id="div-nofi">
+    </div>
+
+
     <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+
     <!--boostrap.js-->
     <script src="../../plugins/bootstrap-5.2.3-dist/js/bootstrap.bundle.min.js"></script>
     <!--slick.js-->
@@ -234,8 +215,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <script>
         var detailParent = <?php print_r($jsdetailParent); ?>;
         var accountParent = <?php print_r($jsaccountParent); ?>;
-
-
         var ds_yeuCau = <?php print_r($jslistRequest); ?>;
         var dsHoaDon_CD = <?php print_r($jslistBill_CD); ?>;
         var dsHoaDon_CN = <?php print_r($jslistBill_CN); ?>;
@@ -273,60 +252,56 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         //isAuthentication === true
         document.querySelector("#menu-bar").innerHTML = authMenuBarHTMl
 
-        var $ = document.querySelector.bind(document)
-        var $$ = document.querySelectorAll.bind(document)
 
-        $(".menubar-drop-btn").onclick = () => {
 
-            $(".menubar-dropdown-menu").classList.toggle("menubar-show")
+
+        document.querySelector(".menubar-drop-btn").onclick = () => {
+
+            document.querySelector(".menubar-dropdown-menu").classList.toggle("menubar-show")
 
         }
     </script>
 </body>
 
 <script>
-    document.getElementById('id').innerHTML = detailParent[0].MaPH;
-    document.getElementById('id-inp').innerHTML = detailParent[0].MaPH;
+    showInfor();
 
-    document.getElementById('name').innerHTML = detailParent[0].TenPH;
-    document.getElementById('name-input').value = detailParent[0].TenPH;
-
-    document.getElementById('gender').innerHTML = detailParent[0].GioiTinh;
-    var img = document.querySelector(".personal-avt");
-    var img2 = document.querySelector(".menubar-avt");
-    if (detailParent[0].GioiTinh == "Nam") {
-        img.src = "../../assets/images/Parent-male-icon.png";
-        img2.src = "../../assets/images/Parent-male-icon.png";
-    } else {
-        img.src = "../../assets/images/Parent-female-icon.png";
-        img2.src = "../../assets/images/Parent-female-icon.png";
-    }
-    var selectTag = document.getElementById("gender-input");
-    for (var i = 0; i < selectTag.options.length; i++) {
-        if (selectTag.options[i].value == detailParent[0].GioiTinh) {
-            selectTag.options[i].selected = true;
-            break;
+    function showInfor() {
+        document.getElementById('id').innerHTML = detailParent[0].MaPH;
+        document.getElementById('id-inp').innerHTML = detailParent[0].MaPH;
+        document.getElementById('name').innerHTML = detailParent[0].TenPH;
+        document.getElementById('name-input').value = detailParent[0].TenPH;
+        document.getElementById('gender').innerHTML = detailParent[0].GioiTinh;
+        var img = document.querySelector(".personal-avt");
+        var img2 = document.querySelector(".menubar-avt");
+        if (detailParent[0].GioiTinh == "Nam") {
+            img.src = "../../assets/images/Parent-male-icon.png";
+            img2.src = "../../assets/images/Parent-male-icon.png";
+        } else {
+            img.src = "../../assets/images/Parent-female-icon.png";
+            img2.src = "../../assets/images/Parent-female-icon.png";
         }
+        var selectTag = document.getElementById("gender-input");
+        for (var i = 0; i < selectTag.options.length; i++) {
+            if (selectTag.options[i].value == detailParent[0].GioiTinh) {
+                selectTag.options[i].selected = true;
+                break;
+            }
+        }
+        document.getElementById('birthday').innerHTML = formatDate(detailParent[0].NgaySinh);
+        document.getElementById('birthday-input').value = detailParent[0].NgaySinh;
+        document.getElementById('age').innerHTML = detailParent[0].Tuoi;
+        document.getElementById('age-input').value = detailParent[0].Tuoi;
+        document.getElementById('address').innerHTML = detailParent[0].DiaChi;
+        document.getElementById('address-input').value = detailParent[0].DiaChi;
+        document.getElementById('email').innerHTML = detailParent[0].Email;
+        document.getElementById('email-input').value = detailParent[0].Email;
+        document.getElementById('phone').innerHTML = detailParent[0].SDT;
+        document.getElementById('phone-input').value = detailParent[0].SDT;
+        document.getElementById('password').value = accountParent[0].Password;
+
+
     }
-
-    document.getElementById('birthday').innerHTML = formatDate(detailParent[0].NgaySinh);
-    document.getElementById('birthday-input').value = detailParent[0].NgaySinh;
-
-    document.getElementById('age').innerHTML = detailParent[0].Tuoi;
-    document.getElementById('age-input').value = detailParent[0].Tuoi;
-
-
-    document.getElementById('address').innerHTML = detailParent[0].DiaChi;
-    document.getElementById('address-input').value = detailParent[0].DiaChi;
-
-
-    document.getElementById('email').innerHTML = detailParent[0].Email;
-    document.getElementById('email-input').value = detailParent[0].Email;
-
-    document.getElementById('phone').innerHTML = detailParent[0].SDT;
-    document.getElementById('phone-input').value = detailParent[0].SDT;
-
-    document.getElementById('password').value = accountParent[0].Password;
 
     function togglePassword() {
         var passwordInput = document.getElementById("password");
@@ -338,7 +313,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     function formatDate(dateString) {
-        var dateParts = dateString.split('-'); // Tách ngày, tháng, năm thành mảng
+        var dateParts = dateString.split('-');
         var year = dateParts[0];
         var month = dateParts[1];
         var day = dateParts[2];
@@ -347,26 +322,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         return formattedDate;
     }
 
+    function setAge() {
+        var inputDate = document.getElementById("birthday-input").value;
+        var namHienTai = new Date().getFullYear();
+        var namInput = new Date(inputDate).getFullYear();
+
+        var age = namHienTai - namInput;
+        document.getElementById('age-input').value = age;
+
+    }
+
+
     // Khi nhấn nút Cập nhật
     const submit_update = document.getElementById('btn-update');
     submit_update.addEventListener('click', function(event) {
 
         var check = true;
-
-        const form1 = document.getElementById('form-update')
-
         event.preventDefault();
 
         const phone = document.getElementById('phone-input').value;
         const email = document.getElementById('email-input').value;
-
         const name = document.getElementById('name-input').value;
         const gender = document.getElementById('gender-input').value;
         const birthday = document.getElementById('birthday-input').value;
         const age = document.getElementById('age-input').value;
-
         const address = document.getElementById('address-input').value;
-
 
 
         var erorr_empty = "*Dữ liệu không để trống";
@@ -414,7 +394,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } else
             document.getElementById('err-phone').textContent = "";
 
-        if (!(/\S+@\S+\.\S+/.test(email))) {
+        if (!(/\S+@\S+\.\S+/.test(email)) && email) {
             document.getElementById('err-email').textContent = "*Email không chính xác (example@xxx.com)";
             check = false;
         } else
@@ -424,8 +404,37 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             return;
 
 
-        document.getElementById('id-input').value = detailParent[0].MaPH;
-        form1.submit();
+        $.ajax({
+            type: 'POST',
+            url: '../../jquery_ajax/ajax_updateInfor.php',
+            data: {
+                id: detailParent[0].MaPH,
+                name: name,
+                gender: gender,
+                birthday: birthday,
+                age: age,
+                address: address,
+                phone: phone,
+                email: email,
+                user: "parent",
+            },
+            success: function(res) {
+                detailParent = JSON.parse(res);
+                showInfor();
+                onChangeEditType(!isEdit, "info");
+            },
+            error: function(xhr, status, error) {
+                console.error(error);
+            }
+        });
+
+        document.getElementById("tb1").textContent = "Đã cập nhật thông tin"
+        document.querySelector(".add-success").style.display = "block"
+        setTimeout(function() {
+            document.querySelector(".add-success").style.display = "none";
+
+        }, 1000);;
+
 
         // Gửi form đi nếu tất cả dữ liệu hợp lệ
 
@@ -435,11 +444,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     document.getElementById('btn-change').addEventListener('click', function(event) {
 
         var check = true;
-
-        const form1 = document.getElementById('form-change-pass')
-
         event.preventDefault();
-
         const pass = document.getElementById('new-pass').value;
 
 
@@ -455,11 +460,33 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         if (!check)
             return;
+        $.ajax({
+            type: 'POST',
+            url: '../../jquery_ajax/ajax_updatePass.php',
+            data: {
+                id: detailParent[0].MaPH,
+                username: accountParent[0].UserName,
+                pass: pass,
+                user: "parent",
+            },
+            success: function(res) {
+                accountParent = JSON.parse(res);
 
-        document.getElementById('username').value = accountParent[0].UserName;
-        form1.submit();
+                showInfor();
+                onChangeEditType(!isEdit, "pass")
+            },
+            error: function(xhr, status, error) {
+                console.error(error);
+            }
+        });
 
-        // Gửi form đi nếu tất cả dữ liệu hợp lệ
+        document.getElementById("tb1").textContent = "Đã cập nhật mật khẩu";
+        document.querySelector(".add-success").style.display = "block"
+        setTimeout(function() {
+            document.querySelector(".add-success").style.display = "none";
+
+        }, 1000);
+
 
     });
 
@@ -467,13 +494,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 
     // initial setup
-    var $ = document.querySelector.bind(document)
+
     var $$ = document.querySelectorAll.bind(document)
 
 
 
     var isEdit = false
-    const editBtn = $(".edit-info")
+    const editBtn = document.querySelector(".edit-info")
 
     $$(".personal-inner-value").forEach(item => {
         item.classList.add("personal-act-inline")
@@ -491,13 +518,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $$(`.personal-inner-value-${opt}`).forEach((item) => {
                 item.classList.remove("personal-act-inline")
             })
-            $(`.control-${opt}`).classList.add("personal-act-flex")
+            document.querySelector(`.control-${opt}`).classList.add("personal-act-flex")
             $$(`.personal-inner-edit-range-${opt}`).forEach((item) => {
                 item.classList.add("personal-active")
             })
             // khởi tạo giá trị của input khi chuyển sang dạng edit
             if (opt === "info") {
-                console.log("active")
+
+
 
             }
         } else {
@@ -507,7 +535,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $$(`.personal-inner-value-${opt}`).forEach((item) => {
                 item.classList.add("personal-act-inline")
             })
-            $(`.control-${opt}`).classList.remove("personal-act-flex")
+            document.querySelector(`.control-${opt}`).classList.remove("personal-act-flex")
         }
     }
 
@@ -517,11 +545,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         onChangeEditType(!isEdit, "info")
     }
 
-    $(".edit-pass").onclick = () => {
+    document.querySelector(".edit-pass").onclick = () => {
         onChangeEditType(!isEdit, "pass")
     }
 
-    $(".info-cancel").onclick = () => {
+    document.querySelector(".info-cancel").onclick = () => {
         onChangeEditType(false, "info");
 
         document.getElementById('err-name').textContent = "";
@@ -532,7 +560,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         document.getElementById('err-phone').textContent = "";
         document.getElementById('err-email').textContent = "";
     }
-    $(".password-cancel").onclick = () => {
+    document.querySelector(".password-cancel").onclick = () => {
         onChangeEditType(false, "pass");
         document.getElementById('err-pass').textContent = "";
     }
@@ -540,88 +568,120 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 
 
-
     var button = document.getElementById('btn-nofi');
-var hiddenDiv = document.getElementById('div-nofi');
+    var hiddenDiv = document.getElementById('div-nofi');
 
-button.addEventListener('click', function() {
-    hiddenDiv.style.display = hiddenDiv.style.display === 'block' ? 'none' : 'block';
- 
-});
+    button.addEventListener('click', function() {
+        hiddenDiv.style.display = hiddenDiv.style.display === 'block' ? 'none' : 'block';
 
+    });
+    var divNofiContainer = document.getElementById('div-nofi');
+    showNotification();
 
-var divNofiContainer = document.getElementById('div-nofi');
+    function showNotification() {
+        divNofiContainer.innerHTML = "";
 
-ds_yeuCau.forEach(function(yeuCau) {
+        ds_yeuCau.forEach(function(yeuCau) {
 
-  var nofiDiv = document.createElement('div');
-  nofiDiv.id = 'nofi';
-  nofiDiv.innerHTML = '<p>Học viên ' + yeuCau.TenHS + ' đã gửi yêu cầu liên kết với bạn</p>' +
-                      '<button onclick="tuChoi(' + yeuCau.MaHS + ',' + yeuCau.MaPH + ')">Từ chối</button>' +
-                      '<button onclick="chapNhan(' + yeuCau.MaHS + ',' + yeuCau.MaPH + ')">Chấp nhận</button>';
+            var nofiDiv = document.createElement('div');
+            nofiDiv.id = 'nofi';
+            nofiDiv.innerHTML = '<p>Học viên ' + yeuCau.TenHS + ' đã gửi yêu cầu liên kết với bạn</p>' +
+                '<button onclick="tuChoi(' + yeuCau.MaHS + ',' + yeuCau.MaPH + ')">Từ chối</button>' +
+                '<button onclick="chapNhan(' + yeuCau.MaHS + ',' + yeuCau.MaPH + ')">Chấp nhận</button>';
 
-  divNofiContainer.appendChild(nofiDiv);
-
-
-});
-
-dsHoaDon_CD.forEach(function(yeuCau) {yeuCau
-
-    var nofiDiv = document.createElement('div');
-    nofiDiv.id = 'nofi';
-    nofiDiv.innerHTML = '<p> Hóa đơn '+ yeuCau.TenHD + ' (' + numberWithCommas(yeuCau.SoTienPhaiDong) +  ' VND) của  Học viên ' +yeuCau.TenHS +  '  chưa được thanh toán</p>'
-    divNofiContainer.appendChild(nofiDiv);
-  });
+            divNofiContainer.appendChild(nofiDiv);
 
 
+        });
 
-  dsHoaDon_CN.forEach(function(yeuCau) {
+        dsHoaDon_CD.forEach(function(yeuCau) {
+            yeuCau
 
-    var nofiDiv = document.createElement('div');
-    nofiDiv.id = 'nofi';
-    nofiDiv.innerHTML = '<p> Hóa đơn '+ yeuCau.TenHD + ' còn nợ (' + numberWithCommas(yeuCau.NoPhiConLai) +  ' VND) của  Học viên ' +yeuCau.TenHS +  '  chưa được thanh toán</p>'
-    divNofiContainer.appendChild(nofiDiv);
-  });
-
-
-  function tuChoi(maHS, maPH) {
-    var form = document.createElement('form');
-
-    form.method = 'POST';
-      form.name = 'refuse-form'
-   
-    var input = document.createElement('input');
-    input.type = 'hidden';
-    input.name = 'refuse-maHS';
-    input.value = maHS;
-    form.appendChild(input);
-  
-    document.body.appendChild(form);
-    form.submit();
-  
-}
-
-function chapNhan(maHS, maPH) {
+            var nofiDiv = document.createElement('div');
+            nofiDiv.id = 'nofi';
+            nofiDiv.innerHTML = '<p> Hóa đơn ' + yeuCau.TenHD + ' (' + numberWithCommas(yeuCau.SoTienPhaiDong) + ' VND) của  Học viên ' + yeuCau.TenHS + '  chưa được thanh toán</p>'
+            divNofiContainer.appendChild(nofiDiv);
+        });
 
 
-  var form = document.createElement('form');
 
-  form.method = 'POST';
-    form.name = 'accept-form'
- 
-  var input = document.createElement('input');
-  input.type = 'hidden';
-  input.name = 'accept-maHS';
-  input.value = maHS;
-  form.appendChild(input);
+        dsHoaDon_CN.forEach(function(yeuCau) {
 
-  document.body.appendChild(form);
-  form.submit();
-}
-function numberWithCommas(x) {
-    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-}
+            var nofiDiv = document.createElement('div');
+            nofiDiv.id = 'nofi';
+            nofiDiv.innerHTML = '<p> Hóa đơn ' + yeuCau.TenHD + ' còn nợ (' + numberWithCommas(yeuCau.NoPhiConLai) + ' VND) của  Học viên ' + yeuCau.TenHS + '  chưa được thanh toán</p>'
+            divNofiContainer.appendChild(nofiDiv);
+        });
+        var imgElement = document.getElementById("img-nofi");
 
+
+        if (ds_yeuCau.length || dsHoaDon_CD.length || dsHoaDon_CN.length) {
+            imgElement.src = "../../assets/images/bell-1.png";
+        } else {
+            imgElement.src = "../../assets/images/bell.png";
+            document.getElementById('div-nofi').innerHTML = "<p>Không có thông báo mới!</p>";
+        }
+
+
+    }
+
+
+
+
+
+
+
+
+
+    function tuChoi(maHS, maPH) {
+
+
+        $.ajax({
+            url: '../../jquery_ajax/ajax_replyRequest.php',
+            type: 'POST',
+            data: {
+                maph: maPH,
+                mahs: maHS,
+                rep: "refuse",
+                nyc: "ph",
+            },
+            success: function(res) {
+                ds_yeuCau = JSON.parse(res).listRequest;
+                showNotification();
+            },
+            error: function(xhr, status, error) {
+                console.error(error);
+            }
+        });
+
+
+    }
+
+    function chapNhan(maHS, maPH) {
+
+
+        $.ajax({
+            url: '../../jquery_ajax/ajax_replyRequest.php',
+            type: 'POST',
+            data: {
+                maph: maPH,
+                mahs: maHS,
+                rep: "accept",
+                nyc: "ph",
+            },
+            success: function(res) {
+                ds_yeuCau = JSON.parse(res).listRequest;
+                showNotification();
+            },
+            error: function(xhr, status, error) {
+                console.error(error);
+            }
+        });
+    }
+
+    function numberWithCommas(x) {
+        return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    }
 </script>
 
 </html>

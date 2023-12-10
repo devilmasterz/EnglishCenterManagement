@@ -60,10 +60,29 @@ function listClassOfTeacher($connection, $magv, $tt)
     }
 }
 
+function listClassActive($connection, $magv)
+{
+    $sql = 'SELECT lop.MaLop , TenLop , LuaTuoi, ThoiGian, SLHS , SLHSToiDa , HocPhi, SoBuoi, SoBuoiDaToChuc, TrangThai , gv_lop.TienTraGV FROM lop INNER JOIN gv_lop WHERE lop.MaLop = gv_lop.MaLop AND gv_lop.MaGV =  ? and (TrangThai ="Chưa mở" or TrangThai = "Đang mở") order by TrangThai ASC ';
+    try {
+        $connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        $statement =  $connection->prepare($sql);
+        $statement->bindParam(1, $magv);
+  
+        $statement->execute();
+
+        $list  = $statement->fetchAll(PDO::FETCH_ASSOC);
+
+        $connection = null;
+        return $list;
+    } catch (PDOException $e) {
+        echo $e->getMessage();
+    }
+}
+
 // select lich hoc cua lop
 function listSchedules($connection)
 {
-    $sql = "SELECT schedules_class.idSchedules ,schedules_class.MaLop ,schedules.day_of_week , schedules.start_time, schedules.end_time FROM schedules_class INNER JOIN schedules WHERE schedules_class.idSchedules = schedules.idSchedules;";
+    $sql = "SELECT lop_lichhoc.MaLich ,lop_lichhoc.MaLop ,lichhoc.Ngay , lichhoc.TGBatDau, lichhoc.TGKetThuc FROM lop_lichhoc INNER JOIN lichhoc WHERE lop_lichhoc.MaLich = lichhoc.MaLich;";
     try {
         $connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         $statement =  $connection->prepare($sql);
