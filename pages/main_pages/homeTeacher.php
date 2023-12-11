@@ -231,6 +231,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 </body>
 
+<script src="../common/menubar.js"></script>
 
 <script>
     var ds_diemdanh = <?php print_r($jslistDD); ?>;
@@ -242,58 +243,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     var detailTeacher = <?php print_r($jsdetailTeacher); ?>;
     var ds_lichhoc = <?php print_r($jslistSchedules); ?>;
 
-    const authMenuBarHTMl = ` <div style= "position: absolute" class="PageMenuBar">
-<a class="PageLogoWrap">
-    <img src="../../assets/images/logo-web.png" class="PageLogoImg"/>
-</a>
-<div class="menubar-left">
-  <a class="menubar-nav"  href="./homeTeacher.php" style="color:darkcyan">Thông tin lớp dạy</a>
-  <a class="menubar-nav  last-nav"  href="./userTeacher_wage.php"">Lịch sử lương</a>
-
-  <div class="menubar-info-wrap">
-    <div class="menubar-info">
-      <div class="menubar-name">` + tenGV[0].TenGV + `</div>
-      
-      
-      <div class="menubar-dropdown">
-          <button class="menubar-avt-wrap menubar-drop-btn">
-            <img src="../../assets/images/Student-male-icon.png" alt="" class="menubar-avt">
-          </button>
-          <ul class="menubar-dropdown-menu" id ="a123">
-              <li class="menubar-dropdown-item"><a  href="../personal/personal_Teacher.php">Thông tin cá nhân</a></li>
-      
-              <li class="menubar-dropdown-item">  <form action="" method="post"> <input type="submit" name ="btn-logout"  id ="btn-logout" value ="Đăng xuất" style="border: none;background-color: unset;"></form></li>          </ul>
-          </ul>
-        </div>
-        
-
-    </div>
-  </div>
-</div>
-  
-</div>`
-    //isAuthentication === true
-    document.querySelector("#menu-bar").innerHTML = authMenuBarHTMl
-
-    var $ = document.querySelector.bind(document)
-    var $$ = document.querySelectorAll.bind(document)
-
-
-
-    $(".menubar-drop-btn").onclick = () => {
-
-        $(".menubar-dropdown-menu")[0].classList.toggle("menubar-show")
-
-    }
-
-    var img2 = document.querySelector(".menubar-avt");
-    if (detailTeacher[0].GioiTinh == "Nam") {
-
-        img2.src = "../../assets/images/Teacher-male-icon.png";
-    } else {
-
-        img2.src = "../../assets/images/Teacher-female-icon.png";
-    }
+    menubarv2(tenGV[0].TenGV, detailTeacher[0].GioiTinh, "teacher");
 </script>
 
 <script src="../../assets/js/userTeacherClass.js"></script>

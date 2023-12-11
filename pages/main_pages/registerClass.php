@@ -14,10 +14,10 @@ if (isset($_SESSION['MaHS'])) {
     $check = true;
     $maHS = $_SESSION['MaHS'];
     $tenHS = selecttenHS($connection, $maHS['MaHS']);
-$detailStudent = selectStudent($connection, $maHS['MaHS']);
-$jstenHS = json_encode($tenHS);
-$jsdetailStudent = json_encode($detailStudent);
-$jscheck = json_encode($check);
+    $detailStudent = selectStudent($connection, $maHS['MaHS']);
+    $jstenHS = json_encode($tenHS);
+    $jsdetailStudent = json_encode($detailStudent);
+    $jscheck = json_encode($check);
 }
 
 
@@ -28,6 +28,7 @@ $dataClass = dataClassById($malop, $connection);
 $dataSchedules = dataSchedulesByMaLop($malop, $connection);
 $nameTeacher = dataTeacherByMaLop($malop, $connection);
 $result = listSchedules($connection);
+$schedule = scheduleOfClass($malop, $connection);
 $nameCondition = '';
 if ($dataClass['TrangThai'] == 'Chưa mở') {
     $nameCondition = 'Chưa mở';
@@ -42,16 +43,15 @@ if (isset($_POST['check'])) {
         $maph = checkExitPH_HS($mahs, $connection);
         if ($maph) {
 
-           
+
             $checkregister = createTabHS_LOP($mahs, $malop, $connection);
-            
+
             $stRegister = $dataClass['SLHS'];
             setHSDANGKI($stRegister, $malop, $connection);
 
             if ($stRegister + 1 == $dataClass['SLHSToiDa']) {
                 setSLHSToiDa($malop, $connection);
             }
-          
         }
     } else {
         header("Location: ../login_pages/login.php");
@@ -81,6 +81,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <link rel="stylesheet" href="../../assets/css/manage.css">
     <link rel="stylesheet" href="../../assets/css/home.css" />
     <link rel="stylesheet" href="../../assets/css/common.css">
+    <link rel="stylesheet" href="../../assets/css/registerClass_.css">
     <script src="https://code.jquery.com/jquery-3.6.4.js"></script>
 
     <style>
@@ -94,6 +95,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             top: 100px;
             padding: 8px;
 
+        }
+
+        .register-class-btn-wrap {
+            right: 40px;
         }
 
         .buttonAdd p {
@@ -191,27 +196,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
 
-        .menubar-nav:hover {
-            background-color: turquoise;
-        }
-        #btn-logout{
-        all:unset;
-      
-    border: none;
-    background-color: unset;
 
-    }
-    #btn-logout:hover{
-        cursor: pointer;
-        background-color: #0d7cd0;
-    }
+        #btn-logout {
+            all: unset;
+
+            border: none;
+            background-color: unset;
+
+        }
+
+        #btn-logout:hover {
+            cursor: pointer;
+            background-color: #0d7cd0;
+        }
     </style>
 </head>
 
 <body>
     <header>
     </header>
-    <main>
+    <main class="register-main">
         <div>
             <div id="menu-bar">
                 <!-- khi chưa đăng nhập -->
@@ -235,7 +239,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <!-- main -->
 
             <div id="overlay">
-                <div id="box">
+                <div id="box" class="">
                     <button id="close-btn">&times;</button>
                     <?php $maph = false;
                     if ($mahs != "") {
@@ -255,27 +259,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     }
                     ?>
                     <?php if (!$check) : ?>
-                        <div>
-                            <p>Thông báo !</p>
-                            <p>Bạn đã chưa đăng nhập tài khoản</p>
-                            <p>Trang đăng nhập: <a style="color: #ffd95c;" href="../login_pages/login.php">Login</a></p>
+                        <div class="container-dialog">
+                            <h3 class="container-title">Thông báo!</h3>
+                            <p class="dialog-content-text">Bạn chưa đăng nhập tài khoản</p>
+                            <p class="dialog-content-text">Vui lòng đăng nhập để tiếp tục thao tác: <a style="color: #0088cc;" href="../login_pages/login.php">Login</a></p>
                         </div>
                     <?php
 
 
                     elseif ($check && $maph) : ?>
-                        <div>
-                            <p>Thông báo !</p>
-                            <p>Bạn đã đăng kí thành công</p>
-                            <p><?php if ($pr) {
-                                    echo "Bạn đã được khuyến mại : ";
-                                    echo $price;
-                                } ?></p>
+                        <div class="container-dialog">
+                            <p class="container-title">Thông báo!</p>
+                            <p class="dialog-content-text">Bạn đã đăng kí thành công</p>
+                            <p class="dialog-content-text"><?php if ($pr) {
+                                                                echo "Bạn đã được khuyến mại : ";
+                                                                echo $price;
+                                                            } ?></p>
                         </div>
                     <?php elseif (!$maph) : ?>
-                        <div>
-                            <p>Thông báo !</p>
-                            <p>Bạn đã chưa liên kết tài khoản phụ huynh</p>
+                        <div class="container-dialog">
+                            <h3 class="container-title">Thông báo!</h3>
+                            <p class="dialog-content-text">Bạn chưa liên kết tài khoản phụ huynh</p>
                         </div>
                     <?php endif ?>
                 </div>
@@ -284,9 +288,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </div>
         </div>
         <?php if (!$resultHSLOP) : ?>
-            <div class="buttonAdd">
-                <button id="showButtons">
-                    <p>Bạn muốn đăng kí lớp học</p>
+            <div class="buttonAdd register-class-btn-wrap hidden-wrap">
+                <button id="showButtons" class="regiter-class-btn-now">
+                    <p>Đăng kí lớp học ngay!</p>
                 </button>
                 <div id="buttonContainer" class="hidden">
                     <button id="checkLoginButton">Có</button>
@@ -296,17 +300,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         <?php endif ?>
         <?php if ($resultHSLOP) : ?>
-            <div class="text-regsister">
+            <div class="text-regsister hidden-wrap">
                 Lớp này bạn đã đăng kí
             </div>
             </div>
 
         <?php endif ?>
-        <div class="modal-bg">
-
+        <div class="modal-bg register-class-bg">
+            <img class="wave-start-jouney img-inner" src="../../assets/images/wave-Vector.svg" />
         </div>
-        <div class="modal-content">
-            <div class="container">
+        <div class="modal-content register-content-wrap">
+            <div class="container container-border">
                 <h1 style="text-align: center;color:#0088cc;">Thông tin chi tiết lớp học <?php echo $malop; ?></h1>
                 <form id="form_delete" name="form_delete" method="post">
                     <table>
@@ -315,7 +319,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             <td style="color: #0088cc" id="teacher-id"><?php echo $malop; ?></td>
                         </tr>
                         <tr>
-                            <th style="color: #ffd95c">Tên lớp:</th>
+                            <th style="color: #0088cc">Tên lớp:</th>
                             <td style="color: #0088cc" id="teacher-gender" contenteditable="false"><?php echo $dataClass['TenLop']; ?></td>
                         </tr>
                         <tr>
@@ -323,22 +327,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             <td style="color: #0088cc" id="" contenteditable="false"><?php echo $dataClass['LuaTuoi']; ?></td>
                         </tr>
                         <tr>
-                            <th style="color:#ffd95c">Thời gian bắt đầu khóa học:</th>
+                            <th style="color:#0088cc">Thời gian bắt đầu khóa học:</th>
                             <td style="color: #0088cc" id="teacher-date" contenteditable="false"><?php echo convertDateFormat($dataClass['ThoiGian']); ?></td>
                         </tr>
                         <tr>
                             <th style="color:#0088cc">Lịch học:</th>
                             <td style="color: #0088cc" id="teacher-age" contenteditable="false">
                                 <?php
-                                foreach ($dataSchedules as $listschedules) {
-                                    echo  $listschedules['day_of_week'] . ' - ' . $listschedules['start_time'] . '-' . $listschedules['end_time'];
-                                    echo "<br>";
+                                foreach ($schedule as $listschedules) {
+                                    echo  $listschedules['Ngay'] . ' - ' . $listschedules['TGBatDau'] . '-' . $listschedules['TGKetThuc'];
+                                    echo "<br/>";
                                 }
                                 ?></p>
                             </td>
                         </tr>
                         <tr>
-                            <th style="color:#ffd95c">Học phí:</th>
+                            <th style="color:#0088cc">Học phí:</th>
                             <td style="color: #0088cc" id="teacher-qq" contenteditable="false"><?php echo numberWithCommas($dataClass['HocPhi']); ?>VND</td>
                         </tr>
                         <tr>
@@ -346,7 +350,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             <td style="color: #0088cc" id="" contenteditable="false"><?php echo $dataClass['SoBuoiDaToChuc']; ?></td>
                         </tr>
                         <tr>
-                            <th style="color:#ffd95c">Tổng số buổi dạy:</th>
+                            <th style="color:#0088cc">Tổng số buổi dạy:</th>
                             <td style="color: #0088cc" id="" contenteditable="false"><?php echo $dataClass['SoBuoi']; ?></td>
                         </tr>
                         <tr>
@@ -354,7 +358,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             <td style="color: #0088cc" id="" contenteditable="false"><?php echo $dataClass['SLHS']; ?></td>
                         </tr>
                         <tr>
-                            <th style="color:#ffd95c">Số lượng học sinh tối đa:</th>
+                            <th style="color:#0088cc">Số lượng học sinh tối đa:</th>
                             <td style="color: #0088cc" id="" contenteditable="false"><?php echo $dataClass['SLHSToiDa']; ?></td>
                         </tr>
                         <tr>
@@ -368,7 +372,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             </td>
                         </tr>
                         <tr>
-                            <th style="color:#ffd95c">Trình đồ giáo viên :</th>
+                            <th style="color:#0088cc">Trình độ giáo viên :</th>
                             <td style="color: #0088cc">
                                 <?php
                                 foreach ($nameTeacher as $nameTeachers) {
@@ -386,15 +390,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                 if (empty($discount['GiamHocPhi'])) {
                                     echo '0%';
                                 } else {
-                                    echo $discount['GiamHocPhi'] . '%'.'    &emsp; &emsp; (Từ '.$discount['TGBatDau'].' đến '.$discount['TGKetThuc'].')';
+                                    echo $discount['GiamHocPhi'] . '%' . '    &emsp; &emsp; (Từ ' . $discount['TGBatDau'] . ' đến ' . $discount['TGKetThuc'] . ')';
                                 }
                                 ?>
                             </td>
                         </tr>
                     </table>
+                    <button id="register-btn" class="register-now-btn-bottom">
+                        <?php if (!$resultHSLOP) : ?>
+                            <span>Đăng kí lớp học ngay!</span>
+                        <?php endif ?>
+                        <?php if ($resultHSLOP) : ?>
+                            <span>Bạn đã đăng kí lớp này!</span>
+                        <?php endif ?>
+                    </button>
                     <input style="display: none;" type="text" id="" name="deleteClass" value="helloToiDepTraiQuaDi">
                 </form>
             </div>
+        </div>
+        <div class="register-back-wrap" id="turn-back-btn">
+            <button class="register-back-btn regiter-class-btn-now">Quay lại</button>
         </div>
         </div>
     </main>
@@ -402,65 +417,33 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <p>© 2023 Hệ thống quản lý giáo dục. All rights reserved.</p>
     </footer>
 </body>
+<script src="../common/menubar.js"></script>
+
 <script>
     var check = <?php print_r($jscheck); ?>;
     var tenHS = <?php print_r($jstenHS); ?>;
     var detailStudent = <?php print_r($jsdetailStudent); ?>;
     if (check) {
-        const authMenuBarHTMl = ` <div class="PageMenuBar" style ="position:absolute">
-<a class="PageLogoWrap" href="../main_pages/homeStudent.php">
-    <img src="../../assets/images/logo-web.png" class="PageLogoImg"/>
-</a>
-<div class="menubar-left">
-  <a class="menubar-nav"  href="./userStudent_class.php" >Thông tin lớp học</a>
-  <a class="menubar-nav  last-nav" href="./userStudent_link.php">Liên kết với phụ huynh</a>
-
-  <div class="menubar-info-wrap">
-    <div class="menubar-info">
-      <div class="menubar-name">` + tenHS[0].TenHS + `</div>
-     
-      <div class="menubar-dropdown">
-          <button class="menubar-avt-wrap menubar-drop-btn">
-            <img alt="" class="menubar-avt">
-          </button>
-          <ul class="menubar-dropdown-menu" id ="a123">
-              <li class="menubar-dropdown-item"><a  href="../personal/personal_Student.php">Thông tin cá nhân</a></li>
-      
-              <li class="menubar-dropdown-item">  <form action="" method="post"> <input type="submit" name ="btn-logout"  id ="btn-logout" value ="Đăng xuất" style="border: none;background-color: unset;"></form></li>          </ul>
-          </ul>
-        </div>
-    </div>
-  </div>
-</div>
-
-</div>`
-        //isAuthentication === true
-        document.querySelector("#menu-bar").innerHTML = authMenuBarHTMl
-
-
-
-        document.querySelector(".menubar-drop-btn").onclick = () => {
-
-            document.querySelector(".menubar-dropdown-menu").classList.toggle("menubar-show")
-
-        }
-
-        var img2 = document.querySelector(".menubar-avt");
-        if (detailStudent[0].GioiTinh == "Nam") {
-
-            img2.src = "../../assets/images/Student-male-icon.png";
-        } else {
-
-            img2.src = "../../assets/images/Student-female-icon.png";
-        }
-}
+        menubarv2(tenHS[0].TenHS, detailStudent[0].GioiTinh, "student")
+    }
 </script>
 <script>
     const openBtn = document.getElementById('checkLoginButton');
     const overlay = document.getElementById('overlay');
     const box = document.getElementById('box');
     const closeBtn = document.getElementById('close-btn');
+    const turnBack = document.getElementById('turn-back-btn');
+    const registerBtn = document.getElementById("register-btn");
 
+    turnBack.onclick = () => {
+        window.history.go(-1);
+    }
+    registerBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        e.preventDefault();
+        overlay.classList.add('active');
+        box.classList.add('active');
+    });
     openBtn.addEventListener('click', () => {
         overlay.classList.add('active');
         box.classList.add('active');
@@ -471,6 +454,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         box.classList.remove('active');
         location.reload();
     });
+
+    box.onclick = (e) => {
+        e.stopPropagation();
+    }
+
+    overlay.onclick = (e) => {
+        console.log("out out 22222")
+        e.stopPropagation();
+        overlay.classList.remove('active');
+        box.classList.remove('active');
+        location.reload();
+    }
 
     $(document).ready(function() {
         $("#checkLoginButton").click(function() {

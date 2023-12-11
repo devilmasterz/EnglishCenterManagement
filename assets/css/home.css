@@ -571,6 +571,10 @@ button:hover{
   max-width: 913px;
   width: 90%;
 }
+.instructNavigation_course{
+  max-width: 913px;
+  width: 90%;
+}
 .instructNav-item{
   margin :0 12px;
 }
@@ -715,6 +719,17 @@ button:hover{
   justify-content: end;
   gap: 8px;
   margin-top: 6px;
+}
+.home_detai_menu{
+  display: flex;
+  justify-content: center;
+  margin-bottom: 12px;
+  font-size: 18px;
+}
+.home_flex_col_item{
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 /*animation*/
 @keyframes a-rocket {

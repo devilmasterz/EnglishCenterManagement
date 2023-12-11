@@ -12,7 +12,7 @@ $tenHS = selecttenHS($connection, $maHS);
 
 $listClassOpen = listDD_HD($connection,$maHS);
 $listClassClose = listDD($connection, $maHS, 'Đã đóng');
-$listAbsent = listNgayNghi($connection,$maHS);
+$listAbsent = listNgayNghi($connection, $maHS);
 $listSchedules =  listSchedules($connection);
 $detailStudent = selectStudent($connection, $maHS);
 
@@ -65,7 +65,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   <div id="content">
 
     <ul class="tab">
-      <li><a href="#" id="btn-1" class="tablinks" onclick="openTab(event, 'tabpane1')">Lớp dang theo học </a></li>
+      <li><a href="#" id="btn-1" class="tablinks" onclick="openTab(event, 'tabpane1')">Lớp đang theo học </a></li>
       <li><a href="#" class="tablinks" onclick="openTab(event, 'tabpane2')">Lớp đã hoàn thành</a></li>
       <!-- <li><a href="#" class="tablinks" onclick="openTab(event, 'tabpane3')">Tab 3</a></li> -->
     </ul>
@@ -79,8 +79,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <div id="tabpane2" class="tabcontent">
 
       <div id="class-close">
-      <h2>Lớp đã hoàn thành</h2>
-      <div id="container-class-close"></div>
+        <h2>Lớp đã hoàn thành</h2>
+        <div id="container-class-close"></div>
       </div>
     </div>
   </div>
@@ -90,7 +90,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 
 </body>
-
+<script src="../common/menubar.js"></script>
 
 <script>
   var tenHS = <?php print_r($jstenHS); ?>;
@@ -101,58 +101,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   var ds_absent = <?php print_r($jslistAbsent); ?>;
   var ds_schedule = <?php print_r($jslistSchedules); ?>;
 
-
-
-
-  const authMenuBarHTMl = ` <div class="PageMenuBar" style ="position:absolute">
-<a class="PageLogoWrap" href="../main_pages/homeStudent.php">
-    <img src="../../assets/images/logo-web.png" class="PageLogoImg"/>
-</a>
-<div class="menubar-left">
-  <a class="menubar-nav"  href="./userStudent_class.php" style="color:darkcyan">Thông tin lớp học</a>
-  <a class="menubar-nav  last-nav" href="./userStudent_link.php">Liên kết với phụ huynh</a>
-
-  <div class="menubar-info-wrap">
-    <div class="menubar-info">
-      <div class="menubar-name">` + tenHS[0].TenHS + `</div>
-     
-      <div class="menubar-dropdown">
-          <button class="menubar-avt-wrap menubar-drop-btn">
-            <img alt="" class="menubar-avt">
-          </button>
-          <ul class="menubar-dropdown-menu" id ="a123">
-              <li class="menubar-dropdown-item"><a  href="../personal/personal_Student.php">Thông tin cá nhân</a></li>
-      
-              <li class="menubar-dropdown-item">  <form action="" method="post"> <input type="submit" name ="btn-logout"  id ="btn-logout" value ="Đăng xuất" style="border: none;background-color: unset;"></form></li>          </ul>
-          </ul>
-        </div>
-    </div>
-  </div>
-</div>
-
-</div>`
-  //isAuthentication === true
-  document.querySelector("#menu-bar").innerHTML = authMenuBarHTMl
-  var $ = document.querySelector.bind(document)
-var $$ = document.querySelectorAll.bind(document)
-
-
-
-$(".menubar-drop-btn").onclick = ()=>{
-   
-    $(".menubar-dropdown-menu")[0].classList.toggle("menubar-show")
- 
-}
-
-var img2 = document.querySelector(".menubar-avt");
-    if (detailStudent[0].GioiTinh == "Nam") {
-    
-        img2.src = "../../assets/images/Student-male-icon.png";
-    } else {
-        
-        img2.src = "../../assets/images/Student-female-icon.png";
-    }
-
+  menubarv2(tenHS[0].TenHS, detailStudent[0].GioiTinh);
 </script>
 
 <script src="../../assets/js/userStudent_class.js"></script>

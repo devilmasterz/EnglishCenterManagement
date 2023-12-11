@@ -18,6 +18,21 @@ function listSchedules($connection)
     }
     return null;
 }
+
+function scheduleOfClass($maLop,$connection) {
+    $sql = "SELECT * FROM lichhoc WHERE lichhoc.MaLich IN ( SELECT MaLich FROM lop_lichhoc WHERE lop_lichhoc.MaLop=?)";
+    try {
+        $statement = $connection->prepare($sql);
+        $statement->bindParam(1, $maLop);
+        $statement->execute();
+        $data = $statement->fetchAll(PDO::FETCH_ASSOC);
+        return $data;
+    } catch (PDOException $e) {
+        $e->getMessage();
+    }
+    return null;
+}
+
 // danh sách giáo viên
 function listTeacher($connection)
 {

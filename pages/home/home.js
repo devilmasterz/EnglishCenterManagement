@@ -85,6 +85,28 @@ $('.courseSlider').slick({
   nextArrow: $(".course-control-next-wrap"),
 
 });
+
+$('.courseSlider').slick({
+  slidesToShow: 3,
+  slidesToScroll: 1,
+  arrows: false,
+  fade: true,
+  asNavFor: '.instructNavigation',
+  prevArrow: $('.course-control-prev'),
+  nextArrow: $(".course-control-next-wrap"),
+
+});
+
+$('.instructNavigation_course').slick({
+  slidesToShow: 3,
+  slidesToScroll: 1,
+  // asNavFor: '.instructSlider',
+  dots: false,
+  centerMode: true,
+  focusOnSelect: true,
+  prevArrow: $('.instruct-control-prev-course'),
+  nextArrow: $(".instruct-control-next-wrap-course"),
+});
 // initial setup
 var $ = document.querySelector.bind(document)
 var $$ = document.querySelectorAll.bind(document)

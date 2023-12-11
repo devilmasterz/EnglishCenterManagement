@@ -15,7 +15,6 @@ $jsaccountStudent = json_encode($accountStudent);
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
-
     if (isset($_POST['btn-logout'])) {
 
         session_start();
@@ -49,7 +48,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <div id="menu-bar"></div>
 
         <div class="personal-bg-wrap">
-            <h2 style="margin-left:40%;  margin-top: 10px;"> Thông tin cá nhân</h2>
+            <h2 class="personal-title-page" style="margin-top: 10px;"> Thông tin cá nhân</h2>
         </div>
         <div class="personal-inner">
             <div class="personal-avt-wrap">
@@ -134,11 +133,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     </button>
                 </div>
 
-                <div class="personal-inner-item personal-inner-item-first">
+                <div class="personal-inner-item personal-inner-item-first personal-inner-password personal-pass-flex">
                     <div class="personal-inner-key">Mật khẩu: <strong style="color: red; font-size: 12px;font-style: italic;" id="err-pass"></strong></div>
-                    <input id='password' class="personal-inner-value personal-inner-value-pass" type="password" readonly></input>
-
-                    <button style="width:25px ; margin-top:2px;  height:25px; margin-left:90%; background-image: url(https://icons.veryicon.com/png/o/miscellaneous/hekr/action-hide-password.png);background-size: cover; " onclick="togglePassword()" class="personal-inner-value personal-inner-value-pass"></button>
+                    <input id='password' class="personal-inner-value personal-inner-value-pass personal-inner-value-pass-input" type="password" readonly></input>
+                    <div class="">
+                        <button style="width:25px ; margin-top:2px;  height:25px; margin-left:90%; background-image: url(https://icons.veryicon.com/png/o/miscellaneous/hekr/action-hide-password.png);background-size: cover; " onclick="togglePassword()" class="personal-inner-value personal-inner-value-pass"></button>
+                    </div>
                 </div>
 
 
@@ -149,7 +149,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <button type="button" class="personal-btn personal-cancel password-cancel">Hủy</button>
 
                         <input type="hidden" name="username" id="username">
+
                         <button class="personal-btn personal-accept password-accept" id="btn-change">Lưu</button>
+
 
 
                     </div>
@@ -173,51 +175,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </div>
 
     <script src="../../plugins/bootstrap-5.2.3-dist/js/bootstrap.bundle.min.js"></script>
-
-
+    <!--slick.js-->
+    <!-- <script src="./personal.js"></script> -->
+    <script src="../common/menubar.js"></script>
     <script>
         var detailStudent = <?php print_r($jsdetailStudent); ?>;
         var accountStudent = <?php print_r($jsaccountStudent); ?>;
 
-        const authMenuBarHTMl = ` <div class="PageMenuBar" style ="position:absolute">
-<a class="PageLogoWrap" href="../main_pages/homeStudent.php">
-    <img src="../../assets/images/logo-web.png" class="PageLogoImg"/>
-</a>
-<div class="menubar-left">
-  <a class="menubar-nav"  href="../main_pages/userStudent_class.php" >Thông tin lớp học</a>
-  <a class="menubar-nav  last-nav" href="../main_pages/userStudent_link.php">Liên kết với phụ huynh</a>
-
-  <div class="menubar-info-wrap">
-    <div class="menubar-info">
-      <div class="menubar-name">` + detailStudent[0].TenHS + `</div>
-     
-      <div class="menubar-dropdown">
-          <button class="menubar-avt-wrap menubar-drop-btn">
-            <img alt="" class="menubar-avt">
-          </button>
-          <ul class="menubar-dropdown-menu" id ="a123">
-              <li class="menubar-dropdown-item"><a  href="../personal/personal_Student.php">Thông tin cá nhân</a></li>
-      
-              <li class="menubar-dropdown-item">  <form action="" method="post"> <input type="submit" name ="btn-logout"  id ="btn-logout" value ="Đăng xuất" style="border: none;background-color: unset;"></form></li>          </ul>
-          </ul>
-        </div>
-    </div>
-  </div>
-</div>
-
-</div>`
-        //isAuthentication === true
-        document.querySelector("#menu-bar").innerHTML = authMenuBarHTMl
-        // var $ = document.querySelector.bind(document)
-        // var $$ = document.querySelectorAll.bind(document)
-
-
-
-        $(".menubar-drop-btn").onclick = () => {
-
-            document.querySelector(".menubar-dropdown-menu").classList.toggle("menubar-show")
-
-        }
+        menubarv2(detailStudent[0].TenHS, detailStudent[0].GioiTinh, "student", "../main_pages")
     </script>
 </body>
 

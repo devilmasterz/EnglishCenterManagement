@@ -44,7 +44,7 @@ $dataClassOnOff = dataClassOnOff('Chưa mở', $connection);
   <div class="PageWrap">
     <div id="menu-bar">
       <!-- khi chưa đăng nhập -->
-     
+
       <div class="PageMenuBar">
         <a class="PageLogoWrap" href="./home.php">
           <img class="PageLogoImg" src="../../assets/images/logo-web.png" />
@@ -53,7 +53,7 @@ $dataClassOnOff = dataClassOnOff('Chưa mở', $connection);
           <a href="../login_pages/login.php" class="PageLogoBtn">Login LoDuHi</a>
         </div>
       </div>
- 
+
 
       <!-- khi đã đăng nhập -->
 
@@ -542,7 +542,7 @@ $dataClassOnOff = dataClassOnOff('Chưa mở', $connection);
           <div class="instruct-title">Danh sách lớp sắp mở</div>
           <div class="instruct-content">
             <div class="instruct-slide">
-              <div class="slider-for-instruct instructSlider">
+              <!-- <div class="slider-for-instruct instructSlider">
                 <div class="instructSlidler-item">
                   <img class="img-inner" src="../../assets/images/instruct-1.jpg" />
                 </div>
@@ -555,18 +555,18 @@ $dataClassOnOff = dataClassOnOff('Chưa mở', $connection);
                 <div class="instructSlidler-item">
                   <img class="img-inner" src="../../assets/images/instruct-4.jpg" />
                 </div>
-              </div>
-              <button class="carousel-control-prev instruct-control-prev" type="button" data-bs-target=".slider-for" data-bs-slide="prev">
+              </div> -->
+            </div>
+            <div class="inStructSlidePagging">
+              <button class="carousel-control-prev instruct-control-prev-course" type="button" data-bs-target=".slider-for" data-bs-slide="prev">
                 <span class="carousel-control-prev-icon intro-control-next intro-control-icon-prev" aria-hidden="true"></span>
                 <span class="visually-hidden">Previous</span>
               </button>
-              <button class="carousel-control-next instruct-control-next-wrap" type="button" data-bs-target=".slider-for" data-bs-slide="next">
+              <button class="carousel-control-next instruct-control-next-wrap-course" type="button" data-bs-target=".slider-for" data-bs-slide="next">
                 <span class="carousel-control-next-icon  intro-control-icon-next" aria-hidden="true"></span>
                 <span class="visually-hidden">Next</span>
               </button>
-            </div>
-            <div class="inStructSlidePagging">
-              <div class="slider-nav instructNavigation">
+              <div class="slider-nav instructNavigation_course">
 
                 <?php $i = 1;
                 foreach ($dataClassOnOff as $listClassOn) :
@@ -579,18 +579,23 @@ $dataClassOnOff = dataClassOnOff('Chưa mở', $connection);
                   <div class="instructNav-item">
                     <div class="instruct-item-wrap">
                       <div class="introNavImg">
-                        <div class="listClassOn<?php echo $i++ ?>" style="    height: 267px;">
-                          <a href="                        
-                          ../main_pages/registerClass.php?malop=<?php echo $listClassOn['MaLop'] ?>                          
-                          ">
+                        <div class="home_flex_col_item listClassOn<?php echo $i++ ?>" style="    height: 267px;">
+                          <div>
                             <p> Mã lớp: <?php echo $listClassOn['MaLop'] ?></p>
                             <p> Tên lớp: <?php echo $listClassOn['TenLop'] ?></p>
                             <p> Giáo viên: <?php echo $s ?></p>
                             <p>
                               <?php if ($gph['GiamHocPhi'] > 0)
-                                echo 'Giảm học phí: ' . $gph['GiamHocPhi'] . "%".'<br>'.'(Từ '. convertDateFormat($gph['TGBatDau']).' đến '.convertDateFormat($gph['TGKetThuc']).') ' ?>
-                                </p>
-                          </a>
+                                echo 'Giảm học phí: ' . $gph['GiamHocPhi'] . "%" . '<br>' . '(Từ ' . convertDateFormat($gph['TGBatDau']) . ' đến ' . convertDateFormat($gph['TGKetThuc']) . ') ' ?>
+                            </p>
+                          </div>
+                          <div class="home_detai_menu">
+                            <a href="                        
+                            ../main_pages/registerClass.php?malop=<?php echo $listClassOn['MaLop'] ?>                          
+                            ">
+                              Xem chi tiết
+                            </a>
+                          </div>
                         </div>
                       </div>
                     </div>

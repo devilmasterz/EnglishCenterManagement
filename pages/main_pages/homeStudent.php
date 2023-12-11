@@ -61,10 +61,6 @@ $jsdetailStudent = json_encode($detailStudent);
       text-decoration: none;
       color: #fff;
     }
-
-    .menubar-nav:hover {
-      background-color: turquoise;
-    }
   </style>
 
   <title>Home Student</title>
@@ -559,7 +555,7 @@ $jsdetailStudent = json_encode($detailStudent);
           <div class="instruct-title">Danh sách lớp sắp mở</div>
           <div class="instruct-content">
             <div class="instruct-slide">
-              <div class="slider-for-instruct instructSlider">
+              <!-- <div class="slider-for-instruct instructSlider">
                 <div class="instructSlidler-item">
                   <img class="img-inner" src="../../assets/images/instruct-1.jpg" />
                 </div>
@@ -572,18 +568,18 @@ $jsdetailStudent = json_encode($detailStudent);
                 <div class="instructSlidler-item">
                   <img class="img-inner" src="../../assets/images/instruct-4.jpg" />
                 </div>
-              </div>
-              <button class="carousel-control-prev instruct-control-prev" type="button" data-bs-target=".slider-for" data-bs-slide="prev">
+              </div> -->
+            </div>
+            <div class="inStructSlidePagging">
+              <button class="carousel-control-prev instruct-control-prev-course" type="button" data-bs-target=".slider-for" data-bs-slide="prev">
                 <span class="carousel-control-prev-icon intro-control-next intro-control-icon-prev" aria-hidden="true"></span>
                 <span class="visually-hidden">Previous</span>
               </button>
-              <button class="carousel-control-next instruct-control-next-wrap" type="button" data-bs-target=".slider-for" data-bs-slide="next">
+              <button class="carousel-control-next instruct-control-next-wrap-course" type="button" data-bs-target=".slider-for" data-bs-slide="next">
                 <span class="carousel-control-next-icon  intro-control-icon-next" aria-hidden="true"></span>
                 <span class="visually-hidden">Next</span>
               </button>
-            </div>
-            <div class="inStructSlidePagging">
-              <div class="slider-nav instructNavigation">
+              <div class="slider-nav instructNavigation_course">
 
                 <?php $i = 1;
                 foreach ($dataClassOnOff as $listClassOn) :
@@ -598,21 +594,23 @@ $jsdetailStudent = json_encode($detailStudent);
                   <div class="instructNav-item">
                     <div class="instruct-item-wrap">
                       <div class="introNavImg">
-                        <div class="listClassOn<?php echo $i++ ?>" style="    height: 267px;">
-                          <a href="                          
-                          registerClass.php?malop=<?php echo $listClassOn['MaLop'] ?>                          
-                          ">
+                        <div class="home_flex_col_item listClassOn<?php echo $i++ ?>" style="    height: 267px;">
+                          <div>
                             <p> Mã lớp: <?php echo $listClassOn['MaLop'] ?></p>
                             <p> Tên lớp: <?php echo $listClassOn['TenLop'] ?></p>
                             <p> Giáo viên: <?php echo $s ?></p>
                             <p>
                               <?php if ($gph['GiamHocPhi'] > 0)
-                                echo 'Giảm học phí: ' . $gph['GiamHocPhi'] . "%".'<br>'.'(Từ '. convertDateFormat($gph['TGBatDau']).' đến '.convertDateFormat($gph['TGKetThuc']).') ' ?>
-                                </p>
-
-
-
-                          </a>
+                                echo 'Giảm học phí: ' . $gph['GiamHocPhi'] . "%" . '<br>' . '(Từ ' . convertDateFormat($gph['TGBatDau']) . ' đến ' . convertDateFormat($gph['TGKetThuc']) . ') ' ?>
+                            </p>
+                          </div>
+                          <div class="home_detai_menu">
+                            <a href="                        
+                            ../main_pages/registerClass.php?malop=<?php echo $listClassOn['MaLop'] ?>                          
+                            ">
+                              Xem chi tiết
+                            </a>
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -698,57 +696,11 @@ $jsdetailStudent = json_encode($detailStudent);
   </div>
   </div>
   <a href="../../assets/images/"></a>
+  <script src="../common/menubar.js"></script>
   <script>
     var tenHS = <?php print_r($jstenHS); ?>;
     var detailStudent = <?php print_r($jsdetailStudent); ?>;
-
-    const authMenuBarHTMl = ` <div class="PageMenuBar" style ="position:absolute">
-<a class="PageLogoWrap" href="../main_pages/homeStudent.php">
-    <img src="../../assets/images/logo-web.png" class="PageLogoImg"/>
-</a>
-<div class="menubar-left">
-  <a class="menubar-nav"  href="./userStudent_class.php" >Thông tin lớp học</a>
-  <a class="menubar-nav  last-nav" href="./userStudent_link.php">Liên kết với phụ huynh</a>
-
-  <div class="menubar-info-wrap">
-    <div class="menubar-info">
-      <div class="menubar-name">` + tenHS[0].TenHS + `</div>
-     
-      <div class="menubar-dropdown">
-          <button class="menubar-avt-wrap menubar-drop-btn">
-            <img alt="" class="menubar-avt">
-          </button>
-          <ul class="menubar-dropdown-menu" id ="a123">
-              <li class="menubar-dropdown-item"><a  href="../personal/personal_Student.php">Thông tin cá nhân</a></li>
-      
-              <li class="menubar-dropdown-item">  <form action="" method="post"> <input type="submit" name ="btn-logout"  id ="btn-logout" value ="Đăng xuất" style="border: none;background-color: unset;"></form></li>          </ul>
-          </ul>
-        </div>
-    </div>
-  </div>
-</div>
-
-</div>`
-    //isAuthentication === true
-    document.querySelector("#menu-bar").innerHTML = authMenuBarHTMl
-    var $ = document.querySelector.bind(document)
-    var $$ = document.querySelectorAll.bind(document)
-
-
-    $(".menubar-drop-btn").onclick = () => {
-
-      $(".menubar-dropdown-menu").classList.toggle("menubar-show")
-
-    }
-
-    var img2 = document.querySelector(".menubar-avt");
-    if (detailStudent[0].GioiTinh == "Nam") {
-
-      img2.src = "../../assets/images/Student-male-icon.png";
-    } else {
-
-      img2.src = "../../assets/images/Student-female-icon.png";
-    }
+    menubarv2(tenHS[0].TenHS, detailStudent[0].GioiTinh);
   </script>
   <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
   <!--boostrap.js-->
@@ -759,7 +711,6 @@ $jsdetailStudent = json_encode($detailStudent);
   </script>
   <script src="../home/home.js"></script>
 
-  <!-- <script src="../common/menubar.js"></script> -->
 </body>
 
 </html>

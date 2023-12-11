@@ -8,7 +8,7 @@ $maGV = $_SESSION['MaGV'];
 
 $listBill  =  selectLuongGV($connection, $maGV);
 $listSoBuoiDayAll =  selectSoBuoiDayAll($connection);
-$tenGV = selectTenGV($connection,$maGV);
+$tenGV = selectTenGV($connection, $maGV);
 $detailTeacher = selectTeacher($connection, $maGV);
 
 $jslistBill = json_encode($listBill);
@@ -19,13 +19,13 @@ $jsdetailTeacher = json_encode($detailTeacher);
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($_POST['btn-logout'])) {
-  
-      session_start();
-      session_unset();
-      session_destroy();
-      header("Location: ../home/home.php");
+
+        session_start();
+        session_unset();
+        session_destroy();
+        header("Location: ../home/home.php");
     }
-  }
+}
 
 ?>
 <!DOCTYPE html>
@@ -38,7 +38,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <link rel="stylesheet" href="/assets/css/home.css">
     <link rel="stylesheet" href="/assets/css/userTeacherWage.css">
 
-    
+
     <link rel="stylesheet" href="../../assets/css/common.css">
     <title>Giáo viên</title>
 </head>
@@ -73,7 +73,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 
             </tbody>
-            
+
 
         </table>
         <p id="emty"></p>
@@ -83,65 +83,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 
 </body>
-
+<script src="../common/menubar.js"></script>
 
 <script>
-    var tenGV = <?php print_r($jstenGV); ?>; 
+    var tenGV = <?php print_r($jstenGV); ?>;
     var detailTeacher = <?php print_r($jsdetailTeacher); ?>;
-    const authMenuBarHTMl = ` <div style= "position: absolute" class="PageMenuBar">
-<a class="PageLogoWrap">
-    <img src="../../assets/images/logo-web.png" class="PageLogoImg"/>
-</a>
-<div class="menubar-left">
-  <a class="menubar-nav"  href="./homeTeacher.php" >Thông tin lớp dạy</a>
-  <a class="menubar-nav  last-nav"  href="./userTeacher_wage.php" style="color:darkcyan">Lịch sử lương</a>
-
-  <div class="menubar-info-wrap">
-    <div class="menubar-info">
-      <div class="menubar-name">` + tenGV[0].TenGV + `</div>
-      
-      
-      <div class="menubar-dropdown">
-          <button class="menubar-avt-wrap menubar-drop-btn">
-            <img src="../../assets/images/Student-male-icon.png" alt="" class="menubar-avt">
-          </button>
-          <ul class="menubar-dropdown-menu" id ="a123">
-              <li class="menubar-dropdown-item"><a  href="../personal/personal_Teacher.php">Thông tin cá nhân</a></li>
-      
-              <li class="menubar-dropdown-item">  <form action="" method="post"> <input type="submit" name ="btn-logout"  id ="btn-logout" value ="Đăng xuất" style="border: none;background-color: unset;"></form></li>          </ul>
-          </ul>
-        </div>
-        
-
-    </div>
-  </div>
-</div>
-  
-</div>`
-    //isAuthentication === true
-    document.querySelector("#menu-bar").innerHTML = authMenuBarHTMl
-
-var $ = document.querySelector.bind(document)
-var $$ = document.querySelectorAll.bind(document)
-
-$(".menubar-drop-btn").onclick = ()=>{
-   
-    $(".menubar-dropdown-menu").classList.toggle("menubar-show")
- 
-}
-var img2 = document.querySelector(".menubar-avt");
-    if (detailTeacher[0].GioiTinh == "Nam") {
-    
-        img2.src = "../../assets/images/Teacher-male-icon.png";
-    } else {
-        
-        img2.src = "../../assets/images/Teacher-female-icon.png";
-    }
+    menubarv2(tenGV[0].TenGV, detailTeacher[0].GioiTinh, "teacher");
 
     var dsHoaDon = <?php print_r($jslistBill); ?>;
     var dssoBuoiDay = <?php print_r($jslistSoBuoiDayAll); ?>;
-    var MaGV  = <?php print_r($jsmaGV); ?>;
- 
+    var MaGV = <?php print_r($jsmaGV); ?>;
 </script>
 
 <script src="../../assets/js/userTeacherWage.js"></script>

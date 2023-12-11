@@ -79,7 +79,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <div id="menu-bar"></div>
 
         <div class="personal-bg-wrap">
-            <h2 style="margin-left:40%;  margin-top: 10px;"> Thông tin cá nhân</h2>
+            <h2 class="personal-title-page" style=" margin-top: 10px;"> Thông tin cá nhân</h2>
         </div>
 
         <div class="personal-inner">
@@ -164,11 +164,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     </button>
                 </div>
 
-                <div class="personal-inner-item personal-inner-item-first">
+                <div class="personal-inner-item personal-inner-item-first personal-inner-password personal-pass-flex">
                     <div class="personal-inner-key">Mật khẩu: <strong style="color: red; font-size: 12px;font-style: italic;" id="err-pass"></strong></div>
-                    <input id='password' class="personal-inner-value personal-inner-value-pass" type="password" readonly></input>
+                    <input id='password' class="personal-inner-value personal-inner-value-pass personal-inner-value-pass-input" type="password" readonly></input>
 
-                    <button style="width:25px ; margin-top:2px;  height:25px; margin-left:90%; background-image: url(https://icons.veryicon.com/png/o/miscellaneous/hekr/action-hide-password.png);background-size: cover; " onclick="togglePassword()" class="personal-inner-value personal-inner-value-pass"></button>
+                    <div class="">
+                        <button style="width:25px ; margin-top:2px;  height:25px; margin-left:90%; background-image: url(https://icons.veryicon.com/png/o/miscellaneous/hekr/action-hide-password.png);background-size: cover; " onclick="togglePassword()" class="personal-inner-value personal-inner-value-pass"></button>
+                    </div>
                 </div>
 
 
@@ -211,55 +213,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <script src="../../plugins/bootstrap-5.2.3-dist/js/bootstrap.bundle.min.js"></script>
     <!--slick.js-->
     <!-- <script src="./personal.js"></script> -->
-    <!-- <script src="../common/menubar.js"></script> -->\
+    <script src="../common/menubar.js"></script>
+
     <script>
         var detailParent = <?php print_r($jsdetailParent); ?>;
         var accountParent = <?php print_r($jsaccountParent); ?>;
         var ds_yeuCau = <?php print_r($jslistRequest); ?>;
         var dsHoaDon_CD = <?php print_r($jslistBill_CD); ?>;
         var dsHoaDon_CN = <?php print_r($jslistBill_CN); ?>;
-
-        const authMenuBarHTMl = ` <div class="PageMenuBar" style ="position:absolute">
-<a class="PageLogoWrap" href="../main_pages/homeParent.php">
-    <img src="../../assets/images/logo-web.png" class="PageLogoImg"/>
-</a>
-<div class="menubar-left">
-  <a class="menubar-nav"  href="../main_pages/userParent_child.php">Thông tin của con</a>
-  <a class="menubar-nav  last-nav"  href="../main_pages/userParent_Fee.php">Học phí của con</a>
-  
-  <div class="menubar-info-wrap">
-    <div class="menubar-info">
-      <div class="menubar-name">` + detailParent[0].TenPH + `</div>
-
-
-      <div class="menubar-dropdown">
-          <button class="menubar-avt-wrap menubar-drop-btn">
-            <img src="../../assets/images/Student-male-icon.png" alt="" class="menubar-avt">
-          </button>
-          <ul class="menubar-dropdown-menu" id ="a123">
-              <li class="menubar-dropdown-item"><a  href="../personal/personal_Parent.php">Thông tin cá nhân</a></li>
-      
-              <li class="menubar-dropdown-item">  <form action="" method="post"> <input type="submit" name ="btn-logout"  id ="btn-logout" value ="Đăng xuất" style="border: none;background-color: unset;"></form></li>          </ul>
-          </ul>
-        </div>
-
-    
-    </div>
-  </div>
-</div>
-
-</div>`
-        //isAuthentication === true
-        document.querySelector("#menu-bar").innerHTML = authMenuBarHTMl
-
-
-
-
-        document.querySelector(".menubar-drop-btn").onclick = () => {
-
-            document.querySelector(".menubar-dropdown-menu").classList.toggle("menubar-show")
-
-        }
+        menubarv2(detailParent[0].TenPH, detailParent[0].GioiTinh, "parent", "../main_pages");
     </script>
 </body>
 
