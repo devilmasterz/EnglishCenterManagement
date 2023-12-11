@@ -27,6 +27,7 @@ CREATE TABLE tk_hs
 (UserName VARCHAR(30) NOT NULL , 
 Password VARCHAR(30) NOT NULL , 
 MaHS int not null,
+NgayDK date not null,
 foreign key (MaHS) references hocsinh(MaHS) , 
 PRIMARY KEY (UserName)) 
 
@@ -54,6 +55,7 @@ CREATE TABLE tk_ph
 (UserName VARCHAR(30) NOT NULL , 
 Password VARCHAR(30) NOT NULL , 
 MaPH int not null,
+NgayDK date not null,
 foreign key (MaPH) references phuhuynh(MaPH) , 
 PRIMARY KEY (UserName))
 
@@ -83,7 +85,8 @@ PRIMARY KEY (MaGV))
 CREATE TABLE tk_gv (
 UserName VARCHAR(30) NOT NULL , 
 Password VARCHAR(30) NOT NULL , 
-MaGV int, 
+MaGV int ,
+NgayDK date not null, 
 foreign key (MaGV) references giaovien(MaGV) , 
 PRIMARY KEY (UserName));
 

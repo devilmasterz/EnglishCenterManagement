@@ -10,7 +10,7 @@ $maHS = $ma['MaHS'];
 
 $tenHS = selecttenHS($connection, $maHS);
 
-$listClassOpen = listDD($connection, $maHS, 'Đang mở');
+$listClassOpen = listDD_HD($connection,$maHS);
 $listClassClose = listDD($connection, $maHS, 'Đã đóng');
 $listAbsent = listNgayNghi($connection, $maHS);
 $listSchedules =  listSchedules($connection);

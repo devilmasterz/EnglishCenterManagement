@@ -8,10 +8,8 @@ $ma = $_SESSION['MaPH'];
 $maPH = $ma['MaPH'];
 
 $listBill = searchHDHocPhi($connection, '', $maPH);
-
 $tenPH = selecttenPH($connection, $maPH);
 $detailParent = selectParent($connection, $maPH);
-
 $listChild = studentOfParent($connection, $maPH);
 $listLSTHP = listLSTHP($connection);
 $jsdetailParent = json_encode($detailParent);
@@ -29,24 +27,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         header("Location: userParent_Fee.php");
     }
 
-    if (isset($_POST['search'])) {
-        $key = trim($_POST['keyword']);
-        $listBill = searchHDHocPhi($connection, $key, $maPH);
-    }
-    if (isset($_POST['accept-maHS'])) {
-        $mahs = $_POST['accept-maHS'];
-        deletedslk($connection, $mahs, $maPH);
-        insertPHHS($mahs, $maPH, $connection);
-        header("Location: userParent_Fee.php");;
-    }
-
-    if (isset($_POST['refuse-maHS'])) {
-        $mahs = $_POST['refuse-maHS'];
-
-        deletedslk($connection, $mahs, $maPH);
-
-        header("Location: userParent_Fee.php");
-    }
     if (isset($_POST['btn-logout'])) {
 
         session_start();
@@ -93,10 +73,7 @@ $jslistLSTHP = json_encode($listLSTHP);
             <h1>Danh sách học phí</h1>
             <div class="search-container">
                 <form id="form-search" method="post" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>" style="width: 50%; margin: unset;display: inline-flex;" autocomplete="off">
-                    <input type="text" name="keyword" placeholder="Tìm kiếm..." style="width: 70%" value="<?php if (isset($_POST['keyword'])) {
-                                                                                                                echo $_POST['keyword'];
-                                                                                                            }
-                                                                                                            ?>">
+                    <input type="text" id="keyword" placeholder="Tìm kiếm..." style="width: 70%" oninput="searchList()">
                     <input type="submit" id="search" id="search" value="Tìm kiếm" style="width: 100px">
                     <button type="submit" id="refesh-btn" name="refesh" style="     border: none; background-color: white;"> <img style="width: 30px;" src="../../assets/images/Refresh-icon.png" alt=""></button>
 
@@ -126,9 +103,7 @@ $jslistLSTHP = json_encode($listLSTHP);
 
             <table id="table-1">
                 <?php $i = 1;
-                // if (!$listBill) {
-                //     echo ' <h2>Không tìm thấy kết quả phù hợp "' . $_POST['keyword'] . '"</h2>';
-                // }
+                
                 ?>
                 <thead id="thead-1">
                     <tr>
@@ -206,10 +181,9 @@ $jslistLSTHP = json_encode($listLSTHP);
         </div>
 
     </div>
-    <button type="button" id="btn-nofi"><img id="img-nofi" width="30px" src=<?php if (!$listRequest && !$listBill_CD && !$listBill_CN) echo '"../../assets/images/bell.png"';
-                                                                            else echo '"../../assets/images/bell-1.png"' ?> alt=""></button>
+    <button type="button" id="btn-nofi"><img id="img-nofi" width="30px" alt=""></button>
     <div id="div-nofi">
-        <?php if (!$listRequest && !$listBill_CD && !$listBill_CN) echo 'Không có thông báo mới!' ?> </button>
+        
     </div>
 
 

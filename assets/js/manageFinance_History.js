@@ -26,7 +26,7 @@ document.getElementById("btn-tab3").classList.add("active");
 
 
 
-// var a = Math.round(203000/100*24.123);
+
 
 function numberWithCommas(x) {
     return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
@@ -35,21 +35,23 @@ function numberWithCommas(x) {
 
 //Hiẹn thị bảng
 // var filteredData = dsHoaDon;
-
+var filteredData_ds = dsHoaDon;
+var filteredData;
+var selectedKind = '';
 hienthids('', dsHoaDon);
 
 function hienthids(kind, dsHoaDon_vl) {
 
     var filteredData = dsHoaDon_vl;
-    
-    if ( kind) {
+
+    if (kind) {
         filteredData = filteredData.filter(function (hoaDon) {
             return hoaDon['Loai'] === kind;
         });
     }
 
 
-    if (!filteredData.length ) {
+    if (!filteredData.length) {
         document.querySelector(".tbody-1").innerHTML = "Không có kết quả phù hợp";
         document.querySelector(".tbody-5").innerHTML = '';
     }
@@ -114,7 +116,7 @@ function hienthids(kind, dsHoaDon_vl) {
 }
 
 var selectKind = document.getElementById('select-kind-bill');
-var selectedKind = '';
+
 var btnFilter = document.getElementById('btn-filter');
 var dateFrom = document.getElementById('date-from');
 var dateTo = document.getElementById('date-to');
@@ -123,22 +125,61 @@ selectKind.addEventListener('change', function () {
     selectedKind = selectKind.value;
     hienthids(selectedKind, filteredData_ds);
 });
-var filteredData_ds = dsHoaDon;
 
-btnFilter.addEventListener('click', function (event) {
-    event.preventDefault();
+
+
+function filterDate() {
     var fromDate = new Date(dateFrom.value);
     var toDate = new Date(dateTo.value);
     
-    if(dateFrom.value  && dateTo.value){
-     
-    filteredData_ds = dsHoaDon.filter(function (hoaDon) {
-        var hoaDonDate = new Date(hoaDon['ThoiGianTT']);
-        return hoaDonDate >= fromDate && hoaDonDate <= toDate;
-    });
+    if (dateFrom.value && dateTo.value) {
+
+        filteredData_ds = dsHoaDon.filter(function (hoaDon) {
+            var hoaDonDate = new Date(hoaDon['ThoiGianTT']);
+            return hoaDonDate >= fromDate && hoaDonDate <= toDate;
+        });
+        
+    }
+    else{
+        filteredData_ds = dsHoaDon;
+    }
     hienthids(selectedKind, filteredData_ds);
 }
+
+btnFilter.addEventListener('click', function (event) {
+    event.preventDefault();
+    filterDate();
+
 });
+
+
+
+function showTableFinance(text) {
+
+    $.ajax({
+        url: '../jquery_ajax/ajax_showTableHistory.php',
+        type: 'POST',
+        data: {
+            key: text,
+        },
+        success: function (res) {
+            dsHoaDon = JSON.parse(res);
+            filterDate()
+        },
+        error: function (xhr, status, error) {
+            console.error(error);
+        }
+    });
+
+}
+
+
+function searchList() {
+    var text = document.getElementById('keyword').value;
+    showTableFinance(text);
+    removeSortIcons();
+}
+
 
 // sap xep bang
 
@@ -233,30 +274,43 @@ function sortTable(columnIndex) {
 
 
 
+function removeSortIcons() {
+    var table = document.getElementById('table-1');
+    var headers = table.querySelectorAll('th');
+
+    headers.forEach(function (header) {
+        var icon = header.querySelector('img');
+        if (icon) {
+            header.removeChild(icon);
+        }
+    });
+}
+
+
 function updateSortIcon(columnIndex) {
     var table = document.getElementById('table-1');
     var headers = table.querySelectorAll('th');
 
     headers.forEach(function (header) {
-        // Remove the sort icon from all column headers
         var icon = header.querySelector('img');
         if (icon) {
             header.removeChild(icon);
         }
     });
 
-    // Add the sort icon to the clicked column header
     var clickedHeader = headers[columnIndex];
     var sortIcon = document.createElement('img');
-    sortIcon.src = '../assets/images/arrow-up-down-bold-icon.png';
+    sortIcon.src = '../assets/images/iconSort.png';
     sortIcon.style.width = '20px';
     sortIcon.style.backgroundColor = 'white';
     sortIcon.style.borderRadius = '30px';
-    if (sortDirection[columnIndex] === 'asc') {
+    if (sortDirection[columnIndex] === 'desc') {
         sortIcon.style.transform = 'rotate(180deg)';
+
     }
     clickedHeader.appendChild(sortIcon);
 }
+
 
 
 

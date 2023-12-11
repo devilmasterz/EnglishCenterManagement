@@ -1,3 +1,6 @@
+
+
+
 function convertDateFormat(dateString) {
     var dateParts = dateString.split("-");
     var formattedDate = dateParts[2] + "-" + dateParts[1] + "-" + dateParts[0];
@@ -16,11 +19,11 @@ function hienthids(status, kind, filteredData) {
     document.querySelector(".tbody-5").innerHTML = '';
     if (status && kind) {
 
-        filteredData_1 = dsHoaDon.filter(function (hoaDon) {
+        filteredData = dsHoaDon.filter(function (hoaDon) {
             return hoaDon['TrangThai'] === status;
         });
 
-        filteredData = filteredData_1.filter(function (hoaDon) {
+        filteredData = filteredData.filter(function (hoaDon) {
             return hoaDon['TenHS'] === kind;
         });
     }
@@ -121,6 +124,33 @@ selectKind.addEventListener('change', function () {
     hienthids(selectedStatus, selectedKind, filteredData_ds);
 });
 
+function showTableBill(text) {
+
+    $.ajax({
+        url: '../../jquery_ajax/ajax_showTableBillFee.php',
+        type: 'POST',
+        data: {
+            key: text,
+            maph : detailParent[0].MaPH,
+        },
+        success: function (res) {
+            dsHoaDon = JSON.parse(res);
+            hienthids(selectedStatus, selectedKind, dsHoaDon);
+
+        },
+        error: function (xhr, status, error) {
+            console.error(error);
+        }
+    });
+
+}
+
+
+function searchList() {
+    var text = document.getElementById('keyword').value;
+    showTableBill(text);
+    removeSortIcons();
+}
 
 
 function parseNumericValue(value) {
@@ -133,7 +163,7 @@ function parseDateValue(value) {
     return new Date(year, month - 1);
 }
 
-var sortDirection = {}; // Store the current sort direction for each column
+var sortDirection = {}; 
 
 function sortTable(columnIndex) {
     var table = document.getElementById('table-1');
@@ -194,41 +224,53 @@ function sortTable(columnIndex) {
     });
 
 
-    // Reverse the sort direction for the clicked column
+    
     if (sortDirection[columnIndex] === 'asc') {
         sortDirection[columnIndex] = 'desc';
     } else {
         sortDirection[columnIndex] = 'asc';
     }
 
-    // Update the sort icon in the column header
+    
     updateSortIcon(columnIndex);
 
 
 
 }
 
+function removeSortIcons() {
+    var table = document.getElementById('table-1');
+    var headers = table.querySelectorAll('th');
+
+    headers.forEach(function (header) {
+        var icon = header.querySelector('img');
+        if (icon) {
+            header.removeChild(icon);
+        }
+    });
+}
+
+
 function updateSortIcon(columnIndex) {
     var table = document.getElementById('table-1');
     var headers = table.querySelectorAll('th');
 
     headers.forEach(function (header) {
-        // Remove the sort icon from all column headers
         var icon = header.querySelector('img');
         if (icon) {
             header.removeChild(icon);
         }
     });
 
-    // Add the sort icon to the clicked column header
     var clickedHeader = headers[columnIndex];
     var sortIcon = document.createElement('img');
-    sortIcon.src = '../../assets/images/arrow-up-down-bold-icon.png';
+    sortIcon.src = '../../assets/images/iconSort.png';
     sortIcon.style.width = '20px';
     sortIcon.style.backgroundColor = 'white';
     sortIcon.style.borderRadius = '30px';
-    if (sortDirection[columnIndex] === 'asc') {
+    if (sortDirection[columnIndex] === 'desc') {
         sortIcon.style.transform = 'rotate(180deg)';
+
     }
     clickedHeader.appendChild(sortIcon);
 }
@@ -321,89 +363,130 @@ document.querySelector('.close-btn').addEventListener('click', () => {
 
 
 
-document.getElementById('btn-add-trans').addEventListener('click', function() {
+document.getElementById('btn-add-trans').addEventListener('click', function () {
 
-  var newPageUrl = '../../pages/recharge/recharge.html';
-  
-  // Mở tab mới
-  window.open(newPageUrl, '_blank');
+    var newPageUrl = '../../pages/recharge/recharge.html';
+
+    // Mở tab mới
+    window.open(newPageUrl, '_blank');
 });
 
 
 var button = document.getElementById('btn-nofi');
 var hiddenDiv = document.getElementById('div-nofi');
 
-button.addEventListener('click', function() {
+button.addEventListener('click', function () {
     hiddenDiv.style.display = hiddenDiv.style.display === 'block' ? 'none' : 'block';
- 
+
 });
 
 
 var divNofiContainer = document.getElementById('div-nofi');
+showNotification();
+function showNotification() {
+    divNofiContainer.innerHTML = "";
 
-ds_yeuCau.forEach(function(yeuCau) {
+    ds_yeuCau.forEach(function (yeuCau) {
 
-  var nofiDiv = document.createElement('div');
-  nofiDiv.id = 'nofi';
-  nofiDiv.innerHTML = '<p>Học viên ' + yeuCau.TenHS + ' đã gửi yêu cầu liên kết với bạn</p>' +
-                      '<button onclick="tuChoi(' + yeuCau.MaHS + ',' + yeuCau.MaPH + ')">Từ chối</button>' +
-                      '<button onclick="chapNhan(' + yeuCau.MaHS + ',' + yeuCau.MaPH + ')">Chấp nhận</button>';
+        var nofiDiv = document.createElement('div');
+        nofiDiv.id = 'nofi';
+        nofiDiv.innerHTML = '<p>Học viên ' + yeuCau.TenHS + ' đã gửi yêu cầu liên kết với bạn</p>' +
+            '<button onclick="tuChoi(' + yeuCau.MaHS + ',' + yeuCau.MaPH + ')">Từ chối</button>' +
+            '<button onclick="chapNhan(' + yeuCau.MaHS + ',' + yeuCau.MaPH + ')">Chấp nhận</button>';
 
-  divNofiContainer.appendChild(nofiDiv);
-
-
-});
-
-dsHoaDon_CD.forEach(function(yeuCau) {yeuCau
-
-    var nofiDiv = document.createElement('div');
-    nofiDiv.id = 'nofi';
-    nofiDiv.innerHTML = '<p> Hóa đơn '+ yeuCau.TenHD + ' (' + numberWithCommas(yeuCau.SoTienPhaiDong) +  ' VND) của  Học viên ' +yeuCau.TenHS +  '  chưa được thanh toán</p>'
-    divNofiContainer.appendChild(nofiDiv);
-  });
+        divNofiContainer.appendChild(nofiDiv);
 
 
+    });
 
-  dsHoaDon_CN.forEach(function(yeuCau) {
+    dsHoaDon_CD.forEach(function (yeuCau) {
+        yeuCau
 
-    var nofiDiv = document.createElement('div');
-    nofiDiv.id = 'nofi';
-    nofiDiv.innerHTML = '<p> Hóa đơn '+ yeuCau.TenHD + ' còn nợ (' + numberWithCommas(yeuCau.NoPhiConLai) +  ' VND) của  Học viên ' +yeuCau.TenHS +  '  chưa được thanh toán</p>'
-    divNofiContainer.appendChild(nofiDiv);
-  });
+        var nofiDiv = document.createElement('div');
+        nofiDiv.id = 'nofi';
+        nofiDiv.innerHTML = '<p> Hóa đơn ' + yeuCau.TenHD + ' (' + numberWithCommas(yeuCau.SoTienPhaiDong) + ' VND) của  Học viên ' + yeuCau.TenHS + '  chưa được thanh toán</p>'
+        divNofiContainer.appendChild(nofiDiv);
+    });
 
 
-  function tuChoi(maHS, maPH) {
-    var form = document.createElement('form');
 
-    form.method = 'POST';
-      form.name = 'refuse-form'
-   
-    var input = document.createElement('input');
-    input.type = 'hidden';
-    input.name = 'refuse-maHS';
-    input.value = maHS;
-    form.appendChild(input);
-  
-    document.body.appendChild(form);
-    form.submit();
-  
+    dsHoaDon_CN.forEach(function (yeuCau) {
+
+        var nofiDiv = document.createElement('div');
+        nofiDiv.id = 'nofi';
+        nofiDiv.innerHTML = '<p> Hóa đơn ' + yeuCau.TenHD + ' còn nợ (' + numberWithCommas(yeuCau.NoPhiConLai) + ' VND) của  Học viên ' + yeuCau.TenHS + '  chưa được thanh toán</p>'
+        divNofiContainer.appendChild(nofiDiv);
+    });
+    var imgElement = document.getElementById("img-nofi");
+
+
+    if (ds_yeuCau.length || dsHoaDon_CD.length || dsHoaDon_CN.length) {
+        imgElement.src = "../../assets/images/bell-1.png";
+    } else {
+        imgElement.src = "../../assets/images/bell.png";
+        document.getElementById('div-nofi').innerHTML = "<p>Không có thông báo mới!</p>";
+    }
+
+
+}
+
+
+
+
+
+
+
+
+
+function tuChoi(maHS, maPH) {
+    
+
+    $.ajax({
+        url: '../../jquery_ajax/ajax_replyRequest.php',
+        type: 'POST',
+        data: {
+            maph: maPH,
+            mahs: maHS,
+            rep: "refuse",
+            nyc : "ph",
+        },
+        success: function (res) {
+            
+            ds_yeuCau = JSON.parse(res).listRequest;
+          
+            showNotification();
+
+            
+        },
+        error: function (xhr, status, error) {
+            console.error(error);
+        }
+    });
+
+
 }
 
 function chapNhan(maHS, maPH) {
 
 
-  var form = document.createElement('form');
-
-  form.method = 'POST';
-    form.name = 'accept-form'
+    $.ajax({
+        url: '../../jquery_ajax/ajax_replyRequest.php',
+        type: 'POST',
+        data: {
+            maph: maPH,
+            mahs: maHS,
+            rep: "accept",
+            nyc : "ph",
+        },
+        success: function (res) {
+           
+            ds_yeuCau = JSON.parse(res).listRequest;
+         
+            showNotification();
  
-  var input = document.createElement('input');
-  input.type = 'hidden';
-  input.name = 'accept-maHS';
-  input.value = maHS;
-  form.appendChild(input);
-
-  document.body.appendChild(form);
-  form.submit();
+        },
+        error: function (xhr, status, error) {
+            console.error(error);
+        }
+    });
 }

@@ -8,7 +8,7 @@ $i = 1;
 $nam = 0;
 $nu = 0;
 if (!$listParent) {
-    echo ' <h2>Không tìm thấy kết quả phù hợp "' . $_POST['key'] . '"</h2>';
+    echo ' <h2>Không tìm thấy kết quả phù hợp "' .$key . '"</h2>';
 } else {
     foreach ($listParent as $Parent) : ?>
         <?php if ($Parent['GioiTinh'] == 'Nam') $nam++;

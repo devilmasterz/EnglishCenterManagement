@@ -41,11 +41,10 @@ if (isset($_POST['submit'])) {
 
         if (!$check) {
             $maph = registerTableParents($_COOKIE['name'], $_COOKIE['gender'], $_COOKIE['date'], $_COOKIE['age'], $_COOKIE['address'], $_COOKIE['phone'], $_COOKIE['email'], $connection);
-            registerAcountParents($userName, $passWord, $maph, $connection);
-    
-           
-
+            $datelogup = date("Y-m-d");
+            registerAcountParents($userName, $passWord, $maph,$datelogup ,$connection);
             $success = 'Tạo tài khoản thành công';
+            
         }
     }
 

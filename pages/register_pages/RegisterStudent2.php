@@ -1,6 +1,6 @@
 <?php
-$path_dir = __DIR__.'/../../lib';  
-include $path_dir.'/function.php';
+$path_dir = __DIR__ . '/../../lib';
+include $path_dir . '/function.php';
 
 $userName = $passWord = $confirmPassword = "";
 $userName_error = $passWord_error = $confirmPassword_error = "";
@@ -41,17 +41,11 @@ if (isset($_POST['submit'])) {
 
         if (!$check) {
             $maHS = registerTableStudent($_COOKIE['name'], $_COOKIE['gender'], $_COOKIE['date'], $_COOKIE['age'], $_COOKIE['address'], $_COOKIE['phone'], $_COOKIE['email'], $connection);
-            registerAcountStudent($userName, $passWord, $maHS, $connection);
-            
-            insertNgayDK($maHS,date('Y-m-d'),$connection);
-    
-
+            $datelogup = date("Y-m-d");
+            registerAcountStudent($userName, $passWord, $maHS, $datelogup, $connection);
             $success = 'Tạo tài khoản thành công';
         }
     }
-
-
-
 }
 
 ?>
@@ -74,7 +68,8 @@ if (isset($_POST['submit'])) {
 
         <div class="login-student" style=" width: 500px;">
             <div class="login-student-img">
-            <a href="../home/home.php"><img src="../../assets/images/logo-web.png" alt=""></a>            </div>
+                <a href="../home/home.php"><img src="../../assets/images/logo-web.png" alt=""></a>
+            </div>
 
             <div class="login-student-form">
                 <form action="<?php htmlspecialchars($_SERVER['PHP_SELF']) ?>" method="post">

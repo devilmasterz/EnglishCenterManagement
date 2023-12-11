@@ -1,10 +1,107 @@
+
+showclassOn();
+
+function showclassOn(){
+    document.getElementById("class-on").innerHTML="";
+    if (!ds_lopMo || ds_lopMo.length === 0) {
+        document.getElementById("class-on").innerHTML = '<h2> Không có lớp đang dạy </h2>';
+      } else {
+          ds_lopMo.forEach(function(classItem) {
+          if (classItem['TrangThai'] === 'Đang mở' || classItem['TrangThai'] === 'Chưa mở') {
+            var tableContent = '';
+            for (var i = 0; i < ds_lichhoc.length; i++) {
+              if (classItem['MaLop'] === ds_lichhoc[i]['MaLop']) {
+                tableContent += ds_lichhoc[i]['Ngay'] + ', ' + ds_lichhoc[i]['TGBatDau'] + ' - ' + ds_lichhoc[i]['TGKetThuc'] + '<br>';
+              }
+            }
+      
+            var classHtml = '<div class="class" onclick="showHiddenInfo(event, \'' + classItem['MaLop'] + '\')">' +
+              '<table>' +
+              '<tr><td><h2>Mã lớp:</h2></td><td>' + classItem['MaLop'] + '</td></tr>' +
+              '<tr><td><h3>Tên lớp:</h3></td><td>' + classItem['TenLop'] + '</td></tr>' +
+              '<tr><td><p>Lứa tuổi :</p></td><td>' + classItem['LuaTuoi'] + ' tuổi' + '</td></tr>' +
+              '<tr><td><p>Số học sinh:</p></td><td>' + classItem['SLHS'] + '/' + classItem['SLHSToiDa'] + ' học viên' + '</td></tr>' +
+              '<tr><td><p>Thời gian bắt đầu :</p></td><td>' + formatDate(classItem['ThoiGian'])  + '</td></tr>' +
+              '<tr><td><p>Số buổi đã dạy:</p></td><td>' + classItem['SoBuoiDaToChuc'] + '/' + classItem['SoBuoi'] + ' buổi' + '</td></tr>' +
+              '<tr><td><p>Thời gian:</p></td><td>' + tableContent + '</td></tr>' +
+              '<tr><td><p>Lương:</p></td><td>' + Number(classItem['TienTraGV']).toLocaleString() + ' /buổi' + '</td></tr>' +
+              '<tr><td><p>Lứa tuổi :</p></td><td>' + classItem['LuaTuoi'] + ' tuổi' + '</td></tr>' +
+              '<tr><td><p>Trạng thái:</p></td><td>' + classItem['TrangThai'] + '</td></tr>' +
+
+              '</table>' +
+              '</div>';
+      
+              document.getElementById("class-on").innerHTML += classHtml;
+          }
+        });
+      }
+}
+
+showClassOff();
+function showClassOff(){
+ 
+    document.getElementById("class-off").innerHTML="";
+    if (!ds_lopDong || ds_lopDong.length == 0) {
+        document.getElementById("class-off").innerHTML = '<h2> Không có lớp hoàn thành </h2>';
+      } else {
+        ds_lopDong.forEach(function(classItem) {
+          
+          if (classItem['TrangThai'] == 'Đã đóng') {
+            var tableContent = '';
+            for (var i = 0; i < ds_lichhoc.length; i++) {
+              if (classItem['MaLop'] === ds_lichhoc[i]['MaLop']) {
+                tableContent += ds_lichhoc[i]['Ngay'] + ', ' + ds_lichhoc[i]['TGBatDau'] + ' - ' + ds_lichhoc[i]['TGKetThuc'] + '<br>';
+              }
+            }
+           
+            var classHtml = '<div class="class" onclick="showHiddenInfo(event, \'' + classItem['MaLop'] + '\')">' +
+              '<table>' +
+              '<tr><td><h2>Mã lớp:</h2></td><td>' + classItem['MaLop'] + '</td></tr>' +
+              '<tr><td><h3>Tên lớp:</h3></td><td>' + classItem['TenLop'] + '</td></tr>' +
+              '<tr><td><p>Lứa tuổi :</p></td><td>' + classItem['LuaTuoi'] + ' tuổi' + '</td></tr>' +
+              '<tr><td><p>Số học sinh:</p></td><td>' + classItem['SLHS'] + '/' + classItem['SLHSToiDa'] + ' học viên' + '</td></tr>' +
+              '<tr><td><p>Thời gian bắt đầu :</p></td><td>' + formatDate(classItem['ThoiGian'])  + '</td></tr>' +
+              '<tr><td><p>Số buổi đã dạy:</p></td><td>' + classItem['SoBuoiDaToChuc'] + '/' + classItem['SoBuoi'] + ' buổi' + '</td></tr>' +
+              '<tr><td><p>Thời gian:</p></td><td>' + tableContent + '</td></tr>' +
+              '<tr><td><p>Lương:</p></td><td>' + Number(classItem['TienTraGV']).toLocaleString() + ' /buổi' + '</td></tr>' +
+              '<tr><td><p>Trạng thái:</p></td><td>' + classItem['TrangThai'] + '</td></tr>' +
+
+              '</table>' +
+              '</div>';
+      
+              document.getElementById("class-off").innerHTML += classHtml;
+          }
+        });
+      }
+
+}
+
+
+
 var class_select = '';
 var date_select = '';
+
+
+var diemDanhGrouped = {};
+
+for (var i = 0; i < ds_diemdanh.length; i++) {
+    var diemDanh = ds_diemdanh[i];
+    var maLop = diemDanh.MaLop;
+    var thoiGian = diemDanh.ThoiGian;
+    var key = maLop + '-' + thoiGian;
+
+    if (!diemDanhGrouped.hasOwnProperty(key)) {
+        diemDanhGrouped[key] = [];
+    }
+
+    diemDanhGrouped[key].push(diemDanh);
+}
 
 var dateListDiv = document.getElementById('date-list');
 function showHiddenInfo(event, maLopp) {
     document.getElementById('modal-bg').style.display = 'block';
 
+    document.getElementById('modal-content').scrollTop=0;
     dateListDiv.innerHTML = '';
     var check_empty = true;
     for (var key in diemDanhGrouped) {
@@ -74,7 +171,7 @@ function showAttendanceInterface(thoiGian, diemDanhArray) {
 
     date_select = thoiGian;
     document.getElementById('modal-bg-update').style.display = 'block';
-
+    document.getElementById('modal-content-update').scrollTop=0;
     // Hiển thị thông tin thời gian
     var timeHeader = document.getElementById('time-header');
     timeHeader.textContent = 'Thời gian: ' + formatDate(thoiGian);
@@ -123,20 +220,7 @@ function showAttendanceInterface(thoiGian, diemDanhArray) {
 
 }
 
-var diemDanhGrouped = {};
 
-for (var i = 0; i < ds_diemdanh.length; i++) {
-    var diemDanh = ds_diemdanh[i];
-    var maLop = diemDanh.MaLop;
-    var thoiGian = diemDanh.ThoiGian;
-    var key = maLop + '-' + thoiGian;
-
-    if (!diemDanhGrouped.hasOwnProperty(key)) {
-        diemDanhGrouped[key] = [];
-    }
-
-    diemDanhGrouped[key].push(diemDanh);
-}
 
 document.getElementById('close').addEventListener('click', function () {
     document.getElementById('modal-bg').style.display = 'none';
@@ -148,19 +232,7 @@ document.getElementById('close-update').addEventListener('click', function () {
 });
 
 
-// function diemDanh() {
-//     // Lấy danh sách checkbox trong bảng điểm danh
-//     var checkboxes = document.querySelectorAll('#attendance input[type="checkbox"]');
 
-//     // Lặp qua danh sách checkbox và cập nhật điểm danh
-//     checkboxes.forEach(function(checkbox, index) {
-//         var diemDanh = diemDanhArray[index];
-//         diemDanh.dd = checkbox.checked ? 1 : 0;
-//     });
-
-//     // Đóng giao diện cập nhật điểm danh
-//     document.getElementById('modal-bg-update').style.display = 'none';
-// }\
 
 document.getElementById('btn-update').addEventListener('click', function (event) {
 
@@ -173,9 +245,11 @@ document.getElementById('btn-update').addEventListener('click', function (event)
     for(var i= 0;i<ds_lopDong.length ;i++){
         if(class_select == ds_lopDong[i].MaLop){
             document.querySelector('.add-cant').style.display = 'block';
+            document.querySelector('#modal-noti-add').style.display = 'block';
             return;
         }
     }
+
     var checkboxes = document.querySelectorAll('#attendance tbody input[type="checkbox"]');
 
     // Tạo một mảng để lưu trữ dữ liệu điểm danh
@@ -195,32 +269,57 @@ document.getElementById('btn-update').addEventListener('click', function (event)
             diemDanh: diemDanh
         };
 
-        // Thêm đối tượng vào mảng danhSachDiemDanh
+    
         danhSachDiemDanh.push(diemDanhObj);
     });
+    var time = document.getElementById('time-update').value;
 
+    $.ajax({
+        url: '../../jquery_ajax/ajax_updateAttend.php',
+        type: 'POST',
+        data: {
+            malop :  class_select,
+            time : time,
+            danhSachDiemDanh: danhSachDiemDanh,
+            magv : detailTeacher[0].MaGV,
+        },
+        success: function (res) {
+            ds_lopMo = JSON.parse(res).dslop;
+            ds_diemdanh = JSON.parse(res).dsdd;
 
+         diemDanhGrouped = {};
 
+        for (var i = 0; i < ds_diemdanh.length; i++) {
+            var diemDanh = ds_diemdanh[i];
+            var maLop = diemDanh.MaLop;
+            var thoiGian = diemDanh.ThoiGian;
+            var key = maLop + '-' + thoiGian;
 
-    var form = document.getElementById('form-update');
-    var input = document.createElement('input');
-    input.setAttribute('type', 'hidden');
-    input.setAttribute('name', 'danhSachDiemDanh');
-    input.setAttribute('value', JSON.stringify(danhSachDiemDanh));
-    form.appendChild(input);
+            if (!diemDanhGrouped.hasOwnProperty(key)) {
+                diemDanhGrouped[key] = [];
+            }
+
+                diemDanhGrouped[key].push(diemDanh);
+        }
+
+        showclassOn();
+        showHiddenInfo("", class_select);
+
+        },
+        error: function (xhr, status, error) {
+            console.error(error);
+        }
+    });
 
     
-   
-
-
-
-    document.getElementById('tb1').innerHTML = "Đã cập nhật điểm danh ngày  thành công!";
+    document.getElementById('modal-bg-update').style.display = 'none';
+    document.getElementById('tb1').innerHTML = "Đã cập nhật điểm danh thành công!";
 
     document.querySelector('.add-success').style.display = 'block';
 
     setTimeout(function () {
         document.querySelector('.add-success').style.display = 'none';
-        form.submit();
+        
     }, 1500);
 });
 
@@ -244,10 +343,31 @@ document.getElementById('close-add').addEventListener('click', function () {
 });
 
 document.getElementById('close-err').addEventListener('click', function () {
+    document.querySelector('#modal-noti-add').style.display = 'none';
     document.querySelector('.add-cant').style.display = 'none';
+    
 });
 
 document.getElementById('btn-add').addEventListener('click', function () {
+
+    
+
+    for(var i= 0;i<ds_lopDong.length ;i++){
+        if(class_select == ds_lopDong[i].MaLop){
+            document.getElementById('tb2').innerHTML = "Lớp đã đóng ~<br> Không thể cập nhật!"
+            document.querySelector('.add-cant').style.display = 'block';
+            document.querySelector('#modal-noti-add').style.display = 'block';
+            return;
+        }
+    }
+    for(var i= 0;i<ds_lopMo.length ;i++){
+        if(class_select == ds_lopMo[i].MaLop && ds_lopMo[i].TrangThai == "Chưa mở" ){
+            document.getElementById('tb2').innerHTML = "Lớp chưa mở ~<br> Không thể cập nhật!"
+            document.querySelector('.add-cant').style.display = 'block';
+            document.querySelector('#modal-noti-add').style.display = 'block';
+            return;
+        }
+    }
 
     var html = '';
     var k=1;
@@ -274,16 +394,6 @@ document.getElementById('btn-add-submit').addEventListener('click', function (ev
     event.preventDefault();
 
 
-    for(var i= 0;i<ds_lopDong.length ;i++){
-        if(class_select == ds_lopDong[i].MaLop){
-            document.querySelector('.add-cant').style.display = 'block';
-            
-            return;
-            
-
-        }
-    }
-
     var time =  document.getElementById('time-add').value ;
     if(!time){
         document.getElementById('error-time').innerHTML =  "Chưa nhập ngày tháng";
@@ -295,7 +405,7 @@ document.getElementById('btn-add-submit').addEventListener('click', function (ev
 
     var checkboxes = document.querySelectorAll('#attendance-add tbody input[type="checkbox"]');
 
-    // Tạo một mảng để lưu trữ dữ liệu điểm danh
+    
     var danhSachDiemDanh = [];
 
     // Lặp qua từng checkbox và lấy dữ liệu tương ứng
@@ -317,53 +427,140 @@ document.getElementById('btn-add-submit').addEventListener('click', function (ev
     });
 
 
-    document.getElementById('class-add').value = class_select;
 
-    var form = document.getElementById('form-add');
-    var input = document.createElement('input');
-    input.setAttribute('type', 'hidden');
-    input.setAttribute('name', 'danhSachDiemDanh');
-    input.setAttribute('value', JSON.stringify(danhSachDiemDanh));
-    form.appendChild(input);
+    $.ajax({
+        url: '../../jquery_ajax/ajax_addAttend.php',
+        type: 'POST',
+        data: {
+            malop :  class_select,
+            time : time,
+            danhSachDiemDanh: danhSachDiemDanh,
+            magv : detailTeacher[0].MaGV,
+        },
+        success: function (res) {
+            ds_lopMo = JSON.parse(res).dslop;
+            ds_diemdanh = JSON.parse(res).dsdd;
 
-    
+         diemDanhGrouped = {};
 
+        for (var i = 0; i < ds_diemdanh.length; i++) {
+            var diemDanh = ds_diemdanh[i];
+            var maLop = diemDanh.MaLop;
+            var thoiGian = diemDanh.ThoiGian;
+            var key = maLop + '-' + thoiGian;
 
+            if (!diemDanhGrouped.hasOwnProperty(key)) {
+                diemDanhGrouped[key] = [];
+            }
+
+                diemDanhGrouped[key].push(diemDanh);
+        }
+
+        showclassOn();
+        showHiddenInfo("", class_select);
+
+        },
+        error: function (xhr, status, error) {
+            console.error(error);
+        }
+    });
+
+    document.getElementById('modal-bg-add').style.display = 'none';
     document.getElementById('tb1').innerHTML = "Đã thêm  điểm danh thành công!";
 
     document.querySelector('.add-success').style.display = 'block';
 
     setTimeout(function () {
         document.querySelector('.add-success').style.display = 'none';
-        form.submit();
+       
     }, 1500);
 });
 
 
 document.getElementById('btn-delete').addEventListener('click', () => {
+    for(var i= 0;i<ds_lopDong.length ;i++){
+        if(class_select == ds_lopDong[i].MaLop){
+            document.getElementById('tb2').innerHTML = "Lớp đã đóng ~<br> Không thể cập nhật!"
+            document.querySelector('.add-cant').style.display = 'block';
+            document.querySelector('#modal-noti-add').style.display = 'block';
+            return;
+        }
+    }
+    for(var i= 0;i<ds_lopMo.length ;i++){
+        if(class_select == ds_lopMo[i].MaLop && ds_lopMo[i].TrangThai == "Chưa mở" ){
+            document.getElementById('tb2').innerHTML = "Lớp chưa mở ~<br> Không thể cập nhật!"
+            document.querySelector('.add-cant').style.display = 'block';
+            document.querySelector('#modal-noti-add').style.display = 'block';
+            return;
+        }
+    }
+    
     document.querySelector('.delete-ques').style.display = 'block';
+    document.querySelector('#modal-noti-delete').style.display = 'block';
 });
 document.getElementById('delete-cancle').addEventListener('click', () => {
+    document.querySelector('#modal-noti-delete').style.display = 'none';
     document.querySelector('.delete-ques').style.display = 'none';
 });
 document.getElementById('delete').addEventListener('click', function(event) {
 
-    const form = document.getElementById('form-delete');
 
     event.preventDefault();
-    document.querySelector('.delete-ques').style.display = 'none';
-    
-    document.getElementById('date-delete').value = date_select;
-    document.getElementById('class-delete').value = class_select;
-   
 
+  
+
+  
+
+
+
+    
+    $.ajax({
+        url: '../../jquery_ajax/ajax_deleteAttend.php',
+        type: 'POST',
+        data: {
+            malop :  class_select,
+            time : date_select,
+            magv : detailTeacher[0].MaGV,
+        },
+        success: function (res) {
+            ds_lopMo = JSON.parse(res).dslop;
+            ds_diemdanh = JSON.parse(res).dsdd;
+
+         diemDanhGrouped = {};
+
+        for (var i = 0; i < ds_diemdanh.length; i++) {
+            var diemDanh = ds_diemdanh[i];
+            var maLop = diemDanh.MaLop;
+            var thoiGian = diemDanh.ThoiGian;
+            var key = maLop + '-' + thoiGian;
+
+            if (!diemDanhGrouped.hasOwnProperty(key)) {
+                diemDanhGrouped[key] = [];
+            }
+
+                diemDanhGrouped[key].push(diemDanh);
+        }
+
+        showclassOn();
+        showHiddenInfo("", class_select);
+
+        },
+        error: function (xhr, status, error) {
+            console.error(error);
+        }
+    });
+    
+    document.querySelector('#modal-noti-delete').style.display = 'none';
+    document.querySelector('.delete-ques').style.display = 'none';
+   
+    document.getElementById('modal-bg-update').style.display = 'none';
     document.getElementById('tb1').innerHTML = "Đã xóa điểm danh thành công!";
 
     document.querySelector('.add-success').style.display = 'block';
 
     setTimeout(function () {
         document.querySelector('.add-success').style.display = 'none';
-        form.submit();
+        
     }, 1500);
 
 });

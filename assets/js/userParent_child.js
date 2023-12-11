@@ -34,7 +34,20 @@ document.getElementById('tab3').classList.add("active");
 
 document.getElementById('btn-class-active').classList.add("active");
 
+showChild();
+function showChild(){
+    var html = "";
 
+    if (!ds_con) {
+        html += '<p style="font-style: italic;"> Phụ huynh chưa liên kết đến học viên nào ~</p>';
+    } else {
+        ds_con.forEach(function(child) {
+            html += '<p class="name-child">' + child.TenHS + '</p>';
+      });
+    }
+
+    document.getElementById("div-child").innerHTML = html;
+}
 
 // Mở tab đầu tiên mặc định
 document.getElementById("tabpane1").style.display = "block";
@@ -74,19 +87,19 @@ for (var i = 0; i < nameChildElements.length; i++) {
         var check_2 = true;
         for (var i = 0; i < ds_classOpen.length; i++) {
             if (ds_classOpen[i].MaHS == child_select.MaHS) {
-                check_2 =false;
-                console.log(ds_classOpen[i].MaLop);
+                check_2 = false;
+
 
 
                 html_class += ' <div class="class"><table style="width: 100%;"> <tbody id="tbody-class"><tr style="width: 100%;">';
                 html_class += '<td style="width:30%">Mã lớp: <span style="font-weight: bold;">' + ds_classOpen[i].MaLop + '</span></td>';
-
                 html_class += '<td style="width:40%">Tên lớp: <span style="font-weight: bold;">' + ds_classOpen[i].TenLop + '</span></td>';
                 html_class += '<td>Lứa tuổi: <span style="font-weight: bold;">' + ds_classOpen[i].LuaTuoi + '</span></td> </tr>';
                 html_class += '<tr style="width: 100%;"> <td style="width:30%">Số lượng học viên : <span style="font-weight: bold;">' + ds_classOpen[i].SLHS + '</span></td> ';
                 html_class += '<td style="width:40%">Học phí: <span style="font-weight: bold;">' + numberWithCommas(ds_classOpen[i].HocPhi) + ' VND/ buổi' + '</span></td>';
-                html_class += '<td>Số buổi đã tổ chức: <span style="font-weight: bold;">' + ds_classOpen[i].SoBuoiDaToChuc + '/' + ds_classOpen[i].SoBuoi + ' buổi' + '</span></td> </tr>';
-                html_class += '<tr style="width: 100%;"> <td style="width:10%">Số buổi nghỉ : <span style="font-weight: bold;">' + ds_classOpen[i].SoBuoiNghi + '</span>  <br>';
+                html_class += '<td style="width:40%">Thời gian bắt đầu: <span style="font-weight: bold;">' + convertDateFormat(ds_classOpen[i].ThoiGian) + '</span></td>';
+                html_class += '<tr style="width: 100%;">  <td>Số buổi đã tổ chức: <span style="font-weight: bold;">' + ds_classOpen[i].SoBuoiDaToChuc + '/' + ds_classOpen[i].SoBuoi + ' buổi' + '</span></td>';
+                html_class += '<td style="width:10%; line-height: 20px; ">Số buổi nghỉ : <span style="font-weight: bold;">' + ds_classOpen[i].SoBuoiNghi + '</span>  <br>';
                 // html_class += '<td style="width:40%">';
                 for (var j = 0; j < ds_absent.length; j++) {
                     if (ds_absent[j].MaHS == child_select.MaHS && ds_absent[j].MaLop == ds_classOpen[i].MaLop) {
@@ -95,19 +108,20 @@ for (var i = 0; i < nameChildElements.length; i++) {
                     }
                 }
                 html_class += '</td>';
-                
+
                 html_class += '<td style="width:40%">Lịch học:<br> <span style="font-weight: bold;">';
 
                 for (var j = 0; j < ds_schedule.length; j++) {
-                    if( ds_schedule[j].MaLop == ds_classOpen[i].MaLop) {
-                        html_class +=   ds_schedule[j]['day_of_week'] + ', ' + ds_schedule[j]['start_time'] + ' - ' + ds_schedule[j]['end_time'] + '<br>'+ '                 ';
-                }}
-                html_class += '</span></td>' 
-                html_class += '<td>Giảm học phí: <span style="font-weight: bold;">' + ds_classOpen[i].GiamHocPhi + '%' + '</span></td> </tr>';       
+                    if (ds_schedule[j].MaLop == ds_classOpen[i].MaLop) {
+                        html_class += ds_schedule[j]['Ngay'] + ', ' + ds_schedule[j]['TGBatDau'] + ' - ' + ds_schedule[j]['TGKetThuc'] + '<br>' + '                 ';
+                    }
+                }
+                html_class += '</span></td>'
+                html_class += '</tr> <tr style="width: 100%;"><td>Giảm học phí: <span style="font-weight: bold;">' + ds_classOpen[i].GiamHocPhi + '%' + '</span></td> </tr>';
                 html_class += ' </tbody></table></div> ';
             }
         }
-        if(check_2){
+        if (check_2) {
             html_class += 'Học viên đang không tham gia lớp học nào';
         }
         document.getElementById('container-class').innerHTML = html_class;
@@ -116,22 +130,22 @@ for (var i = 0; i < nameChildElements.length; i++) {
         var check_1 = true;
         for (var i = 0; i < ds_classClose.length; i++) {
             if (ds_classClose[i].MaHS == child_select.MaHS) {
-                check_1 =false;
-                console.log(ds_classClose[i].MaLop);
-
+                check_1 = false;
+               
 
                 html_class_close += ' <div class="class"><table style="width: 100%;"> <tbody id="tbody-class"><tr style="width: 100%;">';
-                html_class_close += '<td style="width:30%">Mã lớp: <span style="font-weight: bold;">' + ds_classOpen[i].MaLop + '</span></td>';
+                html_class_close += '<td style="width:30%">Mã lớp: <span style="font-weight: bold;">' + ds_classClose[i].MaLop + '</span></td>';
+                html_class_close += '<td style="width:40%">Tên lớp: <span style="font-weight: bold;">' + ds_classClose[i].TenLop + '</span></td>';
+                html_class_close += '<td>Lứa tuổi: <span style="font-weight: bold;">' + ds_classClose[i].LuaTuoi + '</span></td> </tr>';
+                html_class_close += '<tr style="width: 100%;"> <td style="width:30%">Số lượng học viên : <span style="font-weight: bold;">' + ds_classClose[i].SLHS + '</span></td> ';
+                html_class_close += '<td style="width:40%">Học phí: <span style="font-weight: bold;">' + numberWithCommas(ds_classClose[i].HocPhi) + ' VND/ buổi' + '</span></td>';
+                html_class_close += '<td style="width:40%">Thời gian bắt đầu: <span style="font-weight: bold;">' + convertDateFormat(ds_classClose[i].ThoiGian) + '</span></td>';
 
-                html_class_close += '<td style="width:40%">Tên lớp: <span style="font-weight: bold;">' + ds_classOpen[i].TenLop + '</span></td>';
-                html_class_close += '<td>Lứa tuổi: <span style="font-weight: bold;">' + ds_classOpen[i].LuaTuoi + '</span></td> </tr>';
-                html_class_close += '<tr style="width: 100%;"> <td style="width:30%">Số lượng học viên : <span style="font-weight: bold;">' + ds_classOpen[i].SLHS + '</span></td> ';
-                html_class_close += '<td style="width:40%">Học phí: <span style="font-weight: bold;">' + numberWithCommas(ds_classOpen[i].HocPhi) + ' VND/ buổi' + '</span></td>';
-                html_class_close += '<td>Số buổi đã tổ chức: <span style="font-weight: bold;">' + ds_classOpen[i].SoBuoiDaToChuc + '/' + ds_classOpen[i].SoBuoi + ' buổi' + '</span></td> </tr>';
-                html_class_close += '<tr style="width: 100%;"> <td style="width:10%">Số buổi nghỉ : <span style="font-weight: bold;">' + ds_classOpen[i].SoBuoiNghi + '</span>  <br>';
+                html_class_close += '<tr style="width: 100%;">  <td>Số buổi đã tổ chức: <span style="font-weight: bold;">' + ds_classClose[i].SoBuoiDaToChuc + '/' + ds_classClose[i].SoBuoi + ' buổi' + '</span></td>';
+                html_class_close += '<td style="width:10%; line-height: 20px; ">Số buổi nghỉ : <span style="font-weight: bold;">' + ds_classClose[i].SoBuoiNghi + '</span>  <br>';
 
                 for (var j = 0; j < ds_absent.length; j++) {
-                    if (ds_absent[j].MaHS == child_select.MaHS && ds_absent[j].MaLop == ds_classOpen[i].MaLop) {
+                    if (ds_absent[j].MaHS == child_select.MaHS && ds_absent[j].MaLop == ds_classClose[i].MaLop) {
 
                         html_class_close += convertDateFormat(ds_absent[j].ThoiGian) + '<br>' + '        ';
                     }
@@ -140,15 +154,16 @@ for (var i = 0; i < nameChildElements.length; i++) {
                 html_class_close += '<td style="width:40%">Lịch học:<br> <span style="font-weight: bold;">';
 
                 for (var j = 0; j < ds_schedule.length; j++) {
-                    if( ds_schedule[j].MaLop == ds_classClose[i].MaLop) {
-                        html_class_close +=   ds_schedule[j]['day_of_week'] + ', ' + ds_schedule[j]['start_time'] + ' - ' + ds_schedule[j]['end_time'] + '<br>'+ '                 ';
-                }}
-                html_class_close += '</span></td>' 
-                html_class_close += '<td>Giảm học phí: <span style="font-weight: bold;">' + ds_classClose[i].GiamHocPhi + '%' + '</span></td> </tr>';       
+                    if (ds_schedule[j].MaLop == ds_classClose[i].MaLop) {
+                        html_class_close += ds_schedule[j]['Ngay'] + ', ' + ds_schedule[j]['TGBatDau'] + ' - ' + ds_schedule[j]['TGKetThuc'] + '<br>' + '                 ';
+                    }
+                }
+                html_class_close += '</span></td>'
+                html_class_close += '</tr> <tr style="width: 100%;"><td>Giảm học phí: <span style="font-weight: bold;">' + ds_classClose[i].GiamHocPhi + '%' + '</span></td> </tr>';
                 html_class_close += ' </tbody></table></div> ';
             }
         }
-        if(check_1){
+        if (check_1) {
             html_class_close += 'Học viên chưa hoàn thành lớp học nào';
         }
         document.getElementById('container-class-close').innerHTML = html_class_close;
@@ -182,7 +197,6 @@ document.getElementById('btn-link').addEventListener('click', function (event) {
     var check_has = false;
     event.preventDefault();
 
-    const form = document.getElementById('form-link');
 
     var mahs = document.getElementById('input-child').value;
 
@@ -213,96 +227,150 @@ document.getElementById('btn-link').addEventListener('click', function (event) {
     if (!check)
         return;
 
+    $.ajax({
+        url: '../../jquery_ajax/ajax_sentRequest.php',
+        type: 'POST',
+        data: {
+            maph: detailParent[0].MaPH,
+            mahs: mahs,
+            nyc: "ph"
+        },
+        success: function (res) {
+
+        },
+        error: function (xhr, status, error) {
+            console.error(error);
+        }
+    });
+
     document.getElementById('tb1').innerHTML = "Đã gửi yêu cầu liên kết !";
 
     document.querySelector('.add-success').style.display = 'block';
 
     setTimeout(function () {
         document.querySelector('.add-success').style.display = 'none';
-        form.submit();
+
     }, 1500);
 
 });
 
 
+
 ////////////
+
+
+var divNofiContainer = document.getElementById('div-nofi');
+showNotification();
+function showNotification() {
+    divNofiContainer.innerHTML = "";
+
+    ds_yeuCau.forEach(function (yeuCau) {
+
+        var nofiDiv = document.createElement('div');
+        nofiDiv.id = 'nofi';
+        nofiDiv.innerHTML = '<p>Học viên ' + yeuCau.TenHS + ' đã gửi yêu cầu liên kết với bạn</p>' +
+            '<button onclick="tuChoi(' + yeuCau.MaHS + ',' + yeuCau.MaPH + ')">Từ chối</button>' +
+            '<button onclick="chapNhan(' + yeuCau.MaHS + ',' + yeuCau.MaPH + ')">Chấp nhận</button>';
+
+        divNofiContainer.appendChild(nofiDiv);
+
+
+    });
+
+    dsHoaDon_CD.forEach(function (yeuCau) {
+        yeuCau
+
+        var nofiDiv = document.createElement('div');
+        nofiDiv.id = 'nofi';
+        nofiDiv.innerHTML = '<p> Hóa đơn ' + yeuCau.TenHD + ' (' + numberWithCommas(yeuCau.SoTienPhaiDong) + ' VND) của  Học viên ' + yeuCau.TenHS + '  chưa được thanh toán</p>'
+        divNofiContainer.appendChild(nofiDiv);
+    });
+
+
+
+    dsHoaDon_CN.forEach(function (yeuCau) {
+
+        var nofiDiv = document.createElement('div');
+        nofiDiv.id = 'nofi';
+        nofiDiv.innerHTML = '<p> Hóa đơn ' + yeuCau.TenHD + ' còn nợ (' + numberWithCommas(yeuCau.NoPhiConLai) + ' VND) của  Học viên ' + yeuCau.TenHS + '  chưa được thanh toán</p>'
+        divNofiContainer.appendChild(nofiDiv);
+    });
+    var imgElement = document.getElementById("img-nofi");
+
+
+    if (ds_yeuCau.length || dsHoaDon_CD.length || dsHoaDon_CN.length) {
+        imgElement.src = "../../assets/images/bell-1.png";
+    } else {
+        imgElement.src = "../../assets/images/bell.png";
+        document.getElementById('div-nofi').innerHTML = "<p>Không có thông báo mới!</p>";
+    }
+}
+
+
+
 
 var button = document.getElementById('btn-nofi');
 var hiddenDiv = document.getElementById('div-nofi');
 
-button.addEventListener('click', function() {
+button.addEventListener('click', function () {
     hiddenDiv.style.display = hiddenDiv.style.display === 'block' ? 'none' : 'block';
- 
-});
-
-var divNofiContainer = document.getElementById('div-nofi');
-
-ds_yeuCau.forEach(function(yeuCau) {
-
-  var nofiDiv = document.createElement('div');
-  nofiDiv.id = 'nofi';
-  nofiDiv.innerHTML = '<p>Học viên ' + yeuCau.TenHS + ' đã gửi yêu cầu liên kết với bạn</p>' +
-                      '<button onclick="tuChoi(' + yeuCau.MaHS + ',' + yeuCau.MaPH + ')">Từ chối</button>' +
-                      '<button onclick="chapNhan(' + yeuCau.MaHS + ',' + yeuCau.MaPH + ')">Chấp nhận</button>';
-
-  divNofiContainer.appendChild(nofiDiv);
-
 
 });
 
-dsHoaDon_CD.forEach(function(yeuCau) {yeuCau
-
-    var nofiDiv = document.createElement('div');
-    nofiDiv.id = 'nofi';
-    nofiDiv.innerHTML = '<p> Hóa đơn '+ yeuCau.TenHD + ' (' + numberWithCommas(yeuCau.SoTienPhaiDong) +  ' VND) của  Học viên ' +yeuCau.TenHS +  '  chưa được thanh toán</p>'
-    divNofiContainer.appendChild(nofiDiv);
-  });
-
-
-
-  dsHoaDon_CN.forEach(function(yeuCau) {
-
-    var nofiDiv = document.createElement('div');
-    nofiDiv.id = 'nofi';
-    nofiDiv.innerHTML = '<p> Hóa đơn '+ yeuCau.TenHD + ' còn nợ (' + numberWithCommas(yeuCau.NoPhiConLai) +  ' VND) của  Học viên ' +yeuCau.TenHS +  '  chưa được thanh toán</p>'
-    divNofiContainer.appendChild(nofiDiv);
-  });
 
 
 
 function tuChoi(maHS, maPH) {
-    var form = document.createElement('form');
+    
 
-    form.method = 'POST';
-      form.name = 'refuse-form'
-   
-    var input = document.createElement('input');
-    input.type = 'hidden';
-    input.name = 'refuse-maHS';
-    input.value = maHS;
-    form.appendChild(input);
-  
-    document.body.appendChild(form);
-    form.submit();
-  
+    $.ajax({
+        url: '../../jquery_ajax/ajax_replyRequest.php',
+        type: 'POST',
+        data: {
+            maph: maPH,
+            mahs: maHS,
+            rep: "refuse",
+            nyc : "ph",
+        },
+        success: function (res) {
+            ds_con = JSON.parse(res).listChild;
+            ds_yeuCau = JSON.parse(res).listRequest;
+            showChild();
+            showNotification();
+
+            
+        },
+        error: function (xhr, status, error) {
+            console.error(error);
+        }
+    });
+
+
 }
 
 function chapNhan(maHS, maPH) {
 
 
-  var form = document.createElement('form');
-
-  form.method = 'POST';
-    form.name = 'accept-form'
+    $.ajax({
+        url: '../../jquery_ajax/ajax_replyRequest.php',
+        type: 'POST',
+        data: {
+            maph: maPH,
+            mahs: maHS,
+            rep: "accept",
+            nyc : "ph",
+        },
+        success: function (res) {
+            ds_con = JSON.parse(res).listChild;
+            ds_yeuCau = JSON.parse(res).listRequest;
+            showChild();
+            showNotification();
  
-  var input = document.createElement('input');
-  input.type = 'hidden';
-  input.name = 'accept-maHS';
-  input.value = maHS;
-  form.appendChild(input);
-
-  document.body.appendChild(form);
-  form.submit();
+        },
+        error: function (xhr, status, error) {
+            console.error(error);
+        }
+    });
 }
 
 function numberWithCommas(x) {

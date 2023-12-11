@@ -14,7 +14,7 @@ $i = 1;
 $nam = 0;
 $nu = 0;
 if (!$listStudent) {
-    echo ' <h2>Không tìm thấy kết quả phù hợp "' . $_POST['key'] . '"</h2>';
+    echo ' <h2>Không tìm thấy kết quả phù hợp "' . $key  . '"</h2>';
 } else {
     foreach ($listStudent as $Student) : ?>
         <?php if ($Student['GioiTinh'] == 'Nam') {

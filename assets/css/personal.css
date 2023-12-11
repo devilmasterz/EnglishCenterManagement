@@ -186,7 +186,7 @@ body{
     margin-left: 10px;
     background-color: white;
     position: absolute;
-    z-index: 1000;
+    z-index: 100;
     top: 20px;
     right: 201px;
     background-color: unset;
@@ -206,7 +206,7 @@ body{
     background-color: lavender;
     overflow-y: auto;
     border: ridge;
-    z-index: 1000;
+    z-index: 100;
     top: 47px;
     right: 225px;
   }
@@ -230,3 +230,26 @@ body{
   #btn-logout:hover{
     cursor: pointer;
 }
+
+
+.add-success{
+    text-align: center;
+        position: fixed;
+        top: 30%;
+        left: 40%;
+        transform: translate(-50%, -50%);
+        background-color: #f2e7d1;
+        padding: 20px;
+        border-radius: 5px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+        max-width: 250px;
+        width: 100%;
+        max-height: 700px;
+        display: none;
+        z-index:200 ;
+        animation: fadeIn 0.5s forwards;
+}
+@keyframes fadeIn {
+    0% { opacity: 0; transform: translateY(-20px); }
+    100% { opacity: 1; transform: translateY(0); }
+  }

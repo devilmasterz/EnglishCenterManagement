@@ -782,7 +782,7 @@ document.getElementById('cancle-change-pass').addEventListener('click', () => {
 
 
 
-var sortDirection = {}; // Store the current sort direction for each column
+var sortDirection = {}; 
 
 function sortTable(columnIndex) {
     var table = document.getElementById('table-1');
@@ -829,14 +829,13 @@ function sortTable(columnIndex) {
     });
 
 
-    // Reverse the sort direction for the clicked column
+    
     if (sortDirection[columnIndex] === 'asc') {
         sortDirection[columnIndex] = 'desc';
     } else {
         sortDirection[columnIndex] = 'asc';
     }
 
-    // Update the sort icon in the column header
     updateSortIcon(columnIndex);
 
 

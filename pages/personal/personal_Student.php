@@ -15,35 +15,6 @@ $jsaccountStudent = json_encode($accountStudent);
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
-    if (isset($_POST['name-input'])) {
-        $mahs = $_POST['id-input'];
-        $ten = trim($_POST['name-input']);
-        $gt = $_POST['gender-input'];
-        $ns = $_POST['birthday-input'];
-        $tuoi = $_POST['age-input'];
-
-        $dc = trim($_POST['address-input']);
-
-        $sdt = $_POST['phone-input'];
-        $email = trim($_POST['email-input']);
-
-
-        updateStudentbyID($connection, $mahs, $ten, $gt, $ns, $tuoi, $dc, $sdt, $email);
-        header("Location: personal_Student.php");
-    }
-
-
-
-
-
-    if (isset($_POST['new-pass'])) {
-        $username = $_POST['username'];
-        $pass = $_POST['new-pass'];
-
-
-        updatePassHS($connection, $username, $pass);
-        header("Location: personal_Student.php");
-    }
     if (isset($_POST['btn-logout'])) {
 
         session_start();
@@ -68,7 +39,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <link rel="stylesheet" href="../../assets/css/home.css" />
     <link rel="stylesheet" href="../../plugins/bootstrap-5.2.3-dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="../../assets/css/common.css">
-
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
     <title>Thông tin cá nhân</title>
 </head>
 
@@ -116,16 +87,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 
                     <div class="personal-inner-item">
-                        <div class="personal-inner-key">Ngày sinh : <strong style="color: red; font-size: 12px;font-style: italic;" id="err-birthday"></strong></div>
+                        <div class="personal-inner-key">Ngày sinh : <strong style="color: red; font-size: 12px;font-style: italic;" id="err-birthday"></strong> </div>
                         <div id="birthday" class="personal-inner-value personal-inner-value-info">11-12-2122</div>
                     </div>
-                    <input id="birthday-input" name="birthday-input" class="personal-inner-edit-range personal-inner-edit-range-info" type="date" required></input>
+                    <input id="birthday-input" name="birthday-input" class="personal-inner-edit-range personal-inner-edit-range-info" type="date" onchange="setAge()"></input>
 
                     <div class="personal-inner-item">
                         <div class="personal-inner-key">Tuổi : <strong style="color: red; font-size: 12px;font-style: italic;" id="err-age"></strong></div>
                         <div id="age" class="personal-inner-value personal-inner-value-info">12</div>
                     </div>
-                    <input id="age-input" name="age-input" class="personal-inner-edit-range personal-inner-edit-range-info" type="number" placeholder="Nhập tuổi" required></input>
+                    <input id="age-input" name="age-input" class="personal-inner-edit-range personal-inner-edit-range-info" type="number" placeholder="Nhập tuổi" readonly></input>
 
 
 
@@ -197,8 +168,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </div>
 
     </div>
-    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
-    <!--boostrap.js-->
+
+    <div class="add-success">
+        <img src="../../assets/images/icon_success.png" alt="" style=" width: 40px;">
+        <h5 id='tb1'></h5>
+    </div>
+
     <script src="../../plugins/bootstrap-5.2.3-dist/js/bootstrap.bundle.min.js"></script>
     <!--slick.js-->
     <!-- <script src="./personal.js"></script> -->
@@ -212,51 +187,50 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </body>
 
 <script>
-    document.getElementById('id').innerHTML = detailStudent[0].MaHS;
-    document.getElementById('id-inp').innerHTML = detailStudent[0].MaHS;
+    showInfor();
 
-    document.getElementById('name').innerHTML = detailStudent[0].TenHS;
-    document.getElementById('name-input').value = detailStudent[0].TenHS;
+    function showInfor() {
 
-    document.getElementById('gender').innerHTML = detailStudent[0].GioiTinh;
-    var img = document.querySelector(".personal-avt");
-    var img2 = document.querySelector(".menubar-avt");
-    if (detailStudent[0].GioiTinh == "Nam") {
-        img.src = "../../assets/images/Student-male-icon.png";
-        img2.src = "../../assets/images/Student-male-icon.png";
-    } else {
-        img.src = "../../assets/images/Student-female-icon.png";
-        img2.src = "../../assets/images/Student-female-icon.png";
-    }
-
-    var selectTag = document.getElementById("gender-input");
-    for (var i = 0; i < selectTag.options.length; i++) {
-        if (selectTag.options[i].value == detailStudent[0].GioiTinh) {
-            selectTag.options[i].selected = true;
-            break;
+        document.getElementById('id').innerHTML = detailStudent[0].MaHS;
+        document.getElementById('id-inp').innerHTML = detailStudent[0].MaHS;
+        document.getElementById('name').innerHTML = detailStudent[0].TenHS;
+        document.getElementById('name-input').value = detailStudent[0].TenHS;
+        document.getElementById('gender').innerHTML = detailStudent[0].GioiTinh;
+        var img = document.querySelector(".personal-avt");
+        var img2 = document.querySelector(".menubar-avt");
+        if (detailStudent[0].GioiTinh == "Nam") {
+            img.src = "../../assets/images/Student-male-icon.png";
+            img2.src = "../../assets/images/Student-male-icon.png";
+        } else {
+            img.src = "../../assets/images/Student-female-icon.png";
+            img2.src = "../../assets/images/Student-female-icon.png";
         }
+
+        var selectTag = document.getElementById("gender-input");
+        for (var i = 0; i < selectTag.options.length; i++) {
+            if (selectTag.options[i].value == detailStudent[0].GioiTinh) {
+                selectTag.options[i].selected = true;
+                break;
+            }
+        }
+
+         document.getElementById('birthday').innerHTML = formatDate(detailStudent[0].NgaySinh);
+                document.getElementById('birthday-input').value = detailStudent[0].NgaySinh;
+                document.getElementById('age').innerHTML = detailStudent[0].Tuoi;
+                document.getElementById('age-input').value = detailStudent[0].Tuoi;
+                document.getElementById('address').innerHTML = detailStudent[0].DiaChi;
+                document.getElementById('address-input').value = detailStudent[0].DiaChi;
+                document.getElementById('email').innerHTML = detailStudent[0].Email;
+                document.getElementById('email-input').value = detailStudent[0].Email;
+                document.getElementById('phone').innerHTML = detailStudent[0].SDT;
+                document.getElementById('phone-input').value = detailStudent[0].SDT;
+                document.getElementById('password').value = accountStudent[0].Password;
+
+
+
+
+
     }
-
-    document.getElementById('birthday').innerHTML = formatDate(detailStudent[0].NgaySinh);
-    document.getElementById('birthday-input').value = detailStudent[0].NgaySinh;
-
-    document.getElementById('age').innerHTML = detailStudent[0].Tuoi;
-    document.getElementById('age-input').value = detailStudent[0].Tuoi;
-
-
-
-    document.getElementById('address').innerHTML = detailStudent[0].DiaChi;
-    document.getElementById('address-input').value = detailStudent[0].DiaChi;
-
-
-
-    document.getElementById('email').innerHTML = detailStudent[0].Email;
-    document.getElementById('email-input').value = detailStudent[0].Email;
-
-    document.getElementById('phone').innerHTML = detailStudent[0].SDT;
-    document.getElementById('phone-input').value = detailStudent[0].SDT;
-
-    document.getElementById('password').value = accountStudent[0].Password;
 
     function togglePassword() {
         var passwordInput = document.getElementById("password");
@@ -268,7 +242,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     function formatDate(dateString) {
-        var dateParts = dateString.split('-'); // Tách ngày, tháng, năm thành mảng
+        var dateParts = dateString.split('-');
         var year = dateParts[0];
         var month = dateParts[1];
         var day = dateParts[2];
@@ -277,14 +251,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         return formattedDate;
     }
 
+    function setAge() {
+        var inputDate = document.getElementById("birthday-input").value;
+        var namHienTai = new Date().getFullYear();
+        var namInput = new Date(inputDate).getFullYear();
+
+        var age = namHienTai - namInput;
+        document.getElementById('age-input').value = age;
+
+    }
+
+
+
     // Khi nhấn nút Cập nhật
     const submit_update = document.getElementById('btn-update');
     submit_update.addEventListener('click', function(event) {
 
         var check = true;
-
-        const form1 = document.getElementById('form-update')
-
         event.preventDefault();
 
         const phone = document.getElementById('phone-input').value;
@@ -296,8 +279,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         const age = document.getElementById('age-input').value;
 
         const address = document.getElementById('address-input').value;
-
-
 
 
         var erorr_empty = "*Dữ liệu không để trống";
@@ -328,7 +309,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } else
             document.getElementById('err-age').textContent = "";
 
-
         if (!address) {
 
             document.getElementById('err-address').textContent = erorr_empty;
@@ -337,14 +317,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             document.getElementById('err-address').textContent = "";
 
 
-
-        if (!(/^(0[0-9]{9})$/.test(phone))) {
+        if (!(/^(0[0-9]{9})$/.test(phone)) && phone) {
             document.getElementById('err-phone').textContent = "*Số điện thoại không chính xác (0..; 10 chữ số)";
             check = false;
         } else
             document.getElementById('err-phone').textContent = "";
 
-        if (!(/\S+@\S+\.\S+/.test(email))) {
+        if (!(/\S+@\S+\.\S+/.test(email)) && email) {
             document.getElementById('err-email').textContent = "*Email không chính xác (example@xxx.com)";
             check = false;
         } else
@@ -353,23 +332,46 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (!check)
             return;
 
+        $.ajax({
+            type: 'POST',
+            url: '../../jquery_ajax/ajax_updateInfor.php',
+            data: {
+                id: detailStudent[0].MaHS,
+                name: name,
+                gender: gender,
+                birthday: birthday,
+                age: age,
+                address: address,
+                phone: phone,
+                email: email,
+                user: "student",
+            },
+            success: function(res) {
+                detailStudent = JSON.parse(res);
 
-        document.getElementById('id-input').value = detailStudent[0].MaHS;
-        form1.submit();
+                showInfor();
+                onChangeEditType(!isEdit, "info");
+            },
+            error: function(xhr, status, error) {
+                console.error(error);
+            }
+        });
 
-        // Gửi form đi nếu tất cả dữ liệu hợp lệ
+        document.getElementById("tb1").textContent = "Đã cập nhật thông tin"
+        document.querySelector(".add-success").style.display = "block"
+        setTimeout(function() {
+            document.querySelector(".add-success").style.display = "none";
+
+        }, 1000);;
 
     });
+
 
 
     document.getElementById('btn-change').addEventListener('click', function(event) {
 
         var check = true;
-
-        const form1 = document.getElementById('form-change-pass')
-
         event.preventDefault();
-
         const pass = document.getElementById('new-pass').value;
 
 
@@ -386,10 +388,35 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (!check)
             return;
 
-        document.getElementById('username').value = accountStudent[0].UserName;
-        form1.submit();
+        $.ajax({
+            type: 'POST',
+            url: '../../jquery_ajax/ajax_updatePass.php',
+            data: {
+                id: detailStudent[0].MaHS,
+                username: accountStudent[0].UserName,
+                pass: pass,
+                user: "student",
+            },
+            success: function(res) {
+                accountStudent = JSON.parse(res);
 
-        // Gửi form đi nếu tất cả dữ liệu hợp lệ
+                showInfor();
+                onChangeEditType(!isEdit, "pass")
+            },
+            error: function(xhr, status, error) {
+                console.error(error);
+            }
+        });
+
+        document.getElementById("tb1").textContent = "Đã cập nhật mật khẩu";
+        document.querySelector(".add-success").style.display = "block"
+        setTimeout(function() {
+            document.querySelector(".add-success").style.display = "none";
+
+        }, 1000);
+
+
+
 
     });
 
@@ -397,13 +424,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 
     // initial setup
-    var $ = document.querySelector.bind(document)
+
     var $$ = document.querySelectorAll.bind(document)
 
 
 
     var isEdit = false
-    const editBtn = $(".edit-info")
+    const editBtn = document.querySelector(".edit-info")
 
     $$(".personal-inner-value").forEach(item => {
         item.classList.add("personal-act-inline")
@@ -421,15 +448,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $$(`.personal-inner-value-${opt}`).forEach((item) => {
                 item.classList.remove("personal-act-inline")
             })
-            $(`.control-${opt}`).classList.add("personal-act-flex")
+            document.querySelector(`.control-${opt}`).classList.add("personal-act-flex")
             $$(`.personal-inner-edit-range-${opt}`).forEach((item) => {
                 item.classList.add("personal-active")
             })
-            // khởi tạo giá trị của input khi chuyển sang dạng edit
-            if (opt === "info") {
-                console.log("active")
-
+        
+            if (opt == "info") {
+               
             }
+
         } else {
             $$(`.personal-inner-edit-range-${opt}`).forEach((item) => {
                 item.classList.remove("personal-active")
@@ -437,7 +464,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $$(`.personal-inner-value-${opt}`).forEach((item) => {
                 item.classList.add("personal-act-inline")
             })
-            $(`.control-${opt}`).classList.remove("personal-act-flex")
+            document.querySelector(`.control-${opt}`).classList.remove("personal-act-flex")
         }
     }
 
@@ -447,11 +474,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         onChangeEditType(!isEdit, "info")
     }
 
-    $(".edit-pass").onclick = () => {
+    document.querySelector(".edit-pass").onclick = () => {
         onChangeEditType(!isEdit, "pass")
     }
 
-    $(".info-cancel").onclick = () => {
+    document.querySelector(".info-cancel").onclick = () => {
         onChangeEditType(false, "info");
 
         document.getElementById('err-name').textContent = "";
@@ -462,7 +489,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         document.getElementById('err-phone').textContent = "";
         document.getElementById('err-email').textContent = "";
     }
-    $(".password-cancel").onclick = () => {
+    document.querySelector(".password-cancel").onclick = () => {
         onChangeEditType(false, "pass");
         document.getElementById('err-pass').textContent = "";
     }

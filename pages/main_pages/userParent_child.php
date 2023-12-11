@@ -14,7 +14,7 @@ $listBill_CD = searchHDHocPhi($connection, 'Chưa đóng', $maPH);
 $listBill_CN = searchHDHocPhi($connection, 'Còn nợ', $maPH);
 
 $listChild = studentOfParent($connection, $maPH);
-$listClassOpen = listDD($connection, 'Đang mở');
+$listClassOpen = listDD_HD($connection);
 $listClassClose = listDD($connection, 'Đã đóng');
 $listAbsent = listNgayNghi($connection);
 $listMaHS = listMaHS($connection);
@@ -37,28 +37,7 @@ $jslistRequest = json_encode($listRequest);
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
-  if (isset($_POST['input-child'])) {
-    $mahs = $_POST['input-child'];
-    $tenph =  $tenPH[0]['TenPH'];
-    $tenhs  = $_POST['name-child'];
-
-    insertLienKet($mahs, $maPH, $tenhs, $tenph, 'ph', $connection);
-    header("Location: userParent_child.php");
-  }
-  if (isset($_POST['accept-maHS'])) {
-    $mahs = $_POST['accept-maHS'];
-    deletedslk($connection,$mahs,$maPH);
-    insertPHHS($mahs,$maPH,$connection);
-    header("Location: userParent_child.php");;
-  }
-
-  if (isset($_POST['refuse-maHS'])) {
-    $mahs = $_POST['refuse-maHS'];
-    
-    deletedslk($connection,$mahs,$maPH);
-   
-    header("Location: userParent_child.php");
-  }
+  
   if (isset($_POST['btn-logout'])) {
 
     session_start();
@@ -99,20 +78,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     <div id="child">
       <h3>Con của phụ hunh</h3>
-      <?php
-      if (!$listChild) {
-        echo ' <p style="font-style: italic;"> Phụ huynh chưa liên kết đến học viên nào ~</p>';
-      } else {
-        foreach ($listChild as $child) :
-
-          echo '<p class="name-child">' . $child['TenHS'] . '</p>';
-        endforeach;
-      } ?>
-
+      <div id="div-child">
+      
+      </div>
+     
       <div style="display:flex">
         <button id="btn-add-child" onclick="toggleDivLink()"> Thêm liên kết với học viên</button>
-        <button type="button" id="btn-nofi"><img id="img-nofi" width="30px" src=<?php if (!$listRequest && !$listBill_CD && !$listBill_CN) echo '"../../assets/images/bell.png"';
-                                                                                else echo '"../../assets/images/bell-1.png"' ?> alt=""></button>
+        <button type="button" id="btn-nofi"><img id="img-nofi" width="30px"  alt=""></button>
       </div>
       <div id="div-link">
         <form action="" method="post" id="form-link">
@@ -169,7 +141,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 
   <div id="div-nofi">
-  <?php if (!$listRequest && !$listBill_CD && !$listBill_CN) echo 'Không có thông báo mới!' ?> </button>
+   
   </div>
 
   <div class="add-success">

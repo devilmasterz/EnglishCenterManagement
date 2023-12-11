@@ -467,7 +467,7 @@ $jsonListPhuHuynh = json_encode($listPhuHuynh);
 		</div>
 
 
-		<!-- <p style="margin-left: 80%; font-style:italic; font-size:13px"> <?php echo '*Tổng số học viên: ' . $i - 1 . '  Nam: ' . $nam . '  Nữ: ' . $nu ?> </p> -->
+		 <p style="margin-left: 80%; font-style:italic; font-size:13px" id="total">  </p>
 
 
 	</main>

@@ -460,14 +460,12 @@ function countTotal() {
             so: 0
         };
 
-
         var s = 0;
         for (var j = 0; j < ds_HSTang.length; j++) {
             if (((monthData.Thang >= ds_HSTang[j].Thang) && (monthData.Nam == ds_HSTang[j].Nam)) || (monthData.Nam > ds_HSTang[j].Nam)) {
                 s += ds_HSTang[j].so;
             }
         }
-
     
         var currentMonth = new Date().getMonth() + 1;
 
