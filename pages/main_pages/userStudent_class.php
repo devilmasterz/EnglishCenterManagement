@@ -65,7 +65,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   <div id="content">
 
     <ul class="tab">
-      <li><a href="#" id="btn-1" class="tablinks" onclick="openTab(event, 'tabpane1')">Lớp dang theo học </a></li>
+      <li><a href="#" id="btn-1" class="tablinks" onclick="openTab(event, 'tabpane1')">Lớp đang theo học </a></li>
       <li><a href="#" class="tablinks" onclick="openTab(event, 'tabpane2')">Lớp đã hoàn thành</a></li>
       <!-- <li><a href="#" class="tablinks" onclick="openTab(event, 'tabpane3')">Tab 3</a></li> -->
     </ul>

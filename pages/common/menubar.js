@@ -95,10 +95,10 @@ function menubarv2(tenHS,gioitinh,obj = "student",preDirectLink = "."){
     var img2 = document.querySelector(".menubar-avt");
     if (gioitinh == "Nam") {
 
-      img2.src = "../../assets/images/Student-male-icon.png";
+      img2.src = `../../assets/images/${obj === "teacher" ? "Teacher-male-icon" :""}${obj === "student" ? "Student-male-icon" :""}${obj === "parent" ? "Parent-male-icon" :""}.png`;
     } else {
 
-      img2.src = "../../assets/images/Student-female-icon.png";
+      img2.src = `../../assets/images/${obj === "teacher" ? "Teacher-female-icon" :""}${obj === "student" ? "Student-female-icon" :""}${obj === "parent" ? "Parent-female-icon" :""}.png`;
     }
 }
 
