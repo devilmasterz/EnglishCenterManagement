@@ -1,29 +1,73 @@
 <?php
 include "../../lib/FunctionClass2.php";
+include "../../lib/registerClass.php";
+
 $malop = $_GET['malop'];
 session_start();
 $mahs = "";
+$maHS = "";
+$maPH = "";
+$resultHSLOP = false;
+$studentBaseParentList = [];
+$jsStudentList = [];
+$selectChild = null;
 if (isset($_SESSION['MaHS']['MaHS'])) {
     $mahs = $_SESSION['MaHS']['MaHS'];
+    $resultHSLOP = setExits_hs_lop($mahs, $malop, $connection);
 }
-$resultHSLOP = setExits_hs_lop($mahs, $malop, $connection);
+if (isset($_SESSION['MaPH']['MaPH'])) {
+    $maPH = $_SESSION['MaPH']['MaPH'];
+    $studentBaseParentList = studentOfParentRegister($maPH, $connection);
+    $jsStudentList = json_encode($studentBaseParentList);
+}
+$type = "";
+$tenPH = array();
+$detailParent = array();
+$tenHS = array();
+$detailStudent = array();
 $checkregister = "";
 $check = false;
+$jsdetailStudent = "";
+$jstenHS = "";
+$jsdetailParent = "";
+$jstenPH = "";
 if (isset($_SESSION['MaHS'])) {
-
+    $maPH = $_SESSION['MaHS'];
+    $tenPH = selectTenPH($connection, $maPH['MaHS']);
+    $detailParent = selectParent($connection, $maPH['MaHS']);
+    $jstenPH = json_encode($tenPH);
+    $jsdetailParent = json_encode($detailParent);
+    $type = "student";
+    //
     $check = true;
     $maHS = $_SESSION['MaHS'];
     $tenHS = selecttenHS($connection, $maHS['MaHS']);
     $detailStudent = selectStudent($connection, $maHS['MaHS']);
     $jstenHS = json_encode($tenHS);
     $jsdetailStudent = json_encode($detailStudent);
-    $jscheck = json_encode($check);
+    $type = "student";
 }
+if (isset($_SESSION['MaPH'])) {
+    $check = true;
+    $maHS =  $_SESSION['MaPH'];
+    $tenHS = selecttenHS($connection, $maHS['MaPH']);
+    $detailStudent = selectStudent($connection, $maHS['MaPH']);
+    $jstenHS = json_encode($tenHS);
+    $jsdetailStudent = json_encode($detailStudent);
+    $type = "parent";
+    //
+    $check = true;
+    $maPH = $_SESSION['MaPH'];
+    $tenPH = selectTenPH($connection, $maPH['MaPH']);
+    $detailParent = selectParent($connection, $maPH['MaPH']);
+    $jstenPH = json_encode($tenPH);
+    $jsdetailParent = json_encode($detailParent);
+    $type = "parent";
+}
+$jsType = json_encode($type);
+$jscheck = json_encode($check);
 
-
-
-
-
+$registerDone = false;
 $dataClass = dataClassById($malop, $connection);
 $dataSchedules = dataSchedulesByMaLop($malop, $connection);
 $nameTeacher = dataTeacherByMaLop($malop, $connection);
@@ -37,27 +81,50 @@ if ($dataClass['TrangThai'] == 'Chưa mở') {
 } else {
     $nameCondition = 'Đã đóng';
 }
-if (isset($_POST['check'])) {
+// if (isset($_POST['check'])) {
+//     if ($_SESSION['MaHS'] != null) {
+//         $mahs = $_SESSION['MaHS']['MaHS'];
+//         $maph = checkExitPH_HS($mahs, $connection);
+//         if ($maph) {
+
+
+//             $checkregister = createTabHS_LOP($mahs, $malop, $connection);
+
+//             $stRegister = $dataClass['SLHS'];
+//             setHSDANGKI($stRegister, $malop, $connection);
+
+//             if ($stRegister + 1 == $dataClass['SLHSToiDa']) {
+//                 setSLHSToiDa($malop, $connection);
+//             }
+//         }
+//     } else {
+//         header("Location: ../login_pages/login.php");
+//         exit();
+//     }
+// }
+function useRegisterConfirm($maHS, $maLop, $giamHP, $slhs, $connection)
+{
+    registToClass($maHS, $maLop, $giamHP, $connection);
+    updateStudentCount($maLop, $slhs, $connection);
+    echo "<meta http-equiv='refresh' content='0'>";
+}
+
+if (isset($_POST['register'])) {
     if ($_SESSION['MaHS'] != null) {
         $mahs = $_SESSION['MaHS']['MaHS'];
-        $maph = checkExitPH_HS($mahs, $connection);
-        if ($maph) {
 
+        $stRegister = $dataClass['SLHS'];
+        setHSDANGKI($stRegister, $malop, $connection);
 
-            $checkregister = createTabHS_LOP($mahs, $malop, $connection);
-
-            $stRegister = $dataClass['SLHS'];
-            setHSDANGKI($stRegister, $malop, $connection);
-
-            if ($stRegister + 1 == $dataClass['SLHSToiDa']) {
-                setSLHSToiDa($malop, $connection);
-            }
+        if ($stRegister + 1 == $dataClass['SLHSToiDa']) {
+            setSLHSToiDa($malop, $connection);
         }
     } else {
         header("Location: ../login_pages/login.php");
         exit();
     }
 }
+//hoc sinh tu dang ki
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if (isset($_POST['btn-logout'])) {
@@ -66,6 +133,33 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         session_unset();
         session_destroy();
         header("Location: ../home/home.php");
+    }
+    if (isset($_POST['childRegister'])) {
+        $mahs = $_POST['childRegister'];
+        $now = new DateTime();
+        $giamHP = 0;
+        $discount = getDiscount($malop, $connection);
+        if ($now > $discount['TGBatDau'] && $now < $discount['TGKetThuc']) {
+            $giamHP = $discount['GiamHocPhi'];
+        }
+        $countRegister = $dataClass['SLHS'] + 1;
+        if ($countRegister > $dataClass['SLHSToiDa']) {
+            return;
+        }
+        useRegisterConfirm($mahs, $malop, $giamHP, $countRegister, $connection);
+    }
+    if (isset($_POST['selfRegister'])) {
+        $now = new DateTime();
+        $giamHP = 0;
+        $discount = getDiscount($malop, $connection);
+        if ($now > $discount['TGBatDau'] && $now < $discount['TGKetThuc']) {
+            $giamHP = $discount['GiamHocPhi'];
+        }
+        $countRegister = $dataClass['SLHS'] + 1;
+        if ($countRegister > $dataClass['SLHSToiDa']) {
+            return;
+        }
+        useRegisterConfirm($mahs, $malop, $giamHP, $countRegister, $connection);
     }
 }
 
@@ -241,9 +335,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <div id="overlay">
                 <div id="box" class="">
                     <button id="close-btn">&times;</button>
-                    <?php $maph = false;
-                    if ($mahs != "") {
-                        $maph = checkExitPH_HS($mahs, $connection);
+                    <?php $checkExistChild = false;
+                    $checkRegistedChild = [];
+                    if ($check) {
+                        $checkExistChild = checkExistWithChild($maPH['MaPH'], $connection);
+                        $checkRegistedChild = checkRegistedChild($malop, $connection);
+                    }
+
+                    $jsonCheckRegistedChild = json_encode($checkRegistedChild);
+                    if ($mahs != "" || $maPH != "") {
                         $discount = discount($malop, $connection);
                         $day = date("Y/m/d");
                         $startTime = $discount['TGBatDau'];
@@ -264,22 +364,43 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             <p class="dialog-content-text">Bạn chưa đăng nhập tài khoản</p>
                             <p class="dialog-content-text">Vui lòng đăng nhập để tiếp tục thao tác: <a style="color: #0088cc;" href="../login_pages/login.php">Login</a></p>
                         </div>
-                    <?php
-
-
-                    elseif ($check && $maph) : ?>
-                        <div class="container-dialog">
-                            <p class="container-title">Thông báo!</p>
-                            <p class="dialog-content-text">Bạn đã đăng kí thành công</p>
-                            <p class="dialog-content-text"><?php if ($pr) {
-                                                                echo "Bạn đã được khuyến mại : ";
-                                                                echo $price;
-                                                            } ?></p>
-                        </div>
-                    <?php elseif (!$maph) : ?>
+                    <?php endif ?>
+                    <?php if ($check && !$checkExistChild) : ?>
                         <div class="container-dialog">
                             <h3 class="container-title">Thông báo!</h3>
-                            <p class="dialog-content-text">Bạn chưa liên kết tài khoản phụ huynh</p>
+                            <p class="dialog-content-text">Bạn chưa liên kết tài khoản của con</p>
+                        </div>
+                    <?php endif ?>
+                    <?php if ($check && $checkExistChild) : ?>
+                        <div class="container-dialog">
+                            <h3 class="container-title">Vui lòng chọn con để đăng kí!</h3>
+                            <div class="container-chosen-div">
+
+                            </div>
+                        </div>
+                    <?php endif ?>
+                </div>
+            </div>
+            <div class="dialog-wrap">
+                <div class="dialog-container">
+                    <?php if ($check && $type === "student") : ?>
+                        <div class="container-dialog">
+                            <h3 class="container-title">Thông báo!</h3>
+                            <p class="dialog-content-text">Bạn chắc chắn muốn đăng kí</p>
+                            <div class="dialog-content-btn-wrap">
+                                <button class="dialog-content-btn" id="close-btn-confirm">Hủy</button>
+                                <button class="dialog-content-btn" id="confirm-btn" onclick="dangki()">Xác nhận</button>
+                            </div>
+                        </div>
+                    <?php endif ?>
+                    <?php if ($check && $type === "parent") : ?>
+                        <div class="container-dialog">
+                            <h3 class="container-title">Thông báo!</h3>
+                            <p class="dialog-content-text">Bạn chắc chắn muốn đăng kí cho con</p>
+                            <div class="dialog-content-btn-wrap">
+                                <button class="dialog-content-btn" id="close-btn-confirm">Hủy</button>
+                                <button class="dialog-content-btn" id="confirm-btn">Xác nhận</button>
+                            </div>
                         </div>
                     <?php endif ?>
                 </div>
@@ -338,7 +459,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                     echo  $listschedules['Ngay'] . ' - ' . $listschedules['TGBatDau'] . '-' . $listschedules['TGKetThuc'];
                                     echo "<br/>";
                                 }
-                                ?></p>
+                                ?>
                             </td>
                         </tr>
                         <tr>
@@ -396,14 +517,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             </td>
                         </tr>
                     </table>
-                    <button id="register-btn" class="register-now-btn-bottom">
-                        <?php if (!$resultHSLOP) : ?>
+
+                    <?php if (!$resultHSLOP) : ?>
+                        <button type="button" id="register-btn" class="register-now-btn-bottom">
                             <span>Đăng kí lớp học ngay!</span>
-                        <?php endif ?>
-                        <?php if ($resultHSLOP) : ?>
+                        </button>
+                    <?php endif ?>
+
+                    <?php if ($resultHSLOP && $type === "student") : ?>
+                        <div class="text-register-bottom">
                             <span>Bạn đã đăng kí lớp này!</span>
-                        <?php endif ?>
-                    </button>
+                        </div>
+                    <?php endif ?>
                     <input style="display: none;" type="text" id="" name="deleteClass" value="helloToiDepTraiQuaDi">
                 </form>
             </div>
@@ -418,49 +543,68 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </footer>
 </body>
 <script src="../common/menubar.js"></script>
-
 <script>
+    var ten = null;
+    var detail = null;
+    var type = <?php print_r($jsType); ?> || "";
+    if (type === "student") {
+        ten = <?php print_r($jstenHS); ?>;
+        detail = <?php print_r($jsdetailStudent); ?>;
+    }
+    if (type === "parent") {
+        ten = <?php
+                print_r($jstenPH); ?>;
+        detail = <?php print_r($jsdetailParent); ?>;
+    }
     var check = <?php print_r($jscheck); ?>;
-    var tenHS = <?php print_r($jstenHS); ?>;
-    var detailStudent = <?php print_r($jsdetailStudent); ?>;
+
     if (check) {
-        menubarv2(tenHS[0].TenHS, detailStudent[0].GioiTinh, "student")
+        if (type === "student") {
+            menubarv2(ten[0].TenHS, detail[0].GioiTinh, "student");
+        }
+        if (type === "parent") {
+
+            menubarv2(ten[0].TenPH, detail[0].GioiTinh, "parent");
+        }
     }
 </script>
 <script>
+    var type = <?php print_r($jsType); ?> || "";
     const openBtn = document.getElementById('checkLoginButton');
     const overlay = document.getElementById('overlay');
     const box = document.getElementById('box');
     const closeBtn = document.getElementById('close-btn');
     const turnBack = document.getElementById('turn-back-btn');
     const registerBtn = document.getElementById("register-btn");
-
+    const dialogwrap = document.querySelector(".dialog-wrap");
+    const dialogCon = document.querySelector(".dialog-container");
     turnBack.onclick = () => {
         window.history.go(-1);
     }
-    registerBtn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        e.preventDefault();
-        overlay.classList.add('active');
-        box.classList.add('active');
-    });
-    openBtn.addEventListener('click', () => {
-        overlay.classList.add('active');
-        box.classList.add('active');
-    });
 
     closeBtn.addEventListener('click', () => {
         overlay.classList.remove('active');
         box.classList.remove('active');
-        location.reload();
+        dialogwrap.classList.remove('active');
+        dialogCon.classList.remove('active');
     });
+
+    dialogCon.onclick = (e) => {
+        e.stopPropagation();
+    }
+
+    dialogwrap.onclick = (e) => {
+        e.stopPropagation();
+        dialogwrap.classList.remove('active');
+        dialogCon.classList.remove('active');
+
+    }
 
     box.onclick = (e) => {
         e.stopPropagation();
     }
 
     overlay.onclick = (e) => {
-        console.log("out out 22222")
         e.stopPropagation();
         overlay.classList.remove('active');
         box.classList.remove('active');
@@ -480,25 +624,114 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         });
     });
 
+    function chonHocSinh(maHS) {
+        var form = document.createElement('form');
+        form.method = 'POST';
+        form.name = 'accept-form'
+
+        var input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = 'childRegister';
+        input.value = maHS;
+        form.appendChild(input);
+
+        document.body.appendChild(form);
+        form.submit(function(e) {
+            e.preventDefault()
+        });
+    }
+    registerBtn.onclick = (e) => {
+        onClickRegisterBtn(e);
+    }
+
+    function dangki() {
+        var form = document.createElement('form');
+
+        form.method = 'POST';
+        form.name = 'accept-form'
+
+        var input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = 'selfRegister';
+        input.value = "";
+        form.appendChild(input);
+
+        document.body.appendChild(form);
+        form.submit();
+    }
 
 
-    var noButton = document.getElementById('noButton');
+    function onClickRegisterBtn(e) {
+        switch (type) {
+            case "student": {
+                onOpenConfirmDialog(e);
+                break;
+            }
+            case "parent": {
+                //if()
+                e.stopPropagation();
+                e.preventDefault();
+                overlay.classList.add('active');
+                box.classList.add('active');
+                break;
+            }
+            default: {
+                e.stopPropagation();
+                e.preventDefault();
+                overlay.classList.add('active');
+                box.classList.add('active');
+                break;
+            }
+        }
+    }
 
-    var showButton = document.getElementById('showButtons');
-    var buttonContainer = document.getElementById('buttonContainer');
+    function onOpenConfirmDialog(e) {
+        e.stopPropagation();
+        e.preventDefault();
+        dialogCon.classList.add('active');
+        dialogwrap.classList.add('active');
+    }
+    const childListDiv = document.querySelector(".container-chosen-div");
+    const listChildrent = <?php print_r($jsStudentList) ?>;
+    const listStu = <?php print_r($jsonCheckRegistedChild) ?>;
 
-    showButton.addEventListener('click', function(event) {
-        buttonContainer.classList.toggle('hidden');
-        event.stopPropagation();
-    });
+    function showChildToSelect() {
+        listChildrent.forEach(function(child) {
+            let isRegist = listStu.find(stu => stu.MaHS === child.MaHS);
+            var nofiDiv = document.createElement('div');
+            nofiDiv.id = 'nofi';
+            nofiDiv.innerHTML =
+                `<button type="button" class="dialog-select-btn ${ isRegist ? "dialog-selected-item" :""}" onClick="chonHocSinh(` + child.MaHS + `)">` + child.TenHS + `</button>`;
+            childListDiv.appendChild(nofiDiv);
+        });
+    }
+    showChildToSelect();
+    if (type != "") {
+        const closeConfirm = document.querySelector("#close-btn-confirm");
+        closeConfirm.onclick = (e) => {
+            e.stopPropagation();
+            dialogwrap.classList.remove('active');
+            dialogCon.classList.remove('active');
+        }
+    }
 
-    buttonContainer.addEventListener('click', function(event) {
-        event.stopPropagation();
-    });
+    // var noButton = document.getElementById('noButton');
 
-    noButton.addEventListener('click', function() {
-        buttonContainer.classList.toggle('hidden');
-    });
+    // var showButton = document.getElementById('showButtons');
+    // var buttonContainer = document.getElementById('buttonContainer');
+
+    // // showButton.addEventListener('click', function(event) {
+    // //     buttonContainer.classList.toggle('hidden');
+    // //     event.stopPropagation();
+    // // });
+
+    // buttonContainer.addEventListener('click', function(event) {
+    //     event.stopPropagation();
+    // });
+
+    // noButton.addEventListener('click', function() {
+    //     buttonContainer.classList.toggle('hidden');
+    // });
 </script>
 
 </html>
