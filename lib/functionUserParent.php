@@ -284,7 +284,8 @@ function selectTenPH($connection, $magv)
         $list = $statement->fetchAll(PDO::FETCH_ASSOC);
 
         $connection = null;
-        return $list;
+        $ret = count($list) > 0 ? $list : [];
+        return $ret;
     } catch (PDOException $e) {
         echo $e->getMessage();
     }
