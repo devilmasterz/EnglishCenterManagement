@@ -30,6 +30,12 @@
 
 }
 .container-border{
+    min-width: 800px;
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #fff;
+    box-shadow: 0 0 10px rgba(0,0,0,0.2);
     border-radius: 12px;
     padding-bottom: 24px;
 }
@@ -160,4 +166,12 @@
     justify-content: center;
     flex-direction: column;
     align-items: center;
+}
+.selectItemsChild{
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+}
+.register-div-add{
+    min-width: 220px;
 }
