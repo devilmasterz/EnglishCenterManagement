@@ -1,9 +1,8 @@
 $(document).ready(function () {
   
-    // lắng nghe sự kiện changes của province select box
     $('#province').on('change', function () {
-        var province_id = $(this).val(); // this có nghĩa là đang ở province còn val là value của cái option đó
-        $.post('ajax_get_listClass.php',{idSelect:province_id},function(idSelect){
+        var province_id = $(this).val(); 
+        $.post('../jquery_ajax/ajax_get_listClass.php',{idSelect:province_id},function(idSelect){
             $('.class-container').html(idSelect);
        })
 
@@ -13,7 +12,7 @@ $(document).ready(function () {
         province_id: province_id
       };
 
-      $.post('ajax_get_searchClass.php',{data:data},function(response){
+      $.post('../jquery_ajax/ajax_get_searchClass.php',{data:data},function(response){
         $('.class-container').html(response);
    })
 
@@ -28,7 +27,7 @@ $(document).ready(function () {
             key: txt,
             province_id: province_id
           };
-        $.post('ajax_get_searchClass.php',{data:data},function(response){
+        $.post('../jquery_ajax/ajax_get_searchClass.php',{data:data},function(response){
              $('.class-container').html(response);
         })
     })

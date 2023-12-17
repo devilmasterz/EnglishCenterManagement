@@ -6,137 +6,16 @@ $dataClass = dataClassById($malop, $connection);
 $dataSchedules = dataSchedulesByMaLop($malop, $connection);
 $nameTeacher = dataTeacherByMaLop($malop, $connection);
 $result = listSchedules($connection);
-$nameCondition = '';
 
-if ($dataClass['TrangThai'] == 'Chưa mở') {
-    $nameCondition = 'Chưa mở';
-} else if ($dataClass['TrangThai'] == 'Đang mở') {
-    $nameCondition = 'Đang mở';
-} else {
-    $nameCondition = 'Đã đóng';
-}
-
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-
-    if (isset($_POST['deleteClass'])) {
-        $listMaHD =  selectMaHD($connection, $malop);
-        foreach ($listMaHD as $hd) {
-            deleteLSTHP($connection, $hd['MaHD']);
-        }
-        $result = deleteClassById($malop, $connection);
-        header("Location: ListClass.php");
-        exit();
-    }
+///
+$listStudents = ListStudentByClass($malop, $connection);
+$listAddStudent = getListStudents($connection, $malop);
+$listTime = ListTimeAttendance($malop, $connection);
 
 
-    if (isset($_POST['classcode'])) {
-        $classcode = $_POST['classcode'];
-        $classname = $_POST['classname'];
-        $classAge = trim($_POST['classAge']);
-        $classTimeOpen = $_POST['classTimeOpen'];
-        $price = trim($_POST['price']);
-        $numberlessons = trim($_POST['numberlessons']);
-        $students = trim($_POST['students']);
-        $SelectCondition = $_POST['SelectCondition'];
-        updateClassbyID(
-            $classcode,
-            $classname,
-            $classAge,
-            $classTimeOpen,
-            0,
-            $students,
-            $price,
-            $numberlessons,
-            0,
-            $SelectCondition,
-            $connection
-        );
-        $schedules0 = $_POST['schedules0'];
 
-        if (isset($_POST['schedules1'])) {
-            $schedules1 = $_POST['schedules1'];
-        } else {
-            $schedules1 = "";
-        }
-        if (isset($_POST['schedules2'])) {
-            $schedules2 = $_POST['schedules2'];
-        } else {
-            $schedules2 = "";
-        }
-        $arr = array();
-        $dem = 0;
-        foreach ($dataSchedules as $ListSchedules) {
-            $arr[$dem] = $ListSchedules['idSchedules'];
-            $dem++;
-        }
+$timeTeacher = timeTeacherOther($connection, $malop);
 
-        if ($arr[0] != $schedules0) {
-            updateClass_SchedulesByID($malop, $arr[0], $schedules0, $connection);
-        }
-
-        if ($schedules1 != "") {
-            if ($arr[1] != $schedules1) {
-                updateClass_SchedulesByID($malop, $arr[1], $schedules1, $connection);
-            }
-        }
-        if ($schedules2 != "") {
-            if ($arr[2] != $schedules2) {
-                updateClass_SchedulesByID($malop, $arr[2], $schedules2, $connection);
-            }
-        }
-        // kiem tra giao vien cos trungf vs giaos vien dc sua ko 
-        if (isset($_POST['teachers'])) {
-            $newTeacher = $_POST['teachers'];
-        }
-        foreach ($nameTeacher as $nameTeachers) {
-            $teacher =  $nameTeachers['MaGV'];
-            $TeacherSalarie = $nameTeachers['TienTraGV'];
-        };
-
-        if (isset($_POST['TeacherSalarie'])) {
-            $newTeacherSalarie = $_POST['TeacherSalarie'];
-        }
-        updateClass_TeacherByID($malop, $teacher, $newTeacher, $TeacherSalarie, $newTeacherSalarie, $connection);
-
-        if (isset($_POST['startDiscount'])) {
-            $startDiscount = $_POST['startDiscount'];
-        } else {
-            $startDiscount = '2023-1-1';
-        }
-
-        if (isset($_POST['endDiscount'])) {
-            $endDiscount = $_POST['endDiscount'];
-        } else {
-            $endDiscount = '2023-1-1';
-        }
-
-        if (isset($_POST['discountpercent'])) {
-            $Discount = $_POST['discountpercent'];
-        } else {
-            $Discount = 0;
-        }
-
-        editDiscountFull($malop, $startDiscount, $endDiscount, $Discount, $connection);
-
-        header("Location: DetailsClass.php?maLop=$classcode");
-        exit();
-    }
-
-    if (isset($_POST['discount1'])) {
-        $listStudents = ListStudentByClass($malop, $connection);
-        $i = 1;
-        foreach ($listStudents as $list) {
-            $mahsDiscount = $list['MaHS'];
-            $x = 'discount' . $i++;
-            $discount = $_POST[$x];
-
-            $discount = str_replace('%', '', $discount);
-            editDiscount($discount, $mahsDiscount, $malop, $connection);
-        }
-        header("Location: DetailsClass.php?maLop=$malop");
-        exit();
-    }
-}
 ?>
 <!DOCTYPE html>
 
@@ -147,7 +26,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <title>Chi tiết lớp học</title>
     <link rel="stylesheet" href="../assets/css/manage.css">
     <link rel="stylesheet" href="../assets/css/manageClass.css">
+    <!-- start boot strap  -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- start end strap  -->
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/morris.js/0.5.1/morris.css">
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
     <style>
         /* .checkbox 
   display: none; /* Ẩn checkbox gốc */
@@ -237,416 +121,245 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </ul>
         </nav>
     </header>
-    <main>
-        <!-- Thong tin chi tiet -->
-        <div class="modal-bg">
-            <!-- <?php
-                    $listStudents = ListStudentByClass($malop, $connection);
-                    $i = 1;
-                    foreach ($listStudents as $list) {
-                        $mahsDiscount = $list['MaHS'];
-                        $x = 'discount' . $i++;
-                        $discount = $_POST[$x];
-                        echo $x;
-                        echo '<br>';
-                        echo $mahsDiscount;
-                        echo '<br>';
-                        echo $discount;
-                        echo '<br>';
-                        // editDiscount($discount,$mahsDiscount,$malop,$connection);
-                    }
-                    ?> -->
-            <div class="modal-content">
-                <div class="container">
-                    <h1 style="text-align: center;color:#0088cc;">Thông tin chi tiết lớp học <?php echo $malop; ?></h1>
-                    <form id="form_delete" name="form_delete" method="post">
-                        <table>
-                            <tr>
-                                <th>Mã lớp:</th>
-                                <td id="teacher-id"><?php echo $malop; ?></td>
-                            </tr>
-                            <tr>
-                                <th>Tên lớp:</th>
-                                <td id="teacher-gender" contenteditable="false"><?php echo $dataClass['TenLop']; ?></td>
-                            </tr>
-                            <tr>
-                                <th>Lứa tuổi:</th>
-                                <td id="" contenteditable="false"><?php echo $dataClass['LuaTuoi']; ?></td>
-                            </tr>
-                            <tr>
-                                <th>Thời gian bắt đầu khóa học:</th>
-                                <td id="teacher-date" contenteditable="false"><?php echo convertDateFormat($dataClass['ThoiGian']); ?></td>
-                            </tr>
-                            <tr>
-                                <th>Lịch học:</th>
-                                <td id="teacher-age" contenteditable="false">
-                                    <?php
-                                    foreach ($dataSchedules as $listschedules) {
-                                        echo  $listschedules['day_of_week'] . ' - ' . $listschedules['start_time'] . '-' . $listschedules['end_time'];
-                                        echo "<br>";
-                                    }
-                                    ?></p>
-                                </td>
-                            </tr>
-                            <tr>
-                                <th>Học phí/buổi:</th>
-                                <td id="teacher-qq" contenteditable="false"><?php echo numberWithCommas($dataClass['HocPhi']) . ' VND'; ?></td>
-                            </tr>
-                            <tr>
-                                <th>Tổng số buổi đã dạy:</th>
-                                <td id="" contenteditable="false"><?php echo $dataClass['SoBuoiDaToChuc']; ?></td>
-                            </tr>
-                            <tr>
-                                <th>Tổng số buổi học:</th>
-                                <td id="" contenteditable="false"><?php echo $dataClass['SoBuoi']; ?></td>
-                            </tr>
-                            <tr>
-                                <th>Số lượng học sinh đăng kí:</th>
-                                <td id="" contenteditable="false"><?php echo $dataClass['SLHS']; ?></td>
-                            </tr>
-                            <tr>
-                                <th>Số lượng học sinh tối đa:</th>
-                                <td id="" contenteditable="false"><?php echo $dataClass['SLHSToiDa']; ?></td>
-                            </tr>
-                            <tr>
-                                <th>Tên giáo viên</th>
-                                <td id="teacher-class" contenteditable="false">
-                                    <?php
-                                    foreach ($nameTeacher as $nameTeachers) {
 
-                                        echo $nameTeachers['TenGV'];
-                                    };
-                                    ?>
-                                </td>
-                            </tr>
-                            <tr>
-                                <th>Lương giáo viên/buổi :</th>
-                                <td>
-                                    <?php
-                                    foreach ($nameTeacher as $nameTeachers) {
-                                        $TeacherSalarie = $nameTeachers['TienTraGV'];
-                                    };
+    <!--5 12 2023 start -->
+    <div>
+        <div class="card p-3 shadow" style="">
+            <!-- <h2 class="text-center p-3 fw-bold"><?php echo $malop; ?></h2> -->
+            <nav>
+                <div class="nav nav-tabs mb-3" id="nav-tab" role="tablist">
+                    <button class="nav-link fw-bold active" id="nav-home-tab" data-bs-toggle="tab" data-bs-target="#nav-home" type="button" role="tab" aria-controls="nav-home" aria-selected="true">Thông tin chi tiết</button>
+                    <button class="nav-link fw-bold" id="nav-profile-tab" data-bs-toggle="tab" data-bs-target="#nav-profile" type="button" role="tab" aria-controls="nav-profile" aria-selected="false">Danh sách học sinh</button>
+                    <button class="nav-link fw-bold" id="nav-contact-tab" data-bs-toggle="tab" data-bs-target="#nav-contact" type="button" role="tab" aria-controls="nav-contact" aria-selected="false">Quản lý điểm danh</button>
+                </div>
+            </nav>
+            <div class="tab-content p-3 border bg-light" id="nav-tabContent">
+                <div class="tab-pane fade active show" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
+                    <div class="modal-content">
+                        <h1 class="fw-bold" style="color: #0088cc;">Thông tin chi tiết lớp <?php echo $malop ?></h1>
+                        <div class="container px-md-5" style="box-shadow: none;">
 
-                                    echo numberWithCommas($TeacherSalarie) . ' VND';
-                                    ?>
-                                </td>
-                            </tr>
+                            <form id="form_delete" name="form_delete" method="post">
 
-                            <tr>
-                                <th>Khuyến mại : </th>
-                                <td>
-                                    <?php
-                                    $discount = getDiscount($malop, $connection);
+                            </form>
+                            <div class="detailButton">
+                                <input type="submit" id='delete' name="delete" value="Xóa Lớp">
+                                <button id="open-btn">Sửa Lớp</button>
+                            </div>
+                        </div>
+                    </div>
 
-                                    if (empty($discount['GiamHocPhi'])) {
-                                        echo '0%';
-                                    } else {
-                                        echo $discount['GiamHocPhi'] . '%';
-                                    }
-                                    ?>
-                                </td>
-                            </tr>
-                        </table>
-                        <input style="display: none;" type="text" id="" name="deleteClass" value="helloToiDepTraiQuaDi">
-                    </form>
-                    <div class="detailButton">
-                        <input type="submit" id='delete' name="delete" value="Xóa Lớp">
-                        <button id="open-btn">Sửa Lớp</button>
-                        <button id="opten-listStudents">Danh sách học sinh</button>
-                        <button id="opten-listAttendance">Quản lý điểm danh</button>
+                    <!-- sửa thông tin lớp -->
+                    <div id="overlay">
+                        <div id="box">
+                            <button id="close-btn">&times;</button>
+                            <div class="">
+                                <h3 class="fw-bold mt-2 text-center" style="color: #0088cc;">Sửa lớp học</h3>
+                                <form class="row" id="form_edit" name="form_edit" method="post">
+
+
+                                </form>
+                                <input type="submit" id='btn-update' name="update" value="Cập nhật">
+                                <div id="card-container"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- danh sách học sinh -->
+                <div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
+                    <div id="">
+                        <div class="px-5" id="">
+                            <div class="">
+                                <h1 class="fw-bold" style="color: #0088cc;">Danh sách học sinh lớp <?php echo $malop ?></h1>
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>Họ và tên</th>
+                                            <th>Ngày sinh</th>
+                                            <th>Giới tính</th>
+                                            <th>Địa chỉ</th>
+                                            <th>Số điện thoại</th>
+                                            <th>Số buổi tham gia học</th>
+                                            <th>Giảm học phí</th>
+                                            <th>Xóa học sinh</th>
+                                        </tr>
+                                    </thead>
+
+
+
+                                    <form id="form_discount" name="form_discount" method="post">
+                                        <tbody style="position: relative;" id="tbody-student">
+
+                                        </tbody>
+
+                                    </form>
+
+
+
+
+                                    <button id="addStudent" class="px-3 py-1 border-0">Thêm học sinh</button>
+                                    <input class="px-3 py-2 me-2" type="submit" id="discount" style="margin-left:65%" value="Cập nhật giảm học phí">
+                                    <!-- thêm học sinh -->
+                                    <style>
+                                        #overlay-addStudent {
+                                            display: flex;
+                                            justify-content: center;
+                                            align-items: center;
+                                            opacity: 0;
+                                            visibility: hidden;
+                                            position: fixed;
+                                            top: 0;
+                                            left: 0;
+                                            width: 100%;
+                                            height: 100vh;
+                                            overflow: auto;
+                                            background-color: rgba(0, 0, 0, 0.5);
+                                            z-index: 9999;
+                                            transition: opacity 0.3s, visibility 0.3s;
+                                        }
+
+                                        #overlay-addStudent.active {
+                                            opacity: 1;
+                                            visibility: visible;
+                                        }
+
+                                        #box-addStudent {
+                                            opacity: 0;
+                                            transform: scale(1.5);
+                                            transition: opacity 0.3s, transform 0.3s;
+                                            background-color: #ffffff;
+                                            width: 60%;
+                                            height: 98vh;
+                                            overflow: auto;
+                                            padding: 0px 30px;
+                                            border-radius: 5px;
+                                        }
+
+                                        #box-addStudent.active {
+                                            opacity: 1;
+                                            transform: scale(1);
+                                        }
+
+                                        #box-addStudent #close-btn-addStudent {
+                                            position: absolute;
+                                            top: 5px;
+                                            right: 5px;
+                                            background: none;
+                                            border: none;
+                                            font-size: 50px;
+                                            cursor: pointer;
+                                            color: #0088cc;
+                                        }
+                                    </style>
+
+
+                                    <div class="add-success">
+                                        <img src="../assets/images/icon_success.png" alt="" style=" width: 40px;">
+                                        <h3>Thêm học sinh thành công!</h3>
+                                    </div>
+
+
+                                    <div id="overlay-addStudent">
+                                        <div id="box-addStudent" style="text-align: center;">
+                                            <button id="close-btn-addStudent">&times;</button>
+                                            <div class="">
+                                                <h3 class="fw-bold mt-4 text-center" style="color: #0088cc;">Thêm học sinh</h3>
+
+
+                                                <form class="h-100" id="form-addStudent-submit" method="post">
+
+                                                    <select style="height: 500px;" multiple name="addstudents[]" id="select-student">
+
+                                                    </select>
+                                                </form>
+                                                <input class="btn" id="addStudent-submit" style="border: groove;margin-top: 20px;" type="submit" value="Thêm học sinh">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <div style="position: absolute; right: 130px; top:220px" id="div-btn-delete">
+
+                    </div>
+                </div>
+                <div class="tab-pane fade" id="nav-contact" role="tabpanel" aria-labelledby="nav-contact-tab">
+                    <!-- dữ liệu điểm danh của lớp  -->
+                    <div id="">
+                        <button onclick="showAddDateDD()" class="">Thêm điểm danh</button>
+                        <div id="" class="d-flex justify-content-center">
+                            <div class="w-75">
+                                <h1 class="fw-bold" style="color: #0088cc;">Quản lý điểm danh lớp <?php echo $malop ?></h1>
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>STT</th>
+                                            <th>Thời gian</th>
+                                            <th>Sĩ số</th>
+
+                                        </tr>
+                                    </thead>
+                                    <tbody id="listdday">
+
+
+
+                                    </tbody>
+                                </table>
+
+                                <!-- hiện ra box của time chi tiết -->
+                                <div id="div-detail">
+
+                                </div>
+                                <!-- hiển thị box thêm điểm danh + ngày -->
+                                <div id="addboxDateDD">
+                                    <div class="w-75" id="boxDateDD" style="max-width: 900px;">
+                                        <button id="closeboxDateDD">&times;</button>
+                                        <div class="">
+                                            <h1 class="fw-bold mt-3">Thêm điểm danh </h1>
+                                            <form method="post" id="form-add-attend">
+                                                <div class="d-flex" style="display: flex!important;justify-content: space-around;align-items: center;">
+
+                                                    <div>
+                                                        <strong style="margin-right: 20px;">Thời gian:</strong> <input type="date" name="addTime" id="addTime">
+                                                        <label id="err-add" style="color:red; font-size:13px ; font-style: italic "></label>
+                                                    </div>
+
+
+                                                    <input class="w-auto" type="submit" id="btn-add-attend" style="padding:10px 20px" value="Thêm">
+                                                </div>
+
+                                                <table>
+                                                    <thead>
+                                                        <tr>
+                                                            <th>STT</th>
+                                                            <th>Mã học sinh</th>
+                                                            <th>Tên học sinh</th>
+                                                            <th style="text-align: center;  ">Tham gia lớp học</th>
+                                                        </tr>
+                                                    </thead>
+
+                                                    <tbody id="tbody-addAttend">
+
+
+
+                                                    </tbody>
+
+                                                </table>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
 
 
-        <!-- sửa thông tin lớp -->
-        <div id="overlay">
-            <div id="box">
-                <button id="close-btn">&times;</button>
-                <div class="">
-                    <h1 style="color: #0088cc;">Sửa lớp học</h1>
-                    <form id="form_edit" name="form_edit" method="post">
-                        <label for="classcode">Mã lớp:<label id="lbclasscode" style="color:red; font-size:13px ; font-style: italic "></label></label>
-                        <input type="text" id="classcode" name="classcode" readonly value="<?php echo $malop ?>">
+    </div>
 
-                        <label for="classname">Tên lớp:<label id="lbclassname" style="color:red; font-size:13px ; font-style: italic "></label></label>
-                        <input type="text" id="classname" name="classname" value="<?php echo $dataClass['TenLop']; ?>">
-
-                        <label for="classAge">Lứa tuổi:<label id="lbclassAge" style="color:red; font-size:13px ; font-style: italic "></label></label>
-                        <input type="text" id="classAge" name="classAge" value="<?php echo $dataClass['LuaTuoi']; ?>">
-
-                        <label for="classTimeOpen">Thời gian bắt đầu khóa học:<label id="lbclassTimeOpen" style="color:red; font-size:13px ; font-style: italic "></label></label>
-                        <input type="date" id="classTimeOpen" name="classTimeOpen" value="<?php echo $dataClass['ThoiGian']; ?>">
-                        <br>
-
-                        <label for="schedules">Lịch học:<label id="lbschedules" style="color:red; font-size:13px ; font-style: italic "></label></label>
-                        <br>
-                        <?php $i = 0 ?>
-                        <?php foreach ($dataSchedules as $listschedules) :
-                            $maLich = $listschedules['idSchedules'];
-                        ?>
-                            <select name="schedules<?php echo $i; ?>" id="schedules<?php echo $i; ?>">
-                                <option value="<?php echo $maLich ?>">
-                                    <?php echo  $listschedules['day_of_week'] . ' - ' . $listschedules['start_time'] . '-' . $listschedules['end_time']; ?>
-                                </option>
-                                <?php foreach ($result as $results) :
-                                    $maSchedules = $results['idSchedules'];
-                                ?>
-                                    <option id="" value="<?php echo $maSchedules ?>">
-                                        <?php echo  $results['day_of_week'] . ' - ' . $results['start_time'] . '-' . $results['end_time']; ?>
-                                    </option>
-                                <?php endforeach ?>
-                            </select>
-                            <br>
-                            <?php $i++; ?>
-                        <?php endforeach ?>
-
-                        <br>
-                        <label for="price">Học phí:<label id="lbprice" style="color:red; font-size:13px ; font-style: italic "></label></label>
-                        <input type="text" id="price" name="price" value="<?php echo $dataClass['HocPhi']; ?>">
-
-                        <label for="numberlessons">Tổng số buổi học:<label id="lbnumberlessons" style="color:red; font-size:13px ; font-style: italic "></label></label>
-                        <input type="text" id="numberlessons" name="numberlessons" value="<?php echo $dataClass['SoBuoi']; ?>">
-
-                        <label for="students">Số lượng sinh viên tối đa:<label id="lbstudents" style="color:red; font-size:13px ; font-style: italic "></label></label>
-                        <input type="text" id="students" name="students" value="<?php echo $dataClass['SLHSToiDa']; ?>">
-
-                        <label for="teacher">Giáo viên:<label id="lbteacher" style="color:red; font-size:13px ; font-style: italic "></label></label>
-                        <br><select name="teachers" id="teachers">
-                            <option value="<?php
-                                            foreach ($nameTeacher as $nameTeachers) {
-                                                echo $nameTeachers['MaGV'];
-                                            };
-                                            ?>">
-                                <?php
-                                foreach ($nameTeacher as $nameTeachers) {
-                                    echo $nameTeachers['TenGV'] . ' - ' . $nameTeachers['TrinhDo'];
-                                };
-                                ?>
-                            </option>
-                            <?php $listTeacher = listTeacher($connection); ?>
-                            <?php foreach ($listTeacher as $listTeachers) : ?>
-                                <option value="<?php echo $listTeachers['MaGV'] ?>">
-                                    <?php echo $listTeachers['TenGV'] . ' - ' . $listTeachers['TrinhDo'] ?>
-                                </option>
-                            <?php endforeach; ?>
-                        </select>
-                        <br>
-                        <label for="TeacherSalarie">Lương giáo viên:<label id="lbTeacherSalarie" style="color:red; font-size:13px ; font-style: italic "></label></label>
-                        <input type="text" id="TeacherSalarie" name="TeacherSalarie" value="<?php
-                                                                                            foreach ($nameTeacher as $nameTeachers) {
-                                                                                                $TeacherSalarie = $nameTeachers['TienTraGV'];
-                                                                                                if ($TeacherSalarie == null) {
-                                                                                                    $TeacherSalarie = 0;
-                                                                                                }
-                                                                                            };
-
-                                                                                            echo $TeacherSalarie;
-                                                                                            ?>">
-                        <br>
-                        <label for="condition">Trạng thái:<label class="lbStyle" id="lbcondition" style="color:red; font-size:13px ; font-style: italic "></label></label>
-                        <br><select name="SelectCondition" id="SelectCondition">
-                            <option value="<?php echo $dataClass['TrangThai'] ?>">
-                                <?php echo $nameCondition ?>
-                            </option>
-                            <option value="Chưa mở">Chưa mở</option>
-                            <option value="Đang mở">Đang mở</option>
-                            <option value="Đã đóng">Đã đóng</option>
-                        </select>
-                        <br>
-                        <label for="condition">Giảm giá:<label class="lbStyle" id="lbcondition" style="color:red; font-size:13px ; font-style: italic "></label></label>
-                        <p>
-                            <?php
-                            $discount = getDiscount($malop, $connection);
-
-                            if (empty($discount['GiamHocPhi'])) {
-                                echo '0%';
-                            }
-                            ?>
-                            <?php
-                            if (empty($discount['GiamHocPhi'])) : ?>
-                                <button style="background-color: chartreuse; border: 1px solid #fff; border-radius:5px ; padding: 5px 4px;" type="button" onclick="addDiscount()">Thêm khuyến mại</button>
-                        <div id="addDiscount">
-                        </div>
-
-                    <?php else : ?><br>
-
-                        <label class="lbStyle" id="lbdiscount" style="color:red; font-size:13px ; font-style: italic "></label>
-                        Thời gian bắt đầu : <input type="date" name="startDiscount" id="startDiscount" value="<?php echo $discount['TGBatDau'] ?>"><br>
-                        Thời gian kết thúc : <input type="date" name="endDiscount" id="endDiscount" value="<?php echo $discount['TGKetThuc'] ?>"><br>
-                        Khuyến mại : <input type="text" name="discountpercent" id="discountpercent" style="width: 40%;" value="<?php echo $discount['GiamHocPhi'] ?>">
-                        <label id="lbvv1"></label>
-                    <?php endif ?>
-
-
-
-
-
-                    </p>
-
-
-
-                    <input type="submit" id='update' name="update" value="Sửa">
-                    </form>
-
-                    <div id="card-container"></div>
-                </div>
-            </div>
-        </div>
-
-
-
-        <!-- Danh sách học sinh -->
-        <div id="overlayStudent">
-            <div id="boxStudent">
-                <button id="closebtnstudents">&times;</button>
-                <div class="">
-                    <h1 style="color: #0088cc;">Danh sách học sinh lớp <?php echo $malop ?></h1>
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Họ và tên</th>
-                                <th>Ngày sinh</th>
-                                <th>Giới tính</th>
-                                <th>Địa chỉ</th>
-                                <th>Số điện thoại</th>
-                                <th>Tổng số buổi nghỉ học</th>
-                                <th>Giảm học phí</th>
-                            </tr>
-                        </thead>
-                        <form id="form_discount" name="form_discount" method="post">
-                            <tbody>
-                                <?php $listStudents = ListStudentByClass($malop, $connection);
-                                $jsonListStudents = json_encode($listStudents);
-                                $discountNumber = 1;
-                                ?>
-                                <?php foreach ($listStudents as $data) : ?>
-                                    <tr>
-                                        <td><?php echo $data['TenHS'] ?></td>
-                                        <td><?php echo convertDateFormat($data['NgaySinh']) ?></td>
-                                        <td><?php echo $data['GioiTinh'] ?></td>
-                                        <td><?php echo $data['DiaChi'] ?></td>
-                                        <td><?php echo $data['SDT'] ?></td>
-                                        <td><?php
-                                            $mahs = $data['MaHS'];
-                                            $numberAbsences = numberAbsences($mahs, $malop, $connection);
-                                            echo $numberAbsences['Absences'];
-                                            ?></td>
-                                        <td>
-                                            <input name="discount<?php echo $discountNumber++ ?>" style="border:none" type="text" value="<?php
-                                                                                                                                            $discount = discount($mahs, $malop, $connection);
-                                                                                                                                            echo $discount['GiamHocPhi'];
-                                                                                                                                            echo '%';
-                                                                                                                                            ?>">
-                                        </td>
-                                    </tr>
-                                <?php endforeach ?>
-                            </tbody>
-                            <input type="submit" id="discount" value="Sửa">
-                        </form>
-                    </table>
-                </div>
-            </div>
-        </div>
-
-        <!-- dữ liệu điểm danh của lớp  -->
-        <div id="overlayAttendance">
-            <div id="boxAttendance">
-                <button id="closebtnAttendance">&times;</button>
-                <div class="">
-                    <h1 style="color: #0088cc;">Quản lý điểm danh lớp <?php echo $malop ?></h1>
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>STT</th>
-                                <th>Thời gian</th>
-                                <th>Sĩ số</th>
-                            </tr>
-                        </thead>
-                        <tbody id="listdday">
-
-                            <?php $listTime = ListTimeAttendance($malop, $connection);
-                            $j = 1;
-                            ?>
-                            <?php foreach ($listTime as $data) : ?>
-                                <tr id='time<?php echo $j ?>' onclick="showDetails(<?php echo $j; ?>)">
-                                    <td><?php echo $j++ ?></td>
-                                    <td><?php echo convertDateFormat($data['ThoiGian']) ?></td>
-                                    <td><?php
-                                        $totalStudent = TotalStudentByTime($data['ThoiGian'], $malop, $connection);
-                                        echo $totalStudent['total'] . '/' . $dataClass['SLHS']  ?></td>
-                                </tr>
-
-                            <?php endforeach ?>
-
-                        </tbody>
-                    </table>
-
-                    <!-- hiện ra box của time chi tiết -->
-                    <?php $j = 1;
-                    foreach ($listTime as $data) :
-                        $maTime = $data['ThoiGian'];
-                    ?>
-                        <div class="detailTimeAttendance" id="details-<?php echo $j ?>">
-                            <div id="boxTime<?php echo $j ?>">
-                                <button id="closebtnboxTime<?php echo $j ?>">&times;</button>
-                                <div class="">
-                                    <h1>Chi tiết điểm danh của ngày </h1>
-                                    <h2><?php echo $data['ThoiGian']; ?></h2>
-                                    <table>
-                                        <thead>
-                                            <tr>
-                                                <th>STT</th>
-                                                <th>Mã học sinh</th>
-                                                <th>Tên học sinh</th>
-                                                <th>Tham gia lớp học</th>
-                                            </tr>
-                                        </thead>
-                                        <form id="dd" name="dd" method="post">
-                                            <tbody>
-                                                <?php $k = 1;
-                                                $getCodeStudentByTimeandCodeClass = getCodeStudentByTimeandCodeClass($malop, $maTime, $connection);
-                                                foreach ($getCodeStudentByTimeandCodeClass as $dataStudentTime) : ?>
-                                                    <tr>
-                                                        <td><?php echo $k++ ?></td>
-                                                        <td><?php echo $dataStudentTime['MAHS'] ?></td>
-                                                        <td><?php echo  getStudentByid($dataStudentTime['MAHS'], $connection)['TenHS']; ?></td>
-                                                        <td>
-                                                            <div class="squaredcheck">
-                                                                <input onclick="showCheckBox(<?php echo $dataStudentTime['MAHS']; ?>)" <?php echo ($dataStudentTime['dd'] == 1) ? 'checked' : ''; ?> type="checkbox" id="squaredcheck<?php echo $dataStudentTime['MAHS'] ?>" id="<?php echo $dataStudentTime['MAHS']; ?>" name="<?php echo $dataStudentTime['MAHS']; ?>" value="<?php echo $dataStudentTime['dd']; ?>" class="checkbox <?php echo ($dataStudentTime['dd'] == 1) ? 'green' : 'red'; ?>">
-                                                                <?php echo ($dataStudentTime['dd'] == 1) ? '' : ''; ?>
-                                                                <label for="squaredcheck<?php echo $dataStudentTime['MAHS'] ?>"></label>
-
-                                                            </div>
-                                                        </td>
-                                                    </tr>
-                                                <?php endforeach ?>
-                                            </tbody>
-                                            <?php
-                                            $arr = array();
-                                            $dem = 0;
-                                            foreach ($getCodeStudentByTimeandCodeClass as $dataTime) {
-                                                $arr[$dem] = $dataTime['MAHS'];
-                                                $dem++;
-                                            }
-                                            $listDD = json_encode($arr);
-                                            ?>
-                                            <!-- <input type="submit" id="submitDiemDanh" value="Sửa" name="submitDiemDanh"> -->
-                                        </form>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
-                        <?php $j++ ?>
-                    <?php endforeach ?>
-                </div>
-            </div>
-        </div>
-
-
-
-    </main>
     <!-- thống kê -->
     <div id="piechart_3d" style="width: 100%; height: 500px;"></div>
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js">
@@ -663,9 +376,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 ['Đi học', 'Nghỉ học'],
                 <?php $a = getCountDD(1, $malop, $connection);
                 $b = getCountDD(0, $malop, $connection);
-              
-                ?>
-                ['Đi học', <?php echo $a['dihoc'] ?>],
+
+                ?>['Đi học', <?php echo $a['dihoc'] ?>],
                 ['Nghỉ học', <?php echo $b['dihoc'] ?>],
             ]);
 
@@ -678,94 +390,78 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             chart.draw(data, options);
         }
     </script>
+    <!-- end -->
     <footer>
         <p>© 2023 Hệ thống quản lý giáo dục. All rights reserved.</p>
     </footer>
 
-    <div class="delete-Option">
-        <h2 style="color: #fff;">Bạn có chắc chắn xóa lớp không</h2>
-        <button id="yesDelete">Có</button>
-        <button id="noDelete">Không</button>
+
+    <div class="add-success2">
+        <img src="../assets/images/icon_success.png" alt="" style=" width: 40px;">
+        <h3>Thêm điểm danh thành công!</h3>
     </div>
 
-    <div class="delete-success">
-        <img src="../assets/images/icon_success.png" alt="" style=" width: 40px;">
-        <h3>Xóa lớp thành công!</h3>
-    </div>
     <div class="update-success">
         <img src="../assets/images/icon_success.png" alt="" style=" width: 40px;">
-        <h3>Thay đổi thành công!</h3>
+        <h3>Cập nhật thay đổi thành công!</h3>
     </div>
-    <script src="../assets/js/DetailClass.js"></script>
+    <div class="delete-success">
+        <img src="../assets/images/icon_success.png" alt="" style=" width: 40px;">
+        <h3>Xóa thành công!</h3>
+    </div>
+    <!-- <div style="padding: 10px; max-width: 400px; height:300px" class="delete-Option">
+        <h3 style="color: #fff;">Bạn có chắc chắn xóa lớp không</h3>
+        <button class="btn" id="yesDelete">Có</button>
+        <button class="btn" id="noDelete">Không</button>
+    </div> -->
+    <div id="modal-ques">
+        <div class="delete-ques">
+            <img src="../assets/images/Help-icon.png" alt="" style=" width: 40px;">
+            <h5>Việc xóa lớp sẽ ảnh hưởng đến dữ liệu. Bạn chắc chắn muốn xóa?</h5>
+            <div style="display:flex ;justify-content: space-evenly;align-items: center">
+
+                <input type="submit" style="background-color:#52a95f; height: 44px;width: 80px" id="noDelete" value="Hủy bỏ"></input>
+                <input type="submit" style="background-color: #d52828;  height: 44px;width: 80px" id="yesDelete" value="Xóa"></input>
+
+            </div>
+        </div>
+    </div>
+
+    <div id="modal-ques2">
+        <div class="delete-ques">
+            <img src="../assets/images/Help-icon.png" alt="" style=" width: 40px;">
+            <h5>Bạn chắc chắn muốn xóa học sinh ra khỏi lớp?</h5>
+            <div style="display:flex ;justify-content: space-evenly;align-items: center">
+
+                <input type="submit" style="background-color:#52a95f; height: 44px;width: 80px" id="noDeleteStudent" value="Hủy bỏ"></input>
+                <input type="submit" style="background-color: #d52828;  height: 44px;width: 80px" id="yesDeleteStudent" value="Xóa"></input>
+
+            </div>
+        </div>
+    </div>
+
+    <div id="modal-ques3">
+        <div class="delete-ques">
+            <img src="../assets/images/Help-icon.png" alt="" style=" width: 40px;">
+            <h5>Bạn chắc chắn muốn dữ liệu điểm danh này?</h5>
+            <div style="display:flex ;justify-content: space-evenly;align-items: center">
+
+                <input type="submit" style="background-color:#52a95f; height: 44px;width: 80px" id="noDeleteAttend" value="Hủy bỏ"></input>
+                <input type="submit" style="background-color: #d52828;  height: 44px;width: 80px" id="yesDeleteAttend" value="Xóa"></input>
+
+            </div>
+        </div>
+    </div>
 </body>
 <script>
-    function showDetails(id) {
-        var detailsBox = document.getElementById('details-' + id);
-        const boxTime = document.getElementById('boxTime' + id);
-        detailsBox.classList.add('active');
-        boxTime.classList.add('active');
+    var malop = <?php echo json_encode($malop) ?>;
+    var jsonListStudents = <?php echo json_encode($listStudents) ?>;
+    var listtimeTeacher = <?php echo  json_encode($timeTeacher); ?>;
+    var listAddStudent = <?php echo  json_encode($listAddStudent); ?>;
+    var listTime = <?php echo  json_encode($listTime); ?>;
 
-        const closebtnboxTime = document.getElementById('closebtnboxTime' + id);
-        closebtnboxTime.addEventListener('click', () => {
-            detailsBox.classList.remove('active');
-            boxTime.classList.remove('active');
-        });
-    }
-
-    function showCheckBox(id) {
-        var checkbox = document.getElementById('squaredcheck' + id);
-        checkbox.addEventListener('change', function() {
-            if (this.checked) {
-                this.classList.add('green');
-            } else {
-                this.classList.remove('green');
-            }
-        });
-
-    };
-
-    var jsonListStudents = <?php echo $jsonListStudents ?>;
-
-    const submit_discount = document.getElementById('discount');
-    submit_discount.addEventListener('click', function(event) {
-        const formdiscount = document.getElementById('form_discount');
-        event.preventDefault();
-        // for(var i = 1 ; i < jsonListStudents.length() ; i++){
-        //     const classcode = document.getElementById('discount').value;
-        // }
-        document.querySelector('.update-success').style.display = 'block';
-        setTimeout(function() {
-            document.querySelector('.update-success').style.display = 'none';
-            formdiscount.submit();
-        }, 1000);
-
-    })
-    var buttonClicked = false;
-
-    function addDiscount() {
-        buttonClicked = true;
-        var container = document.getElementById("addDiscount");
-        var card = document.createElement("div");
-        card.className = "card";
-        card.innerHTML = `
-		<label class="" id="lbdiscount" style="color:red; font-size:13px ; font-style: italic "></label>
-							Thời gian bát đầu : <input type="date" name="startDiscount" id="startDiscount" ><br>
-							Thời gian kết thúc: <input type="date" name="endDiscount" id="endDiscount"> <br>
-							<input type="text" name="discountpercent" id="discountpercent" placeholder="Nhập % khuyến mại">
-                            <label id="lbvv2"></label>
-							<button class="delete-button" onclick="deleteDiscount(this)">Xóa khuyến mại :</button>
-  `;
-        container.appendChild(card);
-    }
-
-    function deleteDiscount(button) {
-        buttonClicked = false;
-        var index = button.getAttribute("data-index");
-        var card = button.parentNode;
-        var container = card.parentNode;
-        container.removeChild(card);
-
-    }
+    
 </script>
+<script src="../assets/js/DetailClass.js"></script>
 
 </html>

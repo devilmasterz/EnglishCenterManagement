@@ -29,28 +29,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     
 
-    if (isset($_POST['date-delete'])) {
-        $date = $_POST['date-delete'];
-        $class = $_POST['class-delete'];
-
-        $listdiemDanh = selectddByLopTG($connection, $class, $date);
-        for ($i = 0; $i < count($listdiemDanh); $i++) {
-            if ($listdiemDanh[$i]['dd'] == 0) {
-                $soBuoiNghi =  selectSoBuoiNghi($connection, $listdiemDanh[$i]['MaHS'], $class);
-                $so =   $soBuoiNghi[0]['SoBuoiNghi'] - 1;
-                updateSoBuoiNghi($connection, $so, $class,  $listdiemDanh[$i]['MaHS']);
-            }
-        }
-
-        deleteDiemDanh($connection, $class, $date);
-        $la =  selectSoBuoiDaToChuc($connection, $class);
-        $soBDTC =  $la[0]['SoBuoiDaToChuc'] - 1;
-
-
-        updateSoBuoiDaToChuc($connection, $soBDTC, $class);
-
-        header("Location: homeTeacher.php");
-    }
     if (isset($_POST['btn-logout'])) {
 
         session_start();

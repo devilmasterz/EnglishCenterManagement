@@ -24,13 +24,13 @@
                         } ?>
                     </p>
                     <div class='column'>
-                        <p>Thời gian:
+                        <p>Lịch học:
                         </p>
                         <div class='center'>
                             <?php
                             foreach ($schedules as $listschedules) {
 
-                                echo $listschedules['day_of_week'] . ' - ' . $listschedules['start_time'] . '-' . $listschedules['end_time'];
+                                echo $listschedules['Ngay'] . ' - ' . $listschedules['TGBatDau'] . '-' . $listschedules['TGKetThuc'];
                                 echo "<br>";
                             }
                             ?>
@@ -78,7 +78,7 @@
                             <?php
                             foreach ($schedules as $listschedules) {
 
-                                echo $listschedules['day_of_week'] . ' - ' . $listschedules['start_time'] . '-' . $listschedules['end_time'];
+                                echo $listschedules['Ngay'] . ' - ' . $listschedules['TGBatDau'] . '-' . $listschedules['TGKetThuc'];
                                 echo "<br>";
                             }
                             ?>
@@ -127,7 +127,7 @@
                             <?php
                             foreach ($schedules as $listschedules) {
 
-                                echo $listschedules['day_of_week'] . ' - ' . $listschedules['start_time'] . '-' . $listschedules['end_time'];
+                                echo $listschedules['Ngay'] . ' - ' . $listschedules['TGBatDau'] . '-' . $listschedules['TGKetThuc'];
                                 echo "<br>";
                             }
                             ?>

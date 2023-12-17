@@ -393,8 +393,11 @@ document.getElementById('btn-add-submit').addEventListener('click', function (ev
 
     event.preventDefault();
 
-
+   
     var time =  document.getElementById('time-add').value ;
+
+
+
     if(!time){
         document.getElementById('error-time').innerHTML =  "Chưa nhập ngày tháng";
         return;
@@ -402,6 +405,17 @@ document.getElementById('btn-add-submit').addEventListener('click', function (ev
     else
     document.getElementById('error-time').innerHTML =  "";
 
+    var check = false;
+    ds_diemdanh.forEach(data => {
+
+        if (data['ThoiGian'] == time) {
+            document.getElementById("error-time").textContent = "*Thời gian đã có dữ liệu điểm danh!";
+            check = true;
+        }
+    });
+    if (check) {
+        return;
+    }
 
     var checkboxes = document.querySelectorAll('#attendance-add tbody input[type="checkbox"]');
 

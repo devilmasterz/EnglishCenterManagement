@@ -5,7 +5,7 @@ include "../lib/database.php";
 // danh sách lịch học
 function listSchedules($connection)
 {
-    $sql = "SELECT * FROM schedules";
+    $sql = "SELECT * FROM lichhoc";
     try {
         $stmt = $connection->query($sql);
         $data = array();
@@ -21,7 +21,7 @@ function listSchedules($connection)
 // danh sách giáo viên
 function listTeacher($connection)
 {
-    $sql = "SELECT * FROM giaovien order by TenGV asc" ;
+    $sql = "SELECT * FROM giaovien order by TenGV asc";
     try {
         $stmt = $connection->query($sql);
         $data = array();
@@ -96,7 +96,7 @@ function CreateTeacher_Class($magv, $MaLop, $TienTraGV, $connection)
 // tạo class_lich hoc
 function CreateSchedules_Class($idSchedules, $MaLop, $connection)
 {
-    $sql = "insert into schedules_class values(?,?)";
+    $sql = "insert into lop_lichhoc values(?,?)";
     try {
         $statement = $connection->prepare($sql);
         $statement->bindParam(1, $idSchedules);
@@ -137,13 +137,13 @@ function teacherByidClass($idClass, $connection)
     }
 }
 
-// truy vấn dữ liệu ra lịch học với mã lớp
+// truy vấn dữ liệu ra lịch học với mã lớp MaLich
 function dataSchedulesByMaLop($malop, $connection)
 {
-    $sql = "SELECT schedules.idSchedules, schedules.day_of_week , schedules.start_time , schedules.end_time
-    from schedules_class
-    INNER JOIN lop on schedules_class.MaLop = lop.MaLop
-    INNER JOIN schedules on schedules_class.idSchedules = schedules.idSchedules
+    $sql = "SELECT lichhoc.MaLich, lichhoc.Ngay , lichhoc.TGBatDau , lichhoc.TGKetThuc
+    from lop_lichhoc
+    INNER JOIN lop on lop_lichhoc.MaLop = lop.MaLop
+    INNER JOIN lichhoc on lop_lichhoc.MaLich = lichhoc.MaLich
     WHERE lop.MaLop = ?;";
     try {
         $statement = $connection->prepare($sql);
@@ -214,7 +214,7 @@ function deleteClassById($malop, $connection)
     $sql1 = "DELETE from gv_lop where MaLop = ?";
     $sql5 = "DELETE from diemdanh where MaLop = ?";
     $sql6 = "DELETE from hs_lop where MaLop = ?";
-    $sql2 = "DELETE from schedules_class where MaLop = ?";
+    $sql2 = "DELETE from lop_lichhoc where MaLop = ?";
     $sql3 = "DELETE from lop where MaLop = ?";
     $sql4 = "DELETE from lopghp where MaLop = ?";
     $sql7 = "DELETE from hdhocphi where MaLop = ?";
@@ -243,7 +243,7 @@ function deleteClassById($malop, $connection)
 }
 
 // truy vấn ma hdhocphi cua lop
-function selectMaHD( $connection, $malop)
+function selectMaHD($connection, $malop)
 {
     $sql = "SELECT MaHD FROM  hdhocphi   WHERE MaLop = ?";
     try {
@@ -258,13 +258,12 @@ function selectMaHD( $connection, $malop)
 }
 /// xoa lsthp
 
-function deleteLSTHP($connection,$mahd)
+function deleteLSTHP($connection, $mahd)
 {
     $sql = "delete  from lsthp where MaHD = ? ";
     try {
         $statement = $connection->prepare($sql);
         $statement->execute([$mahd]);
-
     } catch (PDOException $e) {
         $e->getMessage();
     }
@@ -295,11 +294,11 @@ function updateClassbyID(
         $statement->bindParam(1, $TenLop);
         $statement->bindParam(2, $LuaTuoi);
         $statement->bindParam(3, $ThoiGian);
-     
+
         $statement->bindParam(4, $SLHSToiDa);
         $statement->bindParam(5, $HocPhi);
         $statement->bindParam(6, $SoBuoi);
-    
+
         $statement->bindParam(7, $TrangThai);
         $statement->bindParam(8, $MaLop);
         $statement->execute();
@@ -308,47 +307,55 @@ function updateClassbyID(
     }
 }
 // update lop_lịch
-function updateClass_SchedulesByID($malop, $idSchedules, $newIdSchedules, $connection)
+function updateClass_SchedulesByID($malop, $newIdSchedules, $connection)
 {
-    $sql = "delete from schedules_class where  MaLop = ? and idSchedules = ?";
-    $sql2 = "insert into schedules_class values(?,?)";
-    try {
-        $statement1 = $connection->prepare($sql);
-        $statement2 = $connection->prepare($sql2);
 
-        $statement1->bindParam(1, $malop);
-        $statement1->bindParam(2, $idSchedules);
+    $sql2 = "insert into lop_lichhoc values(?,?)";
+    try {
+
+        $statement2 = $connection->prepare($sql2);
 
         $statement2->bindParam(1, $newIdSchedules);
         $statement2->bindParam(2, $malop);
-
-        $statement1->execute();
         $statement2->execute();
     } catch (PDOException $e) {
         echo $e->getMessage();
     }
 }
 
-// update lop_teacher
-function updateClass_TeacherByID($malop, $idTeacher, $newIdteacher, $TeacherSalarie, $newTeacherSalarie, $connection)
+
+
+function delete_SchedulesByID($malop, $connection)
 {
-    $sql = "delete from gv_lop where MAGV = ? and MaLop = ? and TienTraGV = ?";
-    $sql2 = "insert into gv_lop values(?,?,?)";
+    $sql = "delete from lop_lichhoc where  MaLop = ?";
+
     try {
         $statement1 = $connection->prepare($sql);
-        $statement2 = $connection->prepare($sql2);
 
-        $statement1->bindParam(1, $idTeacher);
-        $statement1->bindParam(2, $malop);
-        $statement1->bindParam(3, $TeacherSalarie);
 
-        $statement2->bindParam(1, $newIdteacher);
-        $statement2->bindParam(2, $malop);
-        $statement2->bindParam(3, $newTeacherSalarie);
+        $statement1->bindParam(1, $malop);
+
 
 
         $statement1->execute();
-        $statement2->execute();
+    } catch (PDOException $e) {
+        echo $e->getMessage();
+    }
+}
+// update lop_teacher
+function updateClass_TeacherByID($malop, $idTeacher, $TeacherSalarie, $connection)
+{
+    $sql = "update gv_lop set MaGV = ? , TienTraGV =? where MaLop =?";
+
+    try {
+        $statement1 = $connection->prepare($sql);
+
+        $statement1->bindParam(1, $idTeacher);
+        $statement1->bindParam(2, $TeacherSalarie);
+        $statement1->bindParam(3, $malop);
+
+
+        $statement1->execute();
     } catch (PDOException $e) {
         echo $e->getMessage();
     }
@@ -487,6 +494,24 @@ function numberAbsences($mahs, $malop, $connection)
     }
 }
 
+
+function numberAttend($mahs, $malop, $connection)
+{
+    $sql = "select COUNT(*) as Attend
+            FROM diemdanh
+            WHERE MAHS = ? AND dd = true and MaLop = ?;";
+    try {
+        $statement = $connection->prepare($sql);
+        $statement->bindParam(1, $mahs);
+        $statement->bindParam(2, $malop);
+        $statement->execute();
+        $data = $statement->fetch(PDO::FETCH_ASSOC);
+        return $data;
+    } catch (PDOException $e) {
+        echo $e->getMessage();
+    }
+}
+
 // danh sách điểm danh của lớp học
 function ListTimeAttendance($malop, $connection)
 {
@@ -503,7 +528,7 @@ function ListTimeAttendance($malop, $connection)
 }
 
 // đểm số lượng sinh viên đi học bằng thơi gian hôm đó
-function TotalStudentByTime($time,$malop, $connection)
+function TotalStudentByTime($time, $malop, $connection)
 {
     $sql = "select count(dd) as total from diemdanh where dd = 1 and ThoiGian = ? and MaLop = ?";
     try {
@@ -536,13 +561,33 @@ function convertDateFormat($dateString)
 // truy vấn ra giáo viên đã dạy trong thời gian nào 
 function timeTeacher($connection)
 {
-    $sql = "select schedules_class.idSchedules ,gv_lop.MAGV
-        FROM schedules_class
-        inner JOIN lop on schedules_class.MaLop = lop.MaLop
+    $sql = "select lop_lichhoc.MaLich ,gv_lop.MAGV
+        FROM lop_lichhoc
+        inner JOIN lop on lop_lichhoc.MaLop = lop.MaLop
         INNER JOIN gv_lop on gv_lop.MaLop = lop.MaLop
         WHERE gv_lop.MAGV in (SELECT giaovien.MaGV from giaovien )";
     try {
         $statement = $connection->prepare($sql);
+        $statement->execute();
+        $data = $statement->fetchAll(PDO::FETCH_ASSOC);
+        return $data;
+    } catch (PDOException $e) {
+        echo $e->getMessage();
+    }
+}
+
+
+
+function timeTeacherOther($connection, $malop)
+{
+    $sql = "select lop_lichhoc.MaLich ,gv_lop.MAGV
+        FROM lop_lichhoc
+        inner JOIN lop on lop_lichhoc.MaLop = lop.MaLop
+        INNER JOIN gv_lop on gv_lop.MaLop = lop.MaLop
+        WHERE gv_lop.MAGV in (SELECT giaovien.MaGV from giaovien ) and gv_lop.MaLop !=?";
+    try {
+        $statement = $connection->prepare($sql);
+        $statement->bindParam(1, $malop);
         $statement->execute();
         $data = $statement->fetchAll(PDO::FETCH_ASSOC);
         return $data;
@@ -570,7 +615,8 @@ function getCodeStudentByTimeandCodeClass($malop, $time, $connection)
 
 // thêm giảm học phí vs $malop
 
-function insertDiscount($startDiscount,$endDiscount,$discount,$malop,$connection,){
+function insertDiscount($startDiscount, $endDiscount, $discount, $malop, $connection)
+{
     $sql = "insert into lopghp values(?,?,?,?)";
     try {
         $statement = $connection->prepare($sql);
@@ -584,15 +630,16 @@ function insertDiscount($startDiscount,$endDiscount,$discount,$malop,$connection
     }
 }
 
-function getDiscount($malop,$connection){
+function getDiscount($malop, $connection)
+{
     $sql = "select * from lopghp where MaLop = ?";
-    try{
+    try {
         $statement = $connection->prepare($sql);
         $statement->bindParam(1, $malop);
         $statement->execute();
         $data = $statement->fetch(PDO::FETCH_ASSOC);
         return $data;
-    }catch(PDOException $e) {
+    } catch (PDOException $e) {
         $e->getMessage();
     }
 }
@@ -644,7 +691,8 @@ function discount($mahs, $Malop, $connection)
     }
 }
 
-function editDiscount($discount,$mahs, $Malop, $connection){
+function editDiscount($discount, $mahs, $Malop, $connection)
+{
     $sql = "update hs_lop set GiamHocPhi = ?  where MaHS = ? and MaLop = ?";
     try {
         $statement = $connection->prepare($sql);
@@ -658,9 +706,10 @@ function editDiscount($discount,$mahs, $Malop, $connection){
 }
 
 
-function editDiscountFull($malop,$startTime,$endTime,$discount, $connection){
-     $sql = "update lopghp set TGBatDau = ? , TGKetThuc = ? , GiamHocPhi = ? where MaLop = ?";
-     try {
+function editDiscountFull($malop, $startTime, $endTime, $discount, $connection)
+{
+    $sql = "update lopghp set TGBatDau = ? , TGKetThuc = ? , GiamHocPhi = ? where MaLop = ?";
+    try {
         $statement = $connection->prepare($sql);
         $statement->bindParam(1, $startTime);
         $statement->bindParam(2, $endTime);
@@ -672,3 +721,199 @@ function editDiscountFull($malop,$startTime,$endTime,$discount, $connection){
     }
 }
 
+
+// danh sách học sinh
+
+function getListStudents($connection, $malop)
+{
+    $sql = "SELECT * FROM hocsinh WHERE MaHS NOT IN (SELECT MaHS FROM hs_lop WHERE MaLop = '$malop')";
+    try {
+        $stmt = $connection->query($sql);
+        $data = array();
+        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            $data[] = $row;
+        }
+        return $data;
+    } catch (PDOException $e) {
+        $e->getMessage();
+    }
+    return null;
+}
+
+// thêm học sinh vào lớp
+function addStudentsClass($mahs, $malop, $connection)
+{
+    $sql = "insert into hs_lop values(?,?,0,0)";
+
+    try {
+        $statement = $connection->prepare($sql);
+        $statement->bindParam(1, $mahs);
+        $statement->bindParam(2, $malop);
+        $statement->execute();
+
+
+
+        $sqlUpdate = "UPDATE Lop SET SLHS = SLHS + 1 WHERE MaLop = ?";
+        $statementUpdate = $connection->prepare($sqlUpdate);
+        $statementUpdate->bindParam(1, $malop);
+        $statementUpdate->execute();
+    } catch (PDOException $e) {
+        $e->getMessage();
+    }
+}
+
+function deletedStudentsClass($mahs, $malop, $connection)
+{
+    $sql = "delete from hs_lop where MaHS = ? and MaLop = ?";
+
+    try {
+        $statement = $connection->prepare($sql);
+        $statement->bindParam(1, $mahs);
+        $statement->bindParam(2, $malop);
+        $statement->execute();
+
+        $deleteSuccess = $statement->execute();
+
+        if ($deleteSuccess) {
+            $sqlUpdate = "UPDATE Lop SET SLHS = SLHS - 1 WHERE MaLop = ?";
+            $statementUpdate = $connection->prepare($sqlUpdate);
+            $statementUpdate->bindParam(1, $malop);
+            $statementUpdate->execute();
+        }
+    } catch (PDOException $e) {
+        $e->getMessage();
+    }
+}
+
+// xóa thoi gian diem danh cua 1 hs
+function deleteDiemdanhHS($malop, $mahs, $connection)
+{
+    $sql = "delete from diemdanh WHERE MaLop = ? AND MaHS = ?";
+    try {
+        $statement = $connection->prepare($sql);
+        $statement->bindParam(1, $malop);
+        $statement->bindParam(2, $mahs);
+        $statement->execute();
+    } catch (PDOException $e) {
+        echo $e->getMessage();
+    }
+}
+
+// Thay Hieu diem danh ho em 
+function editdiemdanhClass($malop, $mahs, $thoigian, $dd, $connection)
+{
+    $sql = "UPDATE diemdanh SET dd = ? WHERE MaLop = ? AND MaHS = ? AND ThoiGian = ?";
+    try {
+        $statement = $connection->prepare($sql);
+        $statement->bindParam(1, $dd);
+        $statement->bindParam(2, $malop);
+        $statement->bindParam(3, $mahs);
+        $statement->bindParam(4, $thoigian);
+        $statement->execute();
+    } catch (PDOException $e) {
+        echo $e->getMessage();
+    }
+}
+
+function updatediemdanhStudent($malop, $mahs, $checkbox, $connection)
+{
+    if ($checkbox == 1) {
+        $sql = "UPDATE hs_lop SET SoBuoiNghi = SoBuoiNghi - 1 WHERE MaLop = ? and MaHS = ?";
+    } else {
+        $sql = "UPDATE hs_lop SET SoBuoiNghi = SoBuoiNghi + 1 WHERE MaLop = ? and MaHS = ?";
+    }
+
+    try {
+        $statement = $connection->prepare($sql);
+        $statement->bindParam(1, $malop);
+        $statement->bindParam(2, $mahs);
+        $statement->execute();
+    } catch (PDOException $e) {
+        echo $e->getMessage();
+    }
+}
+
+function deletediemdanhStudent($malop, $mahs, $checkbox, $connection)
+{
+    if ($checkbox == 0) {
+        $sql = "UPDATE hs_lop SET SoBuoiNghi = SoBuoiNghi - 1  WHERE MaLop = ? and MaHS = ?";
+
+
+        try {
+            $statement = $connection->prepare($sql);
+            $statement->bindParam(1, $malop);
+            $statement->bindParam(2, $mahs);
+            $statement->execute();
+        } catch (PDOException $e) {
+            echo $e->getMessage();
+        }
+    }
+}
+
+// xóa thoi gian diem danh cua 1 lop
+function deletediemdanhClass($malop, $thoigian, $connection)
+{
+    $sql = "delete from diemdanh WHERE MaLop = ? AND ThoiGian = ?";
+    try {
+        $statement = $connection->prepare($sql);
+        $statement->bindParam(1, $malop);
+        $statement->bindParam(2, $thoigian);
+
+        $statement->execute();
+    } catch (PDOException $e) {
+        echo $e->getMessage();
+    }
+}
+
+// thêm thời ngan + điểm danh của lớp
+function adddiemdanhClassTime($malop, $mahs, $thoigian, $dd, $connection)
+{
+    $sql = "insert into diemdanh values(?,?,?,?)";
+
+    try {
+        $statement = $connection->prepare($sql);
+        $statement->bindParam(1, $malop);
+        $statement->bindParam(2, $mahs);
+        $statement->bindParam(3, $thoigian);
+        $statement->bindParam(4, $dd);
+        $statement->execute();
+
+
+
+        if ($dd == 0) {
+            $sqlUpdate = "UPDATE hs_lop SET SoBuoiNghi = SoBuoiNghi + 1 WHERE MaLop = ? and MaHS = ?";
+            $statementUpdate = $connection->prepare($sqlUpdate);
+            $statementUpdate->bindParam(1, $malop);
+            $statementUpdate->bindParam(2, $mahs);
+            $statementUpdate->execute();
+        }
+    } catch (PDOException $e) {
+        echo $e->getMessage();
+    }
+}
+
+///cap nhat sobuoitochuc
+
+function updateSoBuoiTC($malop, $connection)
+{
+    $sql2 = "UPDATE lop set SoBuoiDaToChuc = SoBuoiDaToChuc + 1 where MaLop = ?";
+    try {
+        $statement2 = $connection->prepare($sql2);
+        $statement2->bindParam(1, $malop);
+        $statement2->execute();
+    } catch (PDOException $e) {
+        echo $e->getMessage();
+    }
+}
+
+function deleteBuoiTC($malop, $connection)
+{
+    $sql2 = "UPDATE lop set SoBuoiDaToChuc = SoBuoiDaToChuc - 1 where MaLop = ?";
+    try {
+        $statement2 = $connection->prepare($sql2);
+        $statement2->bindParam(1, $malop);
+        $statement2->execute();
+    } catch (PDOException $e) {
+        echo $e->getMessage();
+    }
+}

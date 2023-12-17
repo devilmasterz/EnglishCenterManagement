@@ -19,7 +19,6 @@ foreach ($listClass as $dataCodeClass) {
 };
 $listClassJson = json_encode($arr);
 
-
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 	if (isset($_POST['classcode'])) {
 		$classcode = trim($_POST['classcode']);
@@ -40,13 +39,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 			$schedules2 = "schedules2";
 		}
 
-		$price = str_replace(',', '', $_POST['price']); 
+		$price = str_replace(',', '', $_POST['price']);
 		$numberlessons = trim($_POST['numberlessons']);
 		$students = trim($_POST['students']);
 
 		$teachers = $_POST['teachers'];
 		$maLop = CreateClass($classcode, $classname, $classAge, $classTimeOpen, 0, $students, $price, $numberlessons, 0, $condition, $connection);
 		if ($maLop != null) {
+
+			// for($i=0; i<=10)
 			$schedulesClass0 = CreateSchedules_Class($schedules0, $maLop, $connection);
 			if ($schedules1 != "schedules1") {
 				$schedulesClass1 = CreateSchedules_Class($schedules1, $maLop, $connection);
@@ -55,7 +56,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 				$schedulesClass2 = CreateSchedules_Class($schedules2, $maLop, $connection);
 			}
 			$tientraGV = str_replace(',', '', $_POST['TeacherSalarie']);
-			
+
 			$teacherClass = CreateTeacher_Class($teachers, $maLop, $tientraGV, $connection);
 			if ($teacherClass && isset($_POST['startDiscount']) && isset($_POST['endDiscount']) && isset($_POST['discountpercent'])) {
 				insertDiscount($_POST['startDiscount'], $_POST['endDiscount'], $_POST['discountpercent'], $maLop, $connection);
@@ -67,8 +68,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 		}
 	}
 }
-
-
 ?>
 
 <!DOCTYPE html>
@@ -80,6 +79,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 	<title>Quản lý hệ thống giáo dục</title>
 	<link rel="stylesheet" href="../assets/css/manage.css">
 	<link rel="stylesheet" href="../assets/css/manageClass.css">
+	<!-- start boot strap  -->
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+	<!-- start end strap  -->
 	<script src="https://code.jquery.com/jquery-3.6.4.js"></script>
 	<script src="../assets/js/ajaxListClass.js"></script>
 	<style>
@@ -130,127 +133,124 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 			<h1 style="color: #0088cc;">Danh sách lớp học</h1>
 			<!-- lớp on -->
 			<div class="class-container" id="district">
-				<?php
-				if ($dataClassOnOff != null) :
-					foreach ($dataClassOnOff as $datas) :
-						
-						$maLop = $datas['MaLop'];
-						$nameTeacher = dataTeacherByMaLop($maLop, $connection);
-						$schedules = dataSchedulesByMaLop($maLop, $connection); ?>
-						<a class='class' href='DetailsClass.php?maLop=<?php echo $maLop ?>'>
-							<div>
-								<div class='class-code1'>
-									<?php echo $datas['MaLop'] ?>
-								</div>
-								<div class='info'>
-									<h2>
-										<?php echo  $datas['TenLop'] ?>
-									</h2>
-									<p>Giảng viên:
-										<?php foreach ($nameTeacher as $nameTeachers) {
-											echo	 $nameTeachers['TenGV'];
-										} ?>
-									</p>
-									<div class='column'>
-										<p>Thời gian:
-										</p>
-										<div class='center'>
-											<?php
-											foreach ($schedules as $listschedules) {
 
-												echo $listschedules['day_of_week'] . ' - ' . $listschedules['start_time'] . '-' . $listschedules['end_time'];
-												echo "<br>";
-											}
-											?>
-										</div>
-									</div>
-
-									<p>Lứa tuổi:
-										<?php echo  $datas['LuaTuoi'] ?>
-									</p>
-									<p>Số lượng học sinh:
-										<?php echo $datas['SLHS'] . ' / ' . $datas['SLHSToiDa'] ?>
-									</p>
-								</div>
-							</div>
-							<div class='details'>Xem chi tiết</div>
-						</a>
-					<?php endforeach ?>
-				<?php endif ?>
 			</div>
-
+			<style>
+				#box {}
+			</style>
 			<div id="overlay">
 				<div id="box">
 					<button id="close-btn">&times;</button>
 					<div class="">
-						<h1 style="color: #0088cc;">Thêm lớp học</h1>
+						<h1 class="fw-bold mt-4" style="color: #0088cc;">Thêm lớp học</h1>
 						<form id="form_add" name="form_add" method="post">
-							<label for="classcode">Mã lớp:<label class="lbStyle" id="lbclasscode" style="color:red; font-size:13px ; font-style: italic "></label></label>
-							<input type="text" id="classcode" name="classcode" placeholder="Nhập mã lớp...">
+							<div class="row">
+								<div class="col-md-6">
+									<label for="classcode" class="fw-bold">Mã lớp:<label class="lbStyle" id="lbclasscode" style="color:red; font-size:13px ; font-style: italic "></label></label>
+									<input type="text" id="classcode" name="classcode" placeholder="Nhập mã lớp...">
+								</div>
 
-							<label for="classname">Tên lớp:<label class="lbStyle" id="lbclassname" style="color:red; font-size:13px ; font-style: italic "></label></label>
-							<input type="text" id="classname" name="classname" placeholder="Nhập tên lớp...">
-
-							<label for="classAge">Lứa tuổi:<label class="lbStyle" id="lbclassAge" style="color:red; font-size:13px ; font-style: italic "></label></label>
-							<br><input style="width:40%" type="text" id="classAge" name="classAge" placeholder="Nhập lứa tuổi...">
-							<br>
-							<label for="classTimeOpen">Thời gian bắt đầu khóa học:</label>
-							<input type="date" id="classTimeOpen" name="classTimeOpen" placeholder="Nhập thời gian..."><label id="lbclassTimeOpen" style="color:red; font-size:13px ; font-style: italic "></label>
-							<br>
-
-							<label for="schedules">Lịch học:<label class="lbStyle" id="lbschedules" style="color:red; font-size:13px ; font-style: italic "></label></label>
-							<br><select name="schedules0" id="schedules0">
-								<option value="">Thời gian</option>
-								<?php foreach ($result as $results) : ?>
-									<option style="height: 30px;" <?php if (isset($_POST['schedules0']) && $_POST['schedules0'] == $results['idSchedules']) echo 'selected' ?> value="<?php echo $results['idSchedules']  ?>">
-
-										<?php echo $results['day_of_week'] . ' - ' . $results['start_time'] . '-' . $results['end_time']   ?>
-									</option>
-								<?php endforeach; ?>
-							</select>
-
-							<button style="background-color: chartreuse; border: 1px solid #fff; border-radius:5px ; padding: 5px 4px;" type="button" onclick="addCard()">Thêm lịch học</button>
-							<div id="addSchedules"></div>
+								<div class="col-md-6">
+									<label for="classname" class="fw-bold">Tên lớp:<label class="lbStyle" id="lbclassname" style="color:red; font-size:13px ; font-style: italic "></label></label>
+									<input type="text" id="classname" name="classname" placeholder="Nhập tên lớp...">
+								</div>
 
 
-							<br>
-							<label for="price">Học phí/buổi:<label class="lbStyle" id="lbprice" style="color:red; font-size:13px ; font-style: italic "></label></label>
-							<br><input style="width:40%" type="text" id="price" name="price" placeholder="Nhập học phí..." oninput="formatNumber(this)" >
-							<br>
-							<label for="numberlessons">Tổng số buổi học:<label class="lbStyle" id="lbnumberlessons" style="color:red; font-size:13px ; font-style: italic "></label></label>
-							<br><input style="width:40%" type="text" id="numberlessons" name="numberlessons" placeholder="Nhập số buổi học...">
-							<br>
-							<label for="students">Số lượng sinh viên tối đa:<label class="lbStyle" id="lbstudents" style="color:red; font-size:13px ; font-style: italic "></label></label>
-							<br><input style="width:40%" type="text" id="students" name="students" placeholder="Nhập số lượng sinh viên...">
-							<br>
-							<label for="teacher">Giáo viên:<label class="lbStyle" id="lbteacher" style="color:red; font-size:13px ; font-style: italic "></label></label>
-							<br>
-							<select name="teachers" id="teachers">
-								<option value="">Tên giáo viên</option>
-								<?php foreach ($listTeacher as $listTeachers) : ?>
-									<option value="<?php echo $listTeachers['MaGV'] ?>">
-										<?php echo $listTeachers['TenGV'] . ' - ' . $listTeachers['TrinhDo'] ?>
-									</option>
-								<?php endforeach; ?>
-							</select>
-							<br><label for="TeacherSalarie">Lương giáo viên/buổi:<label class="lbStyle" id="lbTeacherSalarie" style="color:red; font-size:13px ; font-style: italic "></label></label>
-							<br> <input style="width:40%" type="text" id="TeacherSalarie" name="TeacherSalarie" placeholder="Nhập lương giáo viên" oninput="formatNumber(this)">
-							<br>
-							<label for="condition">Trạng thái:<label class="lbStyle" id="lbcondition" style="color:red; font-size:13px ; font-style: italic "></label></label>
-							<br><select name="SelectCondition" id="SelectCondition">
-								<option value="">Trạng thái</option>
-								<option value="Chưa mở">Chưa mở</option>
-								<option value="Đang mở">Đang mở</option>
-								<option value="Đã đóng">Đã đóng</option>
-							</select>
-							<br>
+								<div class="col-md-6">
+									<label for="classAge" class="fw-bold mb-2">Lứa tuổi:<label class="lbStyle" id="lbclassAge" style="color:red; font-size:13px ; font-style: italic "></label></label>
+									<br><input style="padding: 12px; outline: none; border: 1px solid #ccc;" class="w-100" type="number" id="classAge" name="classAge" placeholder="Nhập lứa tuổi...">
+								</div>
 
-							<button style="background-color: chartreuse; border: 1px solid #fff; border-radius:5px ; padding: 5px 4px; margin-bottom: 10px;" type="button" onclick="addDiscount()">Thêm khuyến mại</button>
-							<div id="addDiscount">
+								<div class="col-md-6">
+									<label for="price" class="fw-bold">Học phí/buổi:<label class="lbStyle" id="lbprice" style="color:red; font-size:13px ; font-style: italic "></label></label>
+									<input type="text" id="price" name="price" placeholder="Nhập học phí..." oninput="formatNumber(this)">
+								</div>
+
+								<div class="col-md-6">
+									<label for="classTimeOpen" class="fw-bold mb-2">Thời gian bắt đầu khóa học:</label><label id="lbclassTimeOpen" style="color:red; font-size:13px ; font-style: italic "></label>
+
+									<input style="width: 100%;" type="date" id="classTimeOpen" name="classTimeOpen" placeholder="Nhập thời gian...">
+								</div>
+
+								<div class="col-md-6">
+									<label class="fw-bold mb-2" for="schedules">Lịch học:<label class="lbStyle" id="lbschedules" style="color:red; font-size:13px ; font-style: italic "></label></label>
+									<br><select style="width: 70%;" name="schedules0" id="schedules0">
+										<option value="">Thời gian</option>
+										<?php foreach ($result as $results) : ?>
+											<option style="height: 30px;" <?php if (isset($_POST['schedules0']) && $_POST['schedules0'] == $results['MaLich']) {
+																				echo 'selected';
+																			}
+																			?> value="<?php echo $results['MaLich'] ?>">
+												<?php echo $results['Ngay'] . ' - ' . $results['TGBatDau'] . '-' . $results['TGKetThuc'] ?>
+											</option>
+										<?php endforeach; ?>
+									</select>
+
+									<button style="background-color: chartreuse; border: 1px solid #fff; border-radius:5px ; padding: 5px 4px;" type="button" onclick="addCard()">Thêm lịch học</button>
+									<div id="addSchedules"></div>
+								</div>
+
+
+
+								<div class="col-md-6">
+									<label class="fw-bold" for="numberlessons">Tổng số buổi học:<label class="lbStyle" id="lbnumberlessons" style="color:red; font-size:13px ; font-style: italic "></label></label>
+									<br><input type="text" id="numberlessons" name="numberlessons" placeholder="Nhập số buổi học...">
+								</div>
+
+								<div class="col-md-6">
+									<label for="students" class="fw-bold">Số lượng sinh viên tối đa:<label class="lbStyle" id="lbstudents" style="color:red; font-size:13px ; font-style: italic "></label></label>
+									<br><input type="text" id="students" name="students" placeholder="Nhập số lượng sinh viên...">
+									<br>
+								</div>
+								<div class="col-md-6">
+									<label class="fw-bold mb-2" for="teacher">Giáo viên:<label class="lbStyle" id="lbteacher" style="color:red; font-size:13px ; font-style: italic "></label></label>
+									<br>
+									<select style="width: 100%;" name="teachers" id="teachers">
+										<option value="">Tên giáo viên</option>
+										<?php foreach ($listTeacher as $listTeachers) : ?>
+											<option value="<?php echo $listTeachers['MaGV'] ?>">
+												<?php echo $listTeachers['TenGV'] . ' - ' . $listTeachers['TrinhDo'] ?>
+											</option>
+										<?php endforeach; ?>
+									</select>
+								</div>
+								<div class="col-md-6">
+									<label class="fw-bold" for="TeacherSalarie">Lương giáo viên/buổi:<label class="lbStyle" id="lbTeacherSalarie" style="color:red; font-size:13px ; font-style: italic "></label></label>
+									<br><input type="text" id="TeacherSalarie" name="TeacherSalarie" placeholder="Nhập lương giáo viên" oninput="formatNumber(this)">
+								</div>
+								<div class="col-md-6">
+									<label class="fw-bold mb-2" for="condition">Trạng thái:<label class="lbStyle" id="lbcondition" style="color:red; font-size:13px ; font-style: italic "></label></label>
+									<br><select name="SelectCondition" id="SelectCondition">
+										<option value="">Trạng thái</option>
+										<option value="Chưa mở">Chưa mở</option>
+										<option value="Đang mở">Đang mở</option>
+										<option value="Đã đóng">Đã đóng</option>
+									</select>
+									<br>
+									<button class="mt-2 d-none" style="background-color: chartreuse; border: 1px solid #fff; border-radius:5px ; padding: 5px 4px; margin-bottom: 10px;" type="button">Thêm khuyến mại</button>
+									<div class="d-none" id="addDiscount">
+									</div>
+
+
+
+
+									<input id="btn-discount" style="background-color: chartreuse; border: 1px solid #fff; border-radius:5px ; padding: 5px 4px; margin-bottom: 10px; margin-top:5px" type="button" value="Thêm khuyến mãi" onClick="showHideDiv('divMsg')" /><br><br>
+									<div id="divMsg" style="display:none">
+										<label for="">Khuyến mại :<label class="lbStyle" id="lbdiscount" style="color:red; font-size:13px ; font-style: italic "></label></label>
+										<br>
+										Thời gian bát đầu : <input type="date" name="startDiscount" id="startDiscount"><br>
+										Thời gian kết thúc: <input type="date" name="endDiscount" id="endDiscount"><br>
+										<input type="text" name="discountpercent" id="discountpercent" placeholder="Nhập % khuyến mại" style="width:50%"><span style="margin-left: -23px;">%</span>
+									</div>
+
+								</div>
+
+
+
+
+
+								<input type="submit" id='add' name="add" value="Thêm">
 							</div>
-
-
-							<input type="submit" id='add' name="add" value="Thêm">
 						</form>
 
 						<div id="card-container"></div>
@@ -271,7 +271,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 <script>
 	var listtimeTeacher = <?php echo $listtimeTeacher ?>;
+
+	showClass();
+
+	function showClass() {
+		var province_id = document.getElementById("province").value;
+		var txt = document.querySelector(".timkiem").value;
+		var data = {
+			key: txt,
+			province_id: province_id
+		};
+
+		$.post('../jquery_ajax/ajax_get_searchClass.php', {
+			data: data
+		}, function(response) {
+			document.querySelector('.class-container').innerHTML = response;
+		})
+
+	}
+
+
 	// hiển thị box chính
+
+
+
+
 	const openBtn = document.getElementById('open-btn');
 	const overlay = document.getElementById('overlay');
 	const box = document.getElementById('box');
@@ -295,14 +319,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 		var container = document.getElementById("addSchedules");
 		var card = document.createElement("div");
 		card.className = "card";
+		card.style.width = "287px";
 		card.innerHTML = `
-  <select style='' name="schedules${counter}" id="schedules${counter}">
+  		<select style='' name="schedules${counter}" id="schedules${counter}">
           <option value="">Thời gian</option>
           <?php foreach ($result as $results) : ?>
             <?php $counter = 1 ?>
-            <option <?php if (isset($_POST['schedules']) && $_POST['schedules'] == $results['idSchedules']) echo 'selected' ?>
-             value="<?php echo $results['idSchedules']  ?>">
-              <?php echo $results['day_of_week'] . ' - ' . $results['start_time'] . '-' . $results['end_time']   ?>
+            <option <?php if (isset($_POST['schedules']) && $_POST['schedules'] == $results['MaLich']) {
+						echo 'selected';
+					}
+					?>
+             value="<?php echo $results['MaLich'] ?>">
+              <?php echo $results['Ngay'] . ' - ' . $results['TGBatDau'] . '-' . $results['TGKetThuc'] ?>
             </option>
           <?php endforeach; ?>
         </select>
@@ -329,6 +357,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 			var select = cards[i].querySelector("select");
 			select.setAttribute("name", "schedules" + (i + 1));
 		}
+
 
 	}
 
@@ -359,8 +388,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 	const submit_add = document.getElementById('add');
 	submit_add.addEventListener('click', function(event) {
 
-		const form2 = document.getElementById('form_add')
-		// Ngăn chặn việc submit form mặc định để xử lý dữ liệu trước khi gửi form đi
+
+
 		event.preventDefault();
 		const classcode = document.getElementById('classcode').value;
 
@@ -388,15 +417,33 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 
 		// lịch
-		const element0 = document.getElementById('schedules0');
-		const idSchedules0 = element0 ? element0.value : "";
-		var element1 = document.getElementById('schedules1');
-		if (element1 === null) {
-			element1 = 1;
+		// const element0 = document.getElementById('schedules0');
+		// const idSchedules0 = element0 ? element0.value : "";
+		// var element1 = document.getElementById('schedules1');
+		// // if (element1 === null) {
+		// // 	element1 = 1;
+		// // }
+		// const idSchedules1 = element1 ? element1.value : "";
+		// const element2 = document.getElementById('schedules2');
+		// const idSchedules2 = element2 ? element2.value : "";
+
+		var teacherScheduleArray = [];
+		var schedules = [];
+		for (let i = 0; i <= counter; i++) {
+			const element = document.getElementById(`schedules${i}`);
+			const idSchedules = element ? element.value : "";
+
+			if (idSchedules != "") {
+				teacherScheduleArray.push({
+					idSchedules: idSchedules,
+					MAGV: teachers
+				});
+				schedules.push(idSchedules);
+			}
+
 		}
-		const idSchedules1 = element1 ? element1.value : "";
-		const element2 = document.getElementById('schedules2');
-		const idSchedules2 = element2 ? element2.value : "";
+		
+
 
 		// dữ liệu giảm học phí
 		const element_startDiscount = document.getElementById('startDiscount');
@@ -411,153 +458,211 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 		var erorr_empty = "*Dữ liệu không để trống";
 
-		const teacherScheduleArray = [{
-				idSchedules: idSchedules0,
-				MAGV: teachers
-			},
-			{
-				idSchedules: idSchedules1,
-				MAGV: teachers
-			},
-			{
-				idSchedules: idSchedules2,
-				MAGV: teachers
-			}
-		];
 
-		function hasDuplicateElements(arr1, arr2) {
-			for (let i = 0; i < arr1.length; i++) {
-				for (let j = 0; j < arr2.length; j++) {
-					if (arr1[i].MAGV === arr2[j].MAGV && arr1[i].idSchedules === arr2[j].idSchedules) {
-						return true;
-					}
-				}
-			}
-			return false;
-		}
 
-		const hasDuplicates = hasDuplicateElements(teacherScheduleArray, listtimeTeacher);
+		var check = false;
+
+
 		//Kiểm tra dữ liệu nhập vào
 		if (!classcode) {
-			document.getElementById('lbclasscode').textContent = erorr_empty;
-			return;
-		} else
-			document.getElementById('lbclasscode').textContent = "";
 
-		if (found) {
-			document.getElementById('lbclasscode').textContent = '*Mã lớp đã tồn tại';
-			return;
-		} else
-			document.getElementById('lbclasscode').textContent = "";
+			document.getElementById('lbclasscode').textContent = erorr_empty;
+			check = true;
+
+		} else {
+			if (found) {
+				document.getElementById('lbclasscode').textContent = '*Mã lớp đã tồn tại';
+				check = true;
+
+			} else
+				document.getElementById('lbclasscode').textContent = "";
+		}
+
+
+
 
 		if (!classname) {
 			document.getElementById('lbclassname').textContent = erorr_empty;
-			return;
+			check = true;
 		} else
 			document.getElementById('lbclassname').textContent = "";
 
 		if (!classAge) {
 			document.getElementById('lbclassAge').textContent = erorr_empty;
-			return;
+			check = true;
 		} else
 			document.getElementById('lbclassAge').textContent = "";
 
 		if (!classTimeOpen) {
 			document.getElementById('lbclassTimeOpen').textContent = erorr_empty;
-			return;
+			check = true;
 		} else
 			document.getElementById('lbclassTimeOpen').textContent = "";
-
-		if (idSchedules0 === idSchedules1 || idSchedules0 === idSchedules2 || idSchedules2 === idSchedules1) {
-			document.getElementById('lbschedules').textContent = '*Lịch học trùng nhau';
-			return;
+		if (teacherScheduleArray.length == 0) {
+			document.getElementById('lbschedules').textContent = '*Chưa có lịch học';
 		} else {
-			document.getElementById('lbschedules').textContent = "";
+			if (checkDuplicateSchedules(teacherScheduleArray)) {
+				document.getElementById('lbschedules').textContent = '*Lịch học trùng nhau';
+				check = true;
+			} else if (hasDuplicateElements(teacherScheduleArray, listtimeTeacher)) {
+				document.getElementById('lbschedules').textContent = '*Lịch học của giáo viên đã tồn tại ';
+				check = true;
+			} else {
+				document.getElementById('lbschedules').textContent = "";
+			}
 		}
+
 
 		if (!price) {
 			document.getElementById('lbprice').textContent = erorr_empty;
-			return;
+			check = true;
 		} else
 			document.getElementById('lbprice').textContent = "";
 
 		if (!numberlessons) {
 			document.getElementById('lbnumberlessons').textContent = erorr_empty;
-			return;
+			check = true;
 		} else
 			document.getElementById('lbnumberlessons').textContent = "";
 		if (!students) {
 
 			document.getElementById('lbstudents').textContent = erorr_empty;
-			return;
+			check = true;
 		} else
 			document.getElementById('lbstudents').textContent = "";
 
 		if (!teachers) {
 			document.getElementById('lbteacher').textContent = erorr_empty;
-			return;
+			check = true;
 		} else
 			document.getElementById('lbteacher').textContent = "";
 
 		if (!teacherSalarie) {
 			document.getElementById('lbTeacherSalarie').textContent = erorr_empty;
-			return;
+			check = true;
 		} else
 			document.getElementById('lbTeacherSalarie').textContent = "";
 		if (!condition) {
 			document.getElementById('lbcondition').textContent = erorr_empty;
-			return;
+			check = true;
 		} else
 			document.getElementById('lbcondition').textContent = "";
 
-		// lịch học giáo viên 
-		if (hasDuplicates) {
-			document.getElementById('lbschedules').textContent = '*Lịch học của giáo viên đã tồn tại ';
-			return;
-		} else {
-			document.getElementById('lbschedules').textContent = "";
-		}
+		// lịch học giáo viên
+
 
 		if (startDiscount) {
 			if (!startDiscount || !endDiscount || !discountpercent) {
 				document.getElementById('lbdiscount').textContent = '*Bạn đang thiếu dữ liệu';
-				return;
+				check = true;
 			} else if (startDiscount == endDiscount) {
 				document.getElementById('lbdiscount').textContent = '*Lịch trùng nhau';
-				return;
+				check = true;
 			} else {
 				document.getElementById('lbdiscount').textContent = "";
 			}
 		}
 
 
+		if (check) {
+			return;
+		}
 
 
+
+		const data = {
+			classcode: classcode,
+			classname: classname,
+			classAge: classAge,
+			classTimeOpen: classTimeOpen,
+			SelectCondition: condition,
+			price: price,
+			numberlessons: numberlessons,
+			students: students,
+			teachers: teachers,
+			TeacherSalarie: teacherSalarie,
+			startDiscount: startDiscount,
+			endDiscount: endDiscount,
+			discountpercent: discountpercent,
+
+		};
+		const compressedData = JSON.stringify(data);
+
+
+
+		$.ajax({
+			url: '../jquery_ajax/ajax_addClass.php',
+			type: 'POST',
+			data: {
+				 compressedData: compressedData,
+				schedules: schedules,
+			},
+			success: function(res) {
+				
+				
+				showClass();
+
+
+			},
+			error: function(xhr, status, error) {
+				console.error(error);
+			}
+		});
+
+		document.getElementById('form_add').reset();
+		const container = document.getElementById("addSchedules");
+		while (container.firstChild) {
+			container.removeChild(container.firstChild);
+		}
+		document.getElementById("divMsg").style.display = 'none';
 		document.querySelector('.add-success').style.display = 'block';
 
 		setTimeout(function() {
 			document.querySelector('.add-success').style.display = 'none';
-			form2.submit();
+
 		}, 1000);
 
-		// Gửi form đi nếu tất cả dữ liệu hợp lệ
-		// form2.submit();
+
 	});
 
-	// 	$(document).ready(function () {
-	//     $('.timkiem').keyup(function(){
-	//         var txt = $('.timkiem').val();
-	//         $.post('ajax_get_listClass.php',{data:txt},function(data){
-	//              $('.class-container').html(data);
-	//         })
-	//     })
-	// })
+
+
+
+	function checkDuplicateSchedules(scheduleArray) {
+		const idSet = new Set();
+
+		for (const schedule of scheduleArray) {
+			if (idSet.has(schedule.idSchedules)) {
+
+				return true;
+			} else {
+				idSet.add(schedule.idSchedules);
+			}
+		}
+		return false;
+	}
+
+	function hasDuplicateElements(arr1, arr2) {
+		for (let i = 0; i < arr1.length; i++) {
+			for (let j = 0; j < arr2.length; j++) {
+
+				if (arr1[i].MAGV == arr2[j].MAGV && arr1[i].idSchedules == arr2[j].MaLich) {
+
+
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
 	function numberWithCommas(x) {
 		return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 	}
+
 	function parseNumericValue(value) {
-    return parseInt(value.replace(/,/g, ''));
-}
+		return parseInt(value.replace(/,/g, ''));
+	}
 
 	document.getElementById('TeacherSalarie').addEventListener('blur', function() {
 		var value = parseNumericValue(this.value);
@@ -570,6 +675,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 		}
 
 	});
+
 	document.getElementById('lbprice').addEventListener('blur', function() {
 		var value = parseNumericValue(this.value);
 
@@ -583,21 +689,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 	});
 
 	function formatNumber(input) {
-    let value = input.value;
-   
-    value = value.replace(/[^\d,]/g, '');
-   
-    value = value.replace(/,/g, '');
-   
-    value = value.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-    input.value = value;
-}
+		let value = input.value;
+
+		value = value.replace(/[^\d,]/g, '');
+
+		value = value.replace(/,/g, '');
+
+		value = value.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+		input.value = value;
+	}
 
 
-	
+
+	function showHideDiv(ele) {
+		var srcElement = document.getElementById(ele);
+		if (srcElement != null) {
+			if (srcElement.style.display == "block") {
+				srcElement.style.display = 'none';
+				document.getElementById("btn-discount").value = "Thêm khuyến mãi";
+			} else {
+				srcElement.style.display = 'block';
+				document.getElementById("btn-discount").value = "Xóa khuyến mãi";
+			}
+			return false;
+		}
+	}
 </script>
-
-
-
 
 </html>

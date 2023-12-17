@@ -18,21 +18,6 @@ function listSchedules($connection)
     }
     return null;
 }
-
-function scheduleOfClass($maLop,$connection) {
-    $sql = "SELECT * FROM lichhoc WHERE lichhoc.MaLich IN ( SELECT MaLich FROM lop_lichhoc WHERE lop_lichhoc.MaLop=?)";
-    try {
-        $statement = $connection->prepare($sql);
-        $statement->bindParam(1, $maLop);
-        $statement->execute();
-        $data = $statement->fetchAll(PDO::FETCH_ASSOC);
-        return $data;
-    } catch (PDOException $e) {
-        $e->getMessage();
-    }
-    return null;
-}
-
 // danh sách giáo viên
 function listTeacher($connection)
 {
@@ -111,7 +96,7 @@ function CreateTeacher_Class($magv, $MaLop, $TienTraGV, $connection)
 // tạo class_lich hoc
 function CreateSchedules_Class($idSchedules, $MaLop, $connection)
 {
-    $sql = "insert into schedules_class values(?,?)";
+    $sql = "insert into lop_lichhoc values(?,?)";
     try {
         $statement = $connection->prepare($sql);
         $statement->bindParam(1, $idSchedules);
@@ -155,10 +140,10 @@ function teacherByidClass($idClass, $connection)
 // truy vấn dữ liệu ra lịch học với mã lớp
 function dataSchedulesByMaLop($malop, $connection)
 {
-    $sql = "SELECT schedules.idSchedules, schedules.day_of_week , schedules.start_time , schedules.end_time
-    from schedules_class
-    INNER JOIN lop on schedules_class.MaLop = lop.MaLop
-    INNER JOIN schedules on schedules_class.idSchedules = schedules.idSchedules
+    $sql = "SELECT lichhoc.MaLich, lichhoc.Ngay , lichhoc.TGBatDau , lichhoc.TGKetThuc
+    from lop_lichhoc
+    INNER JOIN lop on lop_lichhoc.MaLop = lop.MaLop
+    INNER JOIN lichhoc on lop_lichhoc.MaLich = lichhoc.MaLich
     WHERE lop.MaLop = ?;";
     try {
         $statement = $connection->prepare($sql);

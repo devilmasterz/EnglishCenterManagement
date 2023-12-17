@@ -3,6 +3,7 @@ include "../../lib/FunctionClass2.php";
 include "../../lib/registerClass.php";
 
 $malop = $_GET['malop'];
+
 session_start();
 $mahs = "";
 $maHS = "";
@@ -69,10 +70,10 @@ $jscheck = json_encode($check);
 
 $registerDone = false;
 $dataClass = dataClassById($malop, $connection);
-$dataSchedules = dataSchedulesByMaLop($malop, $connection);
+// $dataSchedules = dataSchedulesByMaLop($malop, $connection);
 $nameTeacher = dataTeacherByMaLop($malop, $connection);
 $result = listSchedules($connection);
-$schedule = scheduleOfClass($malop, $connection);
+$schedule = dataSchedulesByMaLop($malop, $connection);
 $nameCondition = '';
 if ($dataClass['TrangThai'] == 'Chưa mở') {
     $nameCondition = 'Chưa mở';
@@ -81,27 +82,8 @@ if ($dataClass['TrangThai'] == 'Chưa mở') {
 } else {
     $nameCondition = 'Đã đóng';
 }
-// if (isset($_POST['check'])) {
-//     if ($_SESSION['MaHS'] != null) {
-//         $mahs = $_SESSION['MaHS']['MaHS'];
-//         $maph = checkExitPH_HS($mahs, $connection);
-//         if ($maph) {
 
 
-//             $checkregister = createTabHS_LOP($mahs, $malop, $connection);
-
-//             $stRegister = $dataClass['SLHS'];
-//             setHSDANGKI($stRegister, $malop, $connection);
-
-//             if ($stRegister + 1 == $dataClass['SLHSToiDa']) {
-//                 setSLHSToiDa($malop, $connection);
-//             }
-//         }
-//     } else {
-//         header("Location: ../login_pages/login.php");
-//         exit();
-//     }
-// }
 function useRegisterConfirm($maHS, $maLop, $giamHP, $slhs, $connection)
 {
     registToClass($maHS, $maLop, $giamHP, $connection);
