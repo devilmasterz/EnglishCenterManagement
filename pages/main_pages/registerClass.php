@@ -116,33 +116,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         session_destroy();
         header("Location: ../home/home.php");
     }
-    if (isset($_POST['childRegister'])) {
-        $mahs = $_POST['childRegister'];
-        $now = new DateTime();
-        $giamHP = 0;
-        $discount = getDiscount($malop, $connection);
-        if ($now > $discount['TGBatDau'] && $now < $discount['TGKetThuc']) {
-            $giamHP = $discount['GiamHocPhi'];
-        }
-        $countRegister = $dataClass['SLHS'] + 1;
-        if ($countRegister > $dataClass['SLHSToiDa']) {
-            return;
-        }
-        useRegisterConfirm($mahs, $malop, $giamHP, $countRegister, $connection);
-    }
-    if (isset($_POST['selfRegister'])) {
-        $now = new DateTime();
-        $giamHP = 0;
-        $discount = getDiscount($malop, $connection);
-        if ($now > $discount['TGBatDau'] && $now < $discount['TGKetThuc']) {
-            $giamHP = $discount['GiamHocPhi'];
-        }
-        $countRegister = $dataClass['SLHS'] + 1;
-        if ($countRegister > $dataClass['SLHSToiDa']) {
-            return;
-        }
-        useRegisterConfirm($mahs, $malop, $giamHP, $countRegister, $connection);
-    }
 }
 
 
@@ -159,6 +132,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <link rel="stylesheet" href="../../assets/css/common.css">
     <link rel="stylesheet" href="../../assets/css/registerClass_.css">
     <script src="https://code.jquery.com/jquery-3.6.4.js"></script>
+    <link rel="stylesheet" href="../../plugins/bootstrap-5.2.3-dist/css/bootstrap.min.css" />
 
     <style>
         .hidden {
@@ -289,6 +263,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </head>
 
 <body>
+    <div class="toastDiv"></div>
     <header>
     </header>
     <main class="register-main">
@@ -413,7 +388,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <img class="wave-start-jouney img-inner" src="../../assets/images/wave-Vector.svg" />
         </div>
         <div class="modal-content register-content-wrap">
-            <div class="container container-border">
+            <div class="container-border">
                 <h1 style="text-align: center;color:#0088cc;">Thông tin chi tiết lớp học <?php echo $malop; ?></h1>
                 <form id="form_delete" name="form_delete" method="post">
                     <table>
@@ -524,7 +499,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <p>© 2023 Hệ thống quản lý giáo dục. All rights reserved.</p>
     </footer>
 </body>
+<script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+<!--boostrap.js-->
+<script src="../../plugins/bootstrap-5.2.3-dist/js/bootstrap.min.js"></script>
 <script src="../common/menubar.js"></script>
+<script src="../common/toast.js"></script>
 <script>
     var ten = null;
     var detail = null;
@@ -606,20 +585,36 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         });
     });
 
-    function chonHocSinh(maHS) {
-        var form = document.createElement('form');
-        form.method = 'POST';
-        form.name = 'accept-form'
+    const maHS = <?php print_r(json_encode($maHS)) ?>;
+    const maLop = <?php print_r(json_encode($malop)) ?>;
 
-        var input = document.createElement('input');
-        input.type = 'hidden';
-        input.name = 'childRegister';
-        input.value = maHS;
-        form.appendChild(input);
+    function chonHocSinh(selectedId) {
+        console.log("xac nhan")
+        $.ajax({
+            url: '../../jquery_ajax/ajax_registClassByParent.php',
+            type: 'POST',
+            data: {
+                MaLop: maLop,
+                MaHS: selectedId,
+            },
+            success: function(res) {
 
-        document.body.appendChild(form);
-        form.submit(function(e) {
-            e.preventDefault()
+                if (res === "UpdateDone") {
+                    useToast("Đăng kí thành công");
+                    let timeout = setTimeout(() => {
+                        location.reload();
+                        clearTimeout(timeout);
+                    }, 5100);
+                }
+                if (res === "MaxCount") {
+                    useToast("Lớp đã đủ học sinh");
+                }
+
+            },
+            error: function(xhr, status, error) {
+                useToast("Đăng kí thất bại")
+                console.error(error);
+            }
         });
     }
     registerBtn.onclick = (e) => {
@@ -627,19 +622,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     function dangki() {
-        var form = document.createElement('form');
+        $.ajax({
+            url: '../../jquery_ajax/ajax_registClass.php',
+            type: 'POST',
+            data: {
+                MaLop: maLop,
+                MaHS: maHS,
+            },
+            success: function(res) {
 
-        form.method = 'POST';
-        form.name = 'accept-form'
+                if (res === "UpdateDone") {
+                    useToast("Đăng kí thành công");
+                    let timeout = setTimeout(() => {
+                        location.reload();
+                        clearTimeout(timeout);
+                    }, 5100);
+                }
+                if (res === "MaxCount") {
+                    useToast("Lớp đã đủ học sinh");
+                }
 
-        var input = document.createElement('input');
-        input.type = 'hidden';
-        input.name = 'selfRegister';
-        input.value = "";
-        form.appendChild(input);
-
-        document.body.appendChild(form);
-        form.submit();
+            },
+            error: function(xhr, status, error) {
+                useToast("Đăng kí thất bại")
+                console.error(error);
+            }
+        });
     }
 
 
@@ -682,8 +690,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             let isRegist = listStu.find(stu => stu.MaHS === child.MaHS);
             var nofiDiv = document.createElement('div');
             nofiDiv.id = 'nofi';
+            nofiDiv.classList.add("register-div-add");
             nofiDiv.innerHTML =
-                `<button type="button" class="dialog-select-btn ${ isRegist ? "dialog-selected-item" :""}" onClick="chonHocSinh(` + child.MaHS + `)">` + child.TenHS + `</button>`;
+                `
+                <button ${isRegist ? "disabled" : ""} type="button" class="dialog-select-btn ${ isRegist ? "dialog-selected-item" :""}" onClick="chonHocSinh(` + child.MaHS + `)">` + child.TenHS + `</button>
+                ${isRegist ? ("<span>-Đã đăng kí</span>"): ""}
+                `;
             childListDiv.appendChild(nofiDiv);
         });
     }

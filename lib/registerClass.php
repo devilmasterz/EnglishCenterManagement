@@ -1,6 +1,5 @@
 <?php
 
-
 // regist hoc sinh vao lop chua mo
 function registToClass($maHS, $maLop, $giamHP, $connection)
 {
@@ -71,7 +70,7 @@ function checkExistWithChild($maPH, $connection)
         echo $e->getMessage();
     }
 }
-
+//danh sach hoc sinh
 function checkRegistedChild($maLop, $connection)
 {
     $sql = "SELECT * FROM `hs_lop` WHERE MaLop = ?;";
@@ -84,5 +83,32 @@ function checkRegistedChild($maLop, $connection)
         return $data;
     } catch (PDOException $e) {
         echo $e->getMessage();
+    }
+}
+function dataClassByIdRegister($malop, $connection)
+{
+    $sql = "select * from lop where MaLop = ?";
+    try {
+        $statement = $connection->prepare($sql);
+        $statement->bindParam(1, $malop);
+        $statement->execute();
+        $data = $statement->fetch(PDO::FETCH_ASSOC);
+        return $data;
+    } catch (PDOException $e) {
+        $e->getMessage();
+    }
+    return null;
+}
+//
+function getDiscountRegister($malop,$connection){
+    $sql = "select * from lopghp where MaLop = ?";
+    try{
+        $statement = $connection->prepare($sql);
+        $statement->bindParam(1, $malop);
+        $statement->execute();
+        $data = $statement->fetch(PDO::FETCH_ASSOC);
+        return $data;
+    }catch(PDOException $e) {
+        $e->getMessage();
     }
 }
