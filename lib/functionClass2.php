@@ -806,7 +806,7 @@ function insertLienKet($mahs, $maph, $tenhs, $tenph,$nyc, $connection)
 function selectdslk($connection, $magv)
 {
 
-    $sql = 'SELECT * FROM yeucaulienket WHERE nyc = "hs" and  MaPH = ? ';
+    $sql = 'SELECT yeucaulienket.MaHS,yeucaulienket.MaPH, TenHS,TenPH  FROM yeucaulienket , hocsinh , phuhuynh WHERE yeucaulienket.MaHS = hocsinh.MaHS and yeucaulienket.MaPH =  phuhuynh.MaPH and  nyc = "hs" and  yeucaulienket.MaPH = ? ';
 
     try {
         $connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
@@ -822,7 +822,6 @@ function selectdslk($connection, $magv)
         echo $e->getMessage();
     }
 }
-
 // // delêt ds lienket phuhuynh hoc sinh 
 function deletedslk($connection, $mahs , $maph)
 {

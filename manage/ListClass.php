@@ -20,53 +20,53 @@ foreach ($listClass as $dataCodeClass) {
 $listClassJson = json_encode($arr);
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-	if (isset($_POST['classcode'])) {
-		$classcode = trim($_POST['classcode']);
-		$classname = trim($_POST['classname']);
-		$classAge = $_POST['classAge'];
-		$classTimeOpen = $_POST['classTimeOpen'];
-		$schedules0 = $_POST['schedules0'];
-		$condition = $_POST['SelectCondition'];
-		if (isset($_POST['schedules1'])) {
-			$schedules1 = $_POST['schedules1'];
-		} else {
-			$schedules1 = "schedules1";
-		}
+	// if (isset($_POST['classcode'])) {
+	// 	$classcode = trim($_POST['classcode']);
+	// 	$classname = trim($_POST['classname']);
+	// 	$classAge = $_POST['classAge'];
+	// 	$classTimeOpen = $_POST['classTimeOpen'];
+	// 	$schedules0 = $_POST['schedules0'];
+	// 	$condition = $_POST['SelectCondition'];
+	// 	if (isset($_POST['schedules1'])) {
+	// 		$schedules1 = $_POST['schedules1'];
+	// 	} else {
+	// 		$schedules1 = "schedules1";
+	// 	}
 
-		if (isset($_POST['schedules2'])) {
-			$schedules2 = $_POST['schedules2'];
-		} else {
-			$schedules2 = "schedules2";
-		}
+	// 	if (isset($_POST['schedules2'])) {
+	// 		$schedules2 = $_POST['schedules2'];
+	// 	} else {
+	// 		$schedules2 = "schedules2";
+	// 	}
 
-		$price = str_replace(',', '', $_POST['price']);
-		$numberlessons = trim($_POST['numberlessons']);
-		$students = trim($_POST['students']);
+	// 	$price = str_replace(',', '', $_POST['price']);
+	// 	$numberlessons = trim($_POST['numberlessons']);
+	// 	$students = trim($_POST['students']);
 
-		$teachers = $_POST['teachers'];
-		$maLop = CreateClass($classcode, $classname, $classAge, $classTimeOpen, 0, $students, $price, $numberlessons, 0, $condition, $connection);
-		if ($maLop != null) {
+	// 	$teachers = $_POST['teachers'];
+	// 	$maLop = CreateClass($classcode, $classname, $classAge, $classTimeOpen, 0, $students, $price, $numberlessons, 0, $condition, $connection);
+	// 	if ($maLop != null) {
 
-			// for($i=0; i<=10)
-			$schedulesClass0 = CreateSchedules_Class($schedules0, $maLop, $connection);
-			if ($schedules1 != "schedules1") {
-				$schedulesClass1 = CreateSchedules_Class($schedules1, $maLop, $connection);
-			}
-			if ($schedules2 != "schedules2") {
-				$schedulesClass2 = CreateSchedules_Class($schedules2, $maLop, $connection);
-			}
-			$tientraGV = str_replace(',', '', $_POST['TeacherSalarie']);
+	// 		// for($i=0; i<=10)
+	// 		$schedulesClass0 = CreateSchedules_Class($schedules0, $maLop, $connection);
+	// 		if ($schedules1 != "schedules1") {
+	// 			$schedulesClass1 = CreateSchedules_Class($schedules1, $maLop, $connection);
+	// 		}
+	// 		if ($schedules2 != "schedules2") {
+	// 			$schedulesClass2 = CreateSchedules_Class($schedules2, $maLop, $connection);
+	// 		}
+	// 		$tientraGV = str_replace(',', '', $_POST['TeacherSalarie']);
 
-			$teacherClass = CreateTeacher_Class($teachers, $maLop, $tientraGV, $connection);
-			if ($teacherClass && isset($_POST['startDiscount']) && isset($_POST['endDiscount']) && isset($_POST['discountpercent'])) {
-				insertDiscount($_POST['startDiscount'], $_POST['endDiscount'], $_POST['discountpercent'], $maLop, $connection);
-			} else {
-				insertDiscount('2023-1-1', '2023-1-1', 0, $maLop, $connection);
-			}
-			header("Location: ListClass.php");
-			exit();
-		}
-	}
+	// 		$teacherClass = CreateTeacher_Class($teachers, $maLop, $tientraGV, $connection);
+	// 		if ($teacherClass && isset($_POST['startDiscount']) && isset($_POST['endDiscount']) && isset($_POST['discountpercent'])) {
+	// 			insertDiscount($_POST['startDiscount'], $_POST['endDiscount'], $_POST['discountpercent'], $maLop, $connection);
+	// 		} else {
+	// 			insertDiscount('2023-1-1', '2023-1-1', 0, $maLop, $connection);
+	// 		}
+	// 		header("Location: ListClass.php");
+	// 		exit();
+	// 	}
+	// }
 }
 ?>
 
@@ -177,10 +177,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 									<br><select style="width: 70%;" name="schedules0" id="schedules0">
 										<option value="">Thời gian</option>
 										<?php foreach ($result as $results) : ?>
-											<option style="height: 30px;" <?php if (isset($_POST['schedules0']) && $_POST['schedules0'] == $results['MaLich']) {
-																				echo 'selected';
-																			}
-																			?> value="<?php echo $results['MaLich'] ?>">
+											<option style="height: 30px;"  value="<?php echo $results['MaLich'] ?>">
 												<?php echo $results['Ngay'] . ' - ' . $results['TGBatDau'] . '-' . $results['TGKetThuc'] ?>
 											</option>
 										<?php endforeach; ?>
@@ -309,6 +306,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 	closeBtn.addEventListener('click', () => {
 		overlay.classList.remove('active');
 		box.classList.remove('active');
+
+		document.getElementById("form_add").reset();
+		const container = document.getElementById("addSchedules");
+		while (container.firstChild) {
+			container.removeChild(container.firstChild);
+		}
+		document.getElementById("divMsg").style.display = "none";
 	});
 
 	// add class
@@ -319,7 +323,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 		var container = document.getElementById("addSchedules");
 		var card = document.createElement("div");
 		card.className = "card";
-		card.style.width = "287px";
+		card.style.width = "323px";
 		card.innerHTML = `
   		<select style='' name="schedules${counter}" id="schedules${counter}">
           <option value="">Thời gian</option>
@@ -357,9 +361,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 			var select = cards[i].querySelector("select");
 			select.setAttribute("name", "schedules" + (i + 1));
 		}
-
-
 	}
+
+
 
 
 	function addDiscount() {
@@ -417,15 +421,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 
 		// lịch
-		// const element0 = document.getElementById('schedules0');
-		// const idSchedules0 = element0 ? element0.value : "";
-		// var element1 = document.getElementById('schedules1');
-		// // if (element1 === null) {
-		// // 	element1 = 1;
-		// // }
-		// const idSchedules1 = element1 ? element1.value : "";
-		// const element2 = document.getElementById('schedules2');
-		// const idSchedules2 = element2 ? element2.value : "";
 
 		var teacherScheduleArray = [];
 		var schedules = [];

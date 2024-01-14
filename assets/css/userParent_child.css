@@ -230,7 +230,7 @@ button:hover {
     border: none;
     margin-left: 10px;
     background-color: white;
-    position: absolute;
+    position: fixed;
     z-index: 100;
     top: 20px;
     right: 201px;
@@ -239,7 +239,7 @@ button:hover {
   
   #div-nofi{
     display: none;
-    position: absolute;
+    position: fixed;
     
     background-color: #f2f2f2;
     padding: 10px;

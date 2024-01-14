@@ -7,12 +7,15 @@ $dataClass = dataClassById($malop, $connection);
 $listStudents = ListStudentByClass($malop, $connection);
 
 $discountNumber = 1;
+$i =1;
 ?>
 
 <?php foreach ($listStudents as $data) : ?>
 
  
     <tr class="tr-student" data-maHS="<?php echo $data['MaHS']; ?> ">
+        <td><?php echo $i++ ?></td>
+        <td><?php echo $data['MaHS'] ?></td>
         <td><?php echo $data['TenHS'] ?></td>
         <td><?php echo convertDateFormat($data['NgaySinh']) ?></td>
         <td><?php echo $data['GioiTinh'] ?></td>

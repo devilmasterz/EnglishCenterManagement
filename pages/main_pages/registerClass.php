@@ -4,6 +4,7 @@ include "../../lib/registerClass.php";
 
 $malop = $_GET['malop'];
 
+
 session_start();
 $mahs = "";
 $maHS = "";
@@ -20,6 +21,10 @@ if (isset($_SESSION['MaPH']['MaPH'])) {
     $maPH = $_SESSION['MaPH']['MaPH'];
     $studentBaseParentList = studentOfParentRegister($maPH, $connection);
     $jsStudentList = json_encode($studentBaseParentList);
+
+    $listBill_CD = searchHDHocPhi($connection, 'Chưa đóng', $maPH);
+    $listBill_CN = searchHDHocPhi($connection, 'Còn nợ', $maPH);
+    $listRequest = selectdslk($connection, $maPH);
 }
 $type = "";
 $tenPH = array();
@@ -245,6 +250,55 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             top: 100px;
         }
 
+
+
+        #btn-nofi {
+            border: none;
+            margin-left: 10px;
+            background-color: white;
+            position: fixed;
+            z-index: 100;
+            top: 20px;
+            right: 201px;
+            background-color: unset;
+        }
+
+
+        #div-nofi {
+            display: none;
+            position: fixed;
+
+            background-color: #f2f2f2;
+            padding: 10px;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            width: 400px;
+            height: 400px;
+            max-height: 380px;
+            background-color: lavender;
+            overflow-y: auto;
+            border: ridge;
+            z-index: 1000;
+            top: 47px;
+            right: 225px;
+        }
+
+        #nofi {
+            border: solid 2px;
+            border-radius: 8px;
+            padding: 10px;
+            margin-bottom: 20px;
+        }
+
+        #nofi button {
+
+            background-color: rgb(0 125 124);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            margin-right: 10px;
+            cursor: pointer;
+        }
 
 
         #btn-logout {
@@ -499,11 +553,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <p>© 2023 Hệ thống quản lý giáo dục. All rights reserved.</p>
     </footer>
 </body>
+<button type="button" id="btn-nofi"><img id="img-nofi" width="30px" alt=""></button>
+<div id="div-nofi">
+
+</div>
+
 <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
 <!--boostrap.js-->
 <script src="../../plugins/bootstrap-5.2.3-dist/js/bootstrap.min.js"></script>
 <script src="../common/menubar.js"></script>
 <script src="../common/toast.js"></script>
+<script>
+    var ds_yeuCau = <?php print_r(json_encode($listRequest)); ?>;
+    var dsHoaDon_CD = <?php print_r(json_encode($listBill_CD)); ?>;
+    var dsHoaDon_CN = <?php print_r(json_encode($listBill_CN)); ?>;
+</script>
 <script>
     var ten = null;
     var detail = null;
@@ -526,7 +590,124 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (type === "parent") {
 
             menubarv2(ten[0].TenPH, detail[0].GioiTinh, "parent");
+
+
+            // var $ = jQuery.noConflict();
+
+            var button = document.getElementById('btn-nofi');
+            var hiddenDiv = document.getElementById('div-nofi');
+
+            button.addEventListener('click', function() {
+                hiddenDiv.style.display = hiddenDiv.style.display === 'block' ? 'none' : 'block';
+
+            });
+
+
+            var divNofiContainer = document.getElementById('div-nofi');
+            showNotification();
+
+
         }
+    }
+
+    function showNotification() {
+        divNofiContainer.innerHTML = "";
+
+        ds_yeuCau.forEach(function(yeuCau) {
+
+            var nofiDiv = document.createElement('div');
+            nofiDiv.id = 'nofi';
+            nofiDiv.innerHTML = '<p>Học viên ' + yeuCau.TenHS + ' đã gửi yêu cầu liên kết với bạn</p>' +
+                '<button onclick="tuChoi(' + yeuCau.MaHS + ',' + yeuCau.MaPH + ')">Từ chối</button>' +
+                '<button onclick="chapNhan(' + yeuCau.MaHS + ',' + yeuCau.MaPH + ')">Chấp nhận</button>';
+
+            divNofiContainer.appendChild(nofiDiv);
+
+
+        });
+
+        dsHoaDon_CD.forEach(function(yeuCau) {
+            yeuCau
+
+            var nofiDiv = document.createElement('div');
+            nofiDiv.id = 'nofi';
+            nofiDiv.innerHTML = '<p> Hóa đơn ' + yeuCau.TenHD + ' (' + numberWithCommas(yeuCau.SoTienPhaiDong) + ' VND) của  Học viên ' + yeuCau.TenHS + '  chưa được thanh toán</p>'
+            divNofiContainer.appendChild(nofiDiv);
+        });
+
+
+
+        dsHoaDon_CN.forEach(function(yeuCau) {
+
+            var nofiDiv = document.createElement('div');
+            nofiDiv.id = 'nofi';
+            nofiDiv.innerHTML = '<p> Hóa đơn ' + yeuCau.TenHD + ' còn nợ (' + numberWithCommas(yeuCau.NoPhiConLai) + ' VND) của  Học viên ' + yeuCau.TenHS + '  chưa được thanh toán</p>'
+            divNofiContainer.appendChild(nofiDiv);
+        });
+        var imgElement = document.getElementById("img-nofi");
+
+
+        if (ds_yeuCau.length || dsHoaDon_CD.length || dsHoaDon_CN.length) {
+            imgElement.src = "../../assets/images/bell-1.png";
+        } else {
+            imgElement.src = "../../assets/images/bell.png";
+            document.getElementById('div-nofi').innerHTML = "<p>Không có thông báo mới!</p>";
+        }
+    }
+
+    function tuChoi(maHS, maPH) {
+
+
+        $.ajax({
+            url: '../../jquery_ajax/ajax_replyRequest.php',
+            type: 'POST',
+            data: {
+                maph: maPH,
+                mahs: maHS,
+                rep: "refuse",
+                nyc: "ph",
+            },
+            success: function(res) {
+
+                ds_yeuCau = JSON.parse(res).listRequest;
+
+                showNotification();
+            },
+            error: function(xhr, status, error) {
+                console.error(error);
+            }
+        });
+
+
+    }
+
+    function chapNhan(maHS, maPH) {
+
+
+        $.ajax({
+            url: '../../jquery_ajax/ajax_replyRequest.php',
+            type: 'POST',
+            data: {
+                maph: maPH,
+                mahs: maHS,
+                rep: "accept",
+                nyc: "ph",
+            },
+            success: function(res) {
+
+                ds_yeuCau = JSON.parse(res).listRequest;
+                showNotification();
+
+            },
+            error: function(xhr, status, error) {
+                console.error(error);
+            }
+        });
+    }
+
+
+    function numberWithCommas(x) {
+        return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
     }
 </script>
 <script>

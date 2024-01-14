@@ -26,12 +26,7 @@ delete_SchedulesByID($classcode, $connection);
 for ($i = 0; $i < count($schedules); $i++) {
     updateClass_SchedulesByID($classcode, $schedules[$i], $connection);
 }
- 
-
- $TeacherSalarie = str_replace(',', '', $data['TeacherSalarie']);
-
-
-
+  $TeacherSalarie = str_replace(',', '', $data['TeacherSalarie']);
 updateClass_TeacherByID($classcode,  $teachers, $TeacherSalarie, $connection);
 
 

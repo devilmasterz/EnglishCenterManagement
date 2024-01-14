@@ -9,7 +9,7 @@ require '../lib/functionStudent.php';
     $phone =  $_POST['phone'];
     $email =   trim($_POST['email']);
    
-    $parents =  $_POST['parents'];
+    
 
      $mahs=  insertStudent($connection,$name,$gender,$date,$age,$address,$phone,$email);
      $username = "hocsinh".$mahs;
@@ -17,10 +17,14 @@ require '../lib/functionStudent.php';
      $datelogup = date("Y-m-d");
     inserttk_hs($connection,$mahs,$username,$pass,$datelogup);
 
-    foreach ($parents as $maph) {
-        insertph_hs($connection,$mahs,$maph);
+    if(isset($_POST['parents'])){
+        $parents =  $_POST['parents'];
+        foreach ($parents as $maph) {
+            insertph_hs($connection,$mahs,$maph);
+        }
+    
     }
-
+    
  
     $result = [
         "student" => listStudent($connection),

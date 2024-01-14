@@ -24,20 +24,17 @@ $jslistRequest = json_encode($listRequest);
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
-  if (isset($_POST['accept-maHS'])) {
-    $mahs = $_POST['accept-maHS'];
-    deletedslk($connection, $mahs, $maPH['MaPH']);
-    insertPHHS($mahs, $maPH['MaPH'], $connection);
-    header("Location: userParent_Fee.php");
-  }
+  // if (isset($_POST['accept-maHS'])) {
+  //   $mahs = $_POST['accept-maHS'];
+  //   deletedslk($connection, $mahs, $maPH['MaPH']);
+  //   insertPHHS($mahs, $maPH['MaPH'], $connection);
+  // }
 
-  if (isset($_POST['refuse-maHS'])) {
-    $mahs = $_POST['refuse-maHS'];
+  // if (isset($_POST['refuse-maHS'])) {
+  //   $mahs = $_POST['refuse-maHS'];
 
-    deletedslk($connection, $mahs, $maPH['MaPH']);
-
-    header("Location: userParent_Fee.php");
-  }
+  //   deletedslk($connection, $mahs, $maPH['MaPH']);
+  // }
   if (isset($_POST['btn-logout'])) {
 
     session_start();
@@ -77,7 +74,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       border: none;
       margin-left: 10px;
       background-color: white;
-      position: absolute;
+      position: fixed;
       z-index: 100;
       top: 20px;
       right: 201px;
@@ -87,7 +84,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     #div-nofi {
       display: none;
-      position: absolute;
+      position: fixed;
 
       background-color: #f2f2f2;
       padding: 10px;
@@ -131,6 +128,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   <!--Animated css-->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
   <link rel="stylesheet" href="../../assets/css/common.css">
+  <script src="https://code.jquery.com/jquery-3.6.4.js"></script>
+
 
 
   <title>Home Parent</title>
@@ -764,17 +763,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </div>
   </div>
   </div>
-  <button type="button" id="btn-nofi"><img id="img-nofi" width="30px" src=<?php if (!$listRequest && !$listBill_CD && !$listBill_CN) {
-                                                                            echo '"../../assets/images/bell.png"';
-                                                                          } else {
-                                                                            echo '"../../assets/images/bell-1.png"';
-                                                                          }
-                                                                          ?> alt=""></button>
+  <button type="button" id="btn-nofi"><img id="img-nofi" width="30px" alt=""></button>
   <div id="div-nofi">
-    <?php if (!$listRequest && !$listBill_CD && !$listBill_CN) {
-      echo 'Không có thông báo mới!';
-    }
-    ?> </button>
+
   </div>
   <script src="../common/menubar.js"></script>
   <script>
@@ -797,6 +788,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 
   <script>
+    var $ = jQuery.noConflict();
+
     var button = document.getElementById('btn-nofi');
     var hiddenDiv = document.getElementById('div-nofi');
 
@@ -807,73 +800,104 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 
     var divNofiContainer = document.getElementById('div-nofi');
+    showNotification();
 
-    ds_yeuCau.forEach(function(yeuCau) {
+    function showNotification() {
+      divNofiContainer.innerHTML = "";
 
-      var nofiDiv = document.createElement('div');
-      nofiDiv.id = 'nofi';
-      nofiDiv.innerHTML = '<p>Học viên ' + yeuCau.TenHS + ' đã gửi yêu cầu liên kết với bạn</p>' +
-        '<button onclick="tuChoi(' + yeuCau.MaHS + ',' + yeuCau.MaPH + ')">Từ chối</button>' +
-        '<button onclick="chapNhan(' + yeuCau.MaHS + ',' + yeuCau.MaPH + ')">Chấp nhận</button>';
+      ds_yeuCau.forEach(function(yeuCau) {
 
-      divNofiContainer.appendChild(nofiDiv);
+        var nofiDiv = document.createElement('div');
+        nofiDiv.id = 'nofi';
+        nofiDiv.innerHTML = '<p>Học viên ' + yeuCau.TenHS + ' đã gửi yêu cầu liên kết với bạn</p>' +
+          '<button onclick="tuChoi(' + yeuCau.MaHS + ',' + yeuCau.MaPH + ')">Từ chối</button>' +
+          '<button onclick="chapNhan(' + yeuCau.MaHS + ',' + yeuCau.MaPH + ')">Chấp nhận</button>';
 
-
-    });
-
-    dsHoaDon_CD.forEach(function(yeuCau) {
-      yeuCau
-
-      var nofiDiv = document.createElement('div');
-      nofiDiv.id = 'nofi';
-      nofiDiv.innerHTML = '<p> Hóa đơn ' + yeuCau.TenHD + ' (' + numberWithCommas(yeuCau.SoTienPhaiDong) + ' VND) của  Học viên ' + yeuCau.TenHS + '  chưa được thanh toán</p>'
-      divNofiContainer.appendChild(nofiDiv);
-    });
+        divNofiContainer.appendChild(nofiDiv);
 
 
+      });
 
-    dsHoaDon_CN.forEach(function(yeuCau) {
+      dsHoaDon_CD.forEach(function(yeuCau) {
+        yeuCau
 
-      var nofiDiv = document.createElement('div');
-      nofiDiv.id = 'nofi';
-      nofiDiv.innerHTML = '<p> Hóa đơn ' + yeuCau.TenHD + ' còn nợ (' + numberWithCommas(yeuCau.NoPhiConLai) + ' VND) của  Học viên ' + yeuCau.TenHS + '  chưa được thanh toán</p>'
-      divNofiContainer.appendChild(nofiDiv);
-    });
+        var nofiDiv = document.createElement('div');
+        nofiDiv.id = 'nofi';
+        nofiDiv.innerHTML = '<p> Hóa đơn ' + yeuCau.TenHD + ' (' + numberWithCommas(yeuCau.SoTienPhaiDong) + ' VND) của  Học viên ' + yeuCau.TenHS + '  chưa được thanh toán</p>'
+        divNofiContainer.appendChild(nofiDiv);
+      });
 
+
+
+      dsHoaDon_CN.forEach(function(yeuCau) {
+
+        var nofiDiv = document.createElement('div');
+        nofiDiv.id = 'nofi';
+        nofiDiv.innerHTML = '<p> Hóa đơn ' + yeuCau.TenHD + ' còn nợ (' + numberWithCommas(yeuCau.NoPhiConLai) + ' VND) của  Học viên ' + yeuCau.TenHS + '  chưa được thanh toán</p>'
+        divNofiContainer.appendChild(nofiDiv);
+      });
+      var imgElement = document.getElementById("img-nofi");
+
+
+      if (ds_yeuCau.length || dsHoaDon_CD.length || dsHoaDon_CN.length) {
+        imgElement.src = "../../assets/images/bell-1.png";
+      } else {
+        imgElement.src = "../../assets/images/bell.png";
+        document.getElementById('div-nofi').innerHTML = "<p>Không có thông báo mới!</p>";
+      }
+    }
+
+
+ 
 
     function tuChoi(maHS, maPH) {
-      var form = document.createElement('form');
 
-      form.method = 'POST';
-      form.name = 'refuse-form'
 
-      var input = document.createElement('input');
-      input.type = 'hidden';
-      input.name = 'refuse-maHS';
-      input.value = maHS;
-      form.appendChild(input);
+      $.ajax({
+        url: '../../jquery_ajax/ajax_replyRequest.php',
+        type: 'POST',
+        data: {
+          maph: maPH,
+          mahs: maHS,
+          rep: "refuse",
+          nyc: "ph",
+        },
+        success: function(res) {
 
-      document.body.appendChild(form);
-      form.submit();
+          ds_yeuCau = JSON.parse(res).listRequest;
+
+          showNotification();
+        },
+        error: function(xhr, status, error) {
+          console.error(error);
+        }
+      });
+
 
     }
 
     function chapNhan(maHS, maPH) {
 
 
-      var form = document.createElement('form');
+      $.ajax({
+        url: '../../jquery_ajax/ajax_replyRequest.php',
+        type: 'POST',
+        data: {
+          maph: maPH,
+          mahs: maHS,
+          rep: "accept",
+          nyc: "ph",
+        },
+        success: function(res) {
+        
+          ds_yeuCau = JSON.parse(res).listRequest;
+          showNotification();
 
-      form.method = 'POST';
-      form.name = 'accept-form'
-
-      var input = document.createElement('input');
-      input.type = 'hidden';
-      input.name = 'accept-maHS';
-      input.value = maHS;
-      form.appendChild(input);
-
-      document.body.appendChild(form);
-      form.submit();
+        },
+        error: function(xhr, status, error) {
+          console.error(error);
+        }
+      });
     }
 
     function numberWithCommas(x) {

@@ -39,6 +39,19 @@ function searchList() {
     removeSortIcons();
 }
 
+// showindex();
+// function showindex(){
+//     var html = "";
+//     var index =0;
+//     var  count = Math.ceil(ds_hocsinh.length /50)
+   
+//      for(let i =1; i<=count; i++){
+//          index++;
+//              html += '<div class="page-index">'+ index +'</div>';
+//      }
+//     document.getElementById("container-index").innerHTML  = html;
+// }
+
 
 
 document.getElementById('cancle-change-pass').addEventListener('click', () => {
@@ -998,6 +1011,7 @@ document.getElementById('add').addEventListener('click', function (event) {
             parents: selectedValues,
         },
         success: function (res) {
+           
             ds_hocsinh = JSON.parse(res).student;
             ds_ph_hs = JSON.parse(res).phhs;
             ds_tk_hs = JSON.parse(res).acc;

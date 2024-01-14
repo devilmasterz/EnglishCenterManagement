@@ -28,13 +28,13 @@ if (!$listTeacher) {
             <td><?php echo $teacher['GioiTinh']; ?></td>
             <td><?php echo $teacher['Tuoi']; ?></td>
             <td><?php echo $teacher['DiaChi']; ?></td>
-            <td><?php
+            <!-- <td><?php
                 $listClass = classOfTeacher($connection, $teacher['MaGV']);
                 foreach ($listClass as $class) :
                     echo $class['MaLop'] . ' ; ';
                 endforeach;
-                ?></td>
-            <td></td>
+                ?></td> -->
+           
 
         </tr>
 <?php endforeach;

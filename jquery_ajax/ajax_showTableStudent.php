@@ -6,10 +6,6 @@ $key = trim($_POST['key']);
 
     $listStudent = searchStudent($connection, $key);
 
-
-
-
-
 $i = 1;
 $nam = 0;
 $nu = 0;

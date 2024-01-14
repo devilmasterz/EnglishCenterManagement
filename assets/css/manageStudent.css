@@ -430,3 +430,24 @@ tbody tr {
 }
 
 
+#container-index{
+  display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-end;
+}
+
+
+
+.page-index{
+  padding: 10px;
+  margin: 5px;
+  border: 1px solid #ccc;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+
+.page-index:hover {
+  background-color: #f0f0f0;
+}

@@ -5,7 +5,7 @@ $malop = $_GET['maLop'];
 $dataClass = dataClassById($malop, $connection);
 $dataSchedules = dataSchedulesByMaLop($malop, $connection);
 $nameTeacher = dataTeacherByMaLop($malop, $connection);
-$result = listSchedules($connection);
+$listSchedule = listSchedules($connection);
 
 ///
 $listStudents = ListStudentByClass($malop, $connection);
@@ -174,6 +174,8 @@ $timeTeacher = timeTeacherOther($connection, $malop);
                                 <table>
                                     <thead>
                                         <tr>
+                                        <th>STT</th>
+                                        <th>Mã học sinh</th>
                                             <th>Họ và tên</th>
                                             <th>Ngày sinh</th>
                                             <th>Giới tính</th>
@@ -198,7 +200,7 @@ $timeTeacher = timeTeacherOther($connection, $malop);
 
 
                                     <button id="addStudent" class="px-3 py-1 border-0">Thêm học sinh</button>
-                                    <input class="px-3 py-2 me-2" type="submit" id="discount" style="margin-left:65%" value="Cập nhật giảm học phí">
+                                    <input class="px-3 py-2 me-2" type="submit" id="discount" style="margin-left:70%" value="Cập nhật giảm học phí">
                                     <!-- thêm học sinh -->
                                     <style>
                                         #overlay-addStudent {
@@ -459,7 +461,7 @@ $timeTeacher = timeTeacherOther($connection, $malop);
     var listtimeTeacher = <?php echo  json_encode($timeTeacher); ?>;
     var listAddStudent = <?php echo  json_encode($listAddStudent); ?>;
     var listTime = <?php echo  json_encode($listTime); ?>;
-
+    var listSchedule = <?php echo json_encode($listSchedule)  ?>
     
 </script>
 <script src="../assets/js/DetailClass.js"></script>

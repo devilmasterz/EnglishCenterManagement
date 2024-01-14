@@ -11,7 +11,7 @@ $name =   trim($_POST['name']);
     $address =   trim($_POST['address']);
     $phone =  $_POST['phone'];
     $email =   trim($_POST['email']);
-$students =  $_POST['students'];
+
 
  $maph=  insertParent($connection,$name,$gender,$date,$age,$address,$phone,$email);
  $username = "phuhuynh".$maph;
@@ -21,9 +21,16 @@ $students =  $_POST['students'];
 
 inserttk_ph($connection,$maph,$username,$pass,$datelogup);
 
-foreach ($students as $mahs) {
-    insertph_hs($connection,$mahs,$maph);
+if(isset($_POST['students'])){
+    $students =  $_POST['students'];
+    foreach ($students as $mahs) {
+        insertph_hs($connection,$mahs,$maph);
+    }
+
 }
+
+
+
 
 
 $result = [

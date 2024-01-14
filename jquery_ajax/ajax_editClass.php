@@ -32,7 +32,7 @@ if ($dataClass['TrangThai'] == 'Chưa mở') {
 
 <div class="col-md-6">
     <label class="w-100 fw-bold" for="classAge">Lứa tuổi:<label id="lbclassAge" style="color:red; font-size:13px ; font-style: italic "></label></label>
-    <br><input style="width: 100%;" type="text" id="classAge" name="classAge" value="<?php echo $dataClass['LuaTuoi']; ?>">
+    <br><input style="width: 100%;" type="number" id="classAge" name="classAge" value="<?php echo $dataClass['LuaTuoi']; ?>">
 </div>
 
 <div class="col-md-6">
@@ -43,31 +43,45 @@ if ($dataClass['TrangThai'] == 'Chưa mở') {
 <div class="col-md-6">
     <label class="fw-bold mb-2" for="schedules">Lịch học:<label id="lbschedules" style="color:red; font-size:13px ; font-style: italic "></label></label>
     <br>
-    <?php $i = 0 ?>
-    <?php foreach ($dataSchedules as $listschedules) :
-        $maLich = $listschedules['MaLich'];
-    ?>
-        <select class="w-100 mb-2" name="schedules<?php echo $i; ?>" id="schedules<?php echo $i; ?>">
-            <option value="<?php echo $maLich ?>">
-                <?php echo  $listschedules['Ngay'] . ' - ' . $listschedules['TGBatDau'] . '-' . $listschedules['TGKetThuc']; ?>
-            </option>
-            <?php foreach ($result as $results) :
-                $maSchedules = $results['MaLich'];
-            ?>
-                <option id="" value="<?php echo $maSchedules ?>">
-                    <?php echo  $results['Ngay'] . ' - ' . $results['TGBatDau'] . '-' . $results['TGKetThuc']; ?>
-                </option>
-            <?php endforeach ?>
-        </select>
-        <br>
-        <?php $i++; ?>
-    <?php endforeach ?>
+
+    <div id="schedule-container">
+        <?php $i = 0 ?>
+        <?php foreach ($dataSchedules as $listschedules) :
+            $maLich = $listschedules['MaLich'];
+        ?>
+            <div>
+
+                <select class="w-100 mb-2" name="schedules<?php echo $i; ?>" id="schedules<?php echo $i; ?>" style="width: 80%!important;">
+                    <option value="<?php echo $maLich ?>">
+                        <?php echo  $listschedules['Ngay'] . ' - ' . $listschedules['TGBatDau'] . '-' . $listschedules['TGKetThuc']; ?>
+                    </option>
+                    <?php foreach ($result as $results) :
+                        $maSchedules = $results['MaLich'];
+                    ?>
+                        <option id="" value="<?php echo $maSchedules ?>">
+                            <?php echo  $results['Ngay'] . ' - ' . $results['TGBatDau'] . '-' . $results['TGKetThuc']; ?>
+                        </option>
+                    <?php endforeach ?>
+
+                </select>
+                <?php if ($i == 0) {
+                    echo '<button  id="btn-add-schedule" onclick ="addSchedule()">Thêm</button>';
+                } else {?>
+                     <button id="btn-delete-schedule" data-index="<?php  echo $i; ?>" onclick="deleteSchedule(this)">Xóa</button>;
+              <?php  } ?>
+
+            </div>
+
+            
+            <?php $i++; ?>
+        <?php endforeach ?>
+    </div>
 </div>
 
 <br>
 <div class="col-md-6">
-    <label class="fw-bold" for="price">Học phí (/buổi)  :<label id="lbprice" style="color:red; font-size:13px ; font-style: italic "></label></label>
-    <input type="text" id="price" name="price" value="<?php echo number_format($dataClass['HocPhi'], 0, ',', ','); ?>"  oninput="formatNumber(this)">
+    <label class="fw-bold" for="price">Học phí (/buổi) :<label id="lbprice" style="color:red; font-size:13px ; font-style: italic "></label></label>
+    <input type="text" id="price" name="price" value="<?php echo number_format($dataClass['HocPhi'], 0, ',', ','); ?>" oninput="formatNumber(this)">
 </div>
 
 <div class="col-md-6">
@@ -113,8 +127,8 @@ if ($dataClass['TrangThai'] == 'Chưa mở') {
                                                                             }
                                                                         };
 
-                                                                        echo  number_format($TeacherSalarie, 0, ',', ',') ;
-                                                                        ?>"oninput="formatNumber(this)">
+                                                                        echo  number_format($TeacherSalarie, 0, ',', ',');
+                                                                        ?>" oninput="formatNumber(this)">
     <br>
 </div>
 <div class="col-md-6">
@@ -166,3 +180,5 @@ if ($dataClass['TrangThai'] == 'Chưa mở') {
 <?php endif ?>
 </p>
 </div>
+
+

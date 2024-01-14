@@ -133,6 +133,7 @@ function listStudents() {
                         showDetailClass();
                         showLisAttendance();
                         showDetailAdttendance();
+                        showAddAttend();
                     },
                     error: function (xhr, status, error) {
                         console.error(error);
@@ -226,6 +227,7 @@ document.getElementById('div-detail').addEventListener('click', function (event)
                 showDetailClass();
                 showLisAttendance();
                 showDetailAdttendance();
+                showAddAttend();
             },
             error: function (xhr, status, error) {
                 console.error(error);
@@ -271,6 +273,7 @@ document.getElementById('div-detail').addEventListener('click', function (event)
                     showDetailClass();
                     showLisAttendance();
                     showDetailAdttendance();
+                    showAddAttend();
                 },
                 error: function (xhr, status, error) {
                     console.error(error);
@@ -423,6 +426,7 @@ document.getElementById("btn-add-attend").addEventListener('click', function (ev
             showDetailClass();
             showLisAttendance();
             showDetailAdttendance();
+            showAddAttend();
         },
         error: function (xhr, status, error) {
             console.error(error);
@@ -564,6 +568,7 @@ document.getElementById('addStudent-submit').addEventListener('click', function 
             showDetailClass();
             showLisAttendance();
             showDetailAdttendance();
+            showAddAttend();
         },
         error: function (xhr, status, error) {
             console.error(error);
@@ -658,6 +663,81 @@ closeBtn.addEventListener('click', () => {
 });
 
 
+//them, xoa lich hoc
+// document.getElementById('btn-add-schedule').addEventListener('click', function (event) {
+//         event.preventDefault();
+//         var containerDiv = document.getElementById("schedule-container");
+        
+//         var html = ''
+
+
+
+
+// });
+
+
+function addSchedule() {
+    let scheduleContainer = document.getElementById('schedule-container');
+    let newDiv = document.createElement('div');
+    let newSelect = document.createElement('select');
+   
+    newSelect.setAttribute('style', 'width: 80% !important; margin-right:5px');
+    newSelect.classList.add('w-100', 'mb-2');
+
+    var newOption = document.createElement('option');
+    newOption.value = "";
+    newOption.text = "Thời gian";
+    newSelect.appendChild(newOption);
+
+    listSchedule.forEach(schedule => {
+        var newOption = document.createElement('option');
+        newOption.value = schedule.MaLich;
+        newOption.text = schedule.Ngay+ " - " +schedule.TGBatDau+"-"+schedule.TGKetThuc;
+        newSelect.appendChild(newOption);
+    });
+   
+
+    let newButton = document.createElement('button');
+    newButton.id = 'btn-delete-schedule';
+    
+    newButton.onclick = function() { deleteSchedule(this); };
+    newButton.textContent = 'Xóa';
+
+    newDiv.appendChild(newSelect);
+    newDiv.appendChild(newButton);
+    scheduleContainer.appendChild(newDiv);
+
+    getSelectedValues();
+}
+
+function deleteSchedule(element) {
+    let scheduleContainer = document.getElementById('schedule-container');
+    scheduleContainer.removeChild(element.parentNode);
+
+    getSelectedValues();
+}
+
+
+
+document.getElementById("form_edit").addEventListener("submit", function(event) {
+    
+    event.preventDefault();
+   
+});
+
+function getSelectedValues() {
+    let scheduleContainer = document.getElementById('schedule-container');
+    let selects = scheduleContainer.querySelectorAll('select');
+    let selectedValues = [];
+    for (let select of selects) {
+        selectedValues.push(select.value);
+    }
+    console.log(selectedValues);
+}
+
+
+
+
 // sửa lớp tiếp nào baby
 
 document.getElementById('btn-update').addEventListener('click', function (event) {
@@ -676,36 +756,39 @@ document.getElementById('btn-update').addEventListener('click', function (event)
     const condition = document.getElementById('SelectCondition').value;
 
 
-    // const element0 = document.getElementById('schedules0');
-    // console.log(element0);
-    // const idSchedules0 = element0 ? element0.value : "";
-    // console.log(idSchedules0);
-    // var element1 = document.getElementById('schedules1');
-    // if (element1 === null) {
-    //     element1 = 1;
-    // }
-    // const idSchedules1 = element1 ? element1.value : "";
-
-    // const element2 = document.getElementById('schedules2');
-
-    // const idSchedules2 = element2 ? element2.value : "";
+    
 
     var teacherScheduleArray = [];
     var schedules = [];
 
-    for (let i = 0; i <= 10; i++) {
-        const element = document.getElementById(`schedules${i}`);
-        const idSchedules = element ? element.value : "";
-
-        if (idSchedules != "") {
+    let scheduleContainer = document.getElementById('schedule-container');
+    let selects = scheduleContainer.querySelectorAll('select');
+  
+    for (let select of selects) {
+        if (select.value != "") {
             teacherScheduleArray.push({
-                idSchedules: idSchedules,
+                idSchedules: select.value,
                 MAGV: teachers
             });
-            schedules.push(idSchedules);
-        }
-
+            schedules.push(select.value);
+        }      
     }
+    console.log(schedules);
+
+
+    // for (let i = 0; i <= 10; i++) {
+    //     const element = document.getElementById(`schedules${i}`);
+    //     const idSchedules = element ? element.value : "";
+
+    //     if (idSchedules != "") {
+    //         teacherScheduleArray.push({
+    //             idSchedules: idSchedules,
+    //             MAGV: teachers
+    //         });
+    //         schedules.push(idSchedules);
+    //     }
+
+    // }
 
 
     var check = false;
