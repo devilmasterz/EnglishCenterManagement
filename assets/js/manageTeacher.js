@@ -1,5 +1,9 @@
-
-showTableTeacher("");
+var countData = ds_giaovien.length;
+var currentPage = 1;
+var collum = "";
+var orderby =""; 
+showTableTeacher("", 1,collum,orderby);
+showindex();
 
 
 function convertDateFormat(dateString) {
@@ -12,16 +16,22 @@ function numberWithCommas(x) {
     return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
-function showTableTeacher(text) {
+function showTableTeacher(text, page, collumSort ,order) {
 
     $.ajax({
         url: '../jquery_ajax/ajax_showTableTeacher.php',
         type: 'POST',
         data: {
             key: text,
+            page: page,
+            collumSort: collumSort,
+            order : order,
         },
         success: function (res) {
             document.querySelector('.tbody-1').innerHTML = res;
+
+            countData = document.getElementById('count-data').textContent;
+            showindex();
         },
         error: function (xhr, status, error) {
             console.error(error);
@@ -30,12 +40,43 @@ function showTableTeacher(text) {
 
 }
 function searchList() {
+    collum ="";
+    orderby = "";
     var text = document.getElementById('keyword').value;
-    showTableTeacher(text);
+    currentPage = 1;
+    showTableTeacher(text, 1,collum,orderby);
     removeSortIcons();
 }
 
 
+function showindex() {
+    var html = "";
+
+
+    var count = Math.ceil(countData / 50);
+    for (let i = 1; i <= count; i++) {
+
+        var isActive = i === currentPage ? 'activeIndex' : '';
+        html += '<div class="page-index ' + isActive + '" onclick="handlePageIndexClick(this, ' + i + ')">' + i + '</div>';
+    }
+    document.getElementById("container-index").innerHTML = html;
+}
+
+function handlePageIndexClick(clickedElement, pageNumber) {
+
+    var pageElements = document.querySelectorAll('.page-index');
+    pageElements.forEach(function (element) {
+        element.classList.remove('activeIndex');
+    });
+    clickedElement.classList.add('activeIndex');
+
+ 
+    currentPage = pageNumber;
+    var text = document.getElementById('keyword').value;
+    showTableTeacher(text, pageNumber,collum,orderby);
+    var table = document.querySelector(".tbody-1");
+    table.scrollTo({ top: table.offsetTop, behavior: 'smooth' });
+}
 
 
 
@@ -367,7 +408,8 @@ submit_update.addEventListener('click', function (event) {
             }
 
            
-            searchList();
+            var text = document.getElementById('keyword').value;
+            showTableTeacher(text, currentPage,collum,orderby);
 
 
         },
@@ -522,7 +564,8 @@ submit_add.addEventListener('click', function (event) {
         },
         success: function (res) {
             ds_giaovien = JSON.parse(res)
-            searchList();
+            var text = document.getElementById('keyword').value;
+            showTableTeacher(text, currentPage,collum,orderby);
 
         },
         error: function (xhr, status, error) {
@@ -565,7 +608,8 @@ function deleteTeacher() {
             console.error(error);
         }
     });
-    searchList();
+             var text = document.getElementById('keyword').value;
+            showTableTeacher(text, currentPage,collum,orderby);
 
     //
     document.querySelector('.delete-ques2').style.display = 'none';
@@ -654,22 +698,18 @@ document.getElementById('delete2').addEventListener('click', function (event) {
 document.getElementById("tab1").classList.add("show");
 
 function openTab(evt, tabName) {
-    // Declare all variables
     var i, tabcontent, tablinks;
 
-    // Get all elements with class="tabcontent" and hide them
     tabcontent = document.getElementsByClassName("tabcontent");
     for (i = 0; i < tabcontent.length; i++) {
         tabcontent[i].classList.remove("show");
     }
 
-    // Get all elements with class="tablinks" and remove the class "active"
     tablinks = document.getElementsByClassName("tablinks");
     for (i = 0; i < tablinks.length; i++) {
         tablinks[i].classList.remove("active");
     }
 
-    // Show the current tab, and add an "active" class to the button that opened the tab
     document.getElementById(tabName).classList.add("show");
     evt.currentTarget.classList.add("active");
 }
@@ -734,6 +774,7 @@ document.getElementById('change').addEventListener('click', function (event) {
         },
         success: function (res) {
             ds_tk_gv = JSON.parse(res);
+          
 
             for (var i = 0; i < ds_tk_gv.length; i++) {
                 if (ds_tk_gv[i].MaGV === teacher_select.MaGV) {
@@ -782,59 +823,27 @@ document.getElementById('cancle-change-pass').addEventListener('click', () => {
 var sortDirection = {}; 
 
 function sortTable(columnIndex) {
-    var table = document.getElementById('table-1');
-    var tbody = table.querySelector('.tbody-1');
-    var rows = Array.from(tbody.getElementsByTagName('tr'));
-    var sttValues = rows.map(function (row) {
-        return parseInt(row.getElementsByTagName('td')[0].innerText.trim());
-    });
-
-    rows.sort(function (a, b) {
-       
-
-        if (columnIndex === 4 || columnIndex === 1) {
-            var aValue = parseFloat(a.getElementsByTagName('td')[columnIndex].innerText.trim());
-            var bValue = parseFloat(b.getElementsByTagName('td')[columnIndex].innerText.trim());
-
-            if (sortDirection[columnIndex] === 'asc') {
-                return aValue - bValue;
-            } else {
-                return bValue - aValue;
-            }
-        } else {
-            var aValue = a.getElementsByTagName('td')[columnIndex].innerText.trim();
-            var bValue = b.getElementsByTagName('td')[columnIndex].innerText.trim();
-            if (sortDirection[columnIndex] === 'asc') {
-                return aValue.localeCompare(bValue);
-            } else {
-                return bValue.localeCompare(aValue);
-            }
-        }
+   
 
 
+    if (columnIndex == 1 ) collum = "MaGV";
+    else if(columnIndex == 2) collum = "TenGV";
+    else if(columnIndex == 3) collum = "GioiTinh";
+    else if(columnIndex == 4) collum = "Tuoi";
+    else if(columnIndex == 5) collum = "DiaChi";
 
-    });
-
-
-
-    rows.forEach(function (row, index) {
-        var sttCell = row.getElementsByTagName('td')[0];
-        sttCell.innerText = sttValues[index];
-    });
-
-    rows.forEach(function (row) {
-        tbody.appendChild(row);
-    });
-
-
-    // Reverse the sort direction for the clicked column
     if (sortDirection[columnIndex] === 'asc') {
         sortDirection[columnIndex] = 'desc';
+        orderby = "desc";
+        
     } else {
         sortDirection[columnIndex] = 'asc';
+        orderby = "asc";    
     }
+    var text = document.getElementById('keyword').value;
+    showTableTeacher(text, currentPage,collum,orderby);
 
-    // Update the sort icon in the column header
+    
     updateSortIcon(columnIndex);
 
 

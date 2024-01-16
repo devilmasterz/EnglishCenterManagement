@@ -1,18 +1,19 @@
 <?php
 require '../lib/functionParent.php';
 $key = trim($_POST['key']);
+$page = $_POST['page'];
+$collumSort = $_POST['collumSort'];
+$order =  $_POST['order'];
 
-    $listParent = searchParent($connection, $key);
-    $listph_hs = listph_hs($connection);
+$listParent = searchParent($connection, $key,$page,$collumSort,$order);
+
 $i = 1;
-$nam = 0;
-$nu = 0;
+
 if (!$listParent) {
     echo ' <h2>Không tìm thấy kết quả phù hợp "' .$key . '"</h2>';
 } else {
     foreach ($listParent as $Parent) : ?>
-        <?php if ($Parent['GioiTinh'] == 'Nam') $nam++;
-        else $nu++; ?>
+        
         <tr>
             <td><?php echo $i++ ?></td>
             <td><?php echo $Parent['MaPH']; ?></td>
@@ -20,17 +21,14 @@ if (!$listParent) {
             <td><?php echo $Parent['GioiTinh']; ?></td>
             <td><?php echo $Parent['Tuoi']; ?></td>
             <td style="width :200px"><?php echo $Parent['DiaChi']; ?></td>
-            <td><?php
+            <td>
 
-                foreach ($listph_hs as $hs) :
-                    if ($hs['MaPH'] === $Parent['MaPH']) {
-                        echo $hs['TenHS'];
-                        echo '<br>';
-                    }
-                endforeach;
-                ?></td>
+                <?php echo str_replace(',', "<br>", $Parent['dshs']) ; ?>
+            </td>
 
 
         </tr>
 <?php endforeach;
 } ?>
+
+<p hidden id="count-data"> <?php if(searchList($connection,$key)) {echo count(searchList($connection,$key));} ?> </p>

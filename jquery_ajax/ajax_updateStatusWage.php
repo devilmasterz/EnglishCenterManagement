@@ -12,7 +12,7 @@ require '../lib/functionFin_wageTea.php';
     updateStatusLuonggv($connection, $tt, $tg, $maL);
 
 
-    $listBill = searchLuongGV($connection, '');
+    $listBill = listBillLGV($connection);
 
     print_r(json_encode($listBill)) ;
 

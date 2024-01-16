@@ -139,9 +139,17 @@ function inserttk_gv($connection, $magv, $username, $pass, $ngaydk)
 }
 
 // search Giao vien
-function searchTeacher($connection, $key)
+function searchTeacher($connection, $key,$page,$collumSort, $order)
 {
-    $sql = "select * from giaovien where MaGV like :key or TenGV like :key or GioiTinh like :key or NgaySinh like :key or Tuoi like :key or QueQuan like :key or  DiaChi like :key or  TrinhDo like :key or  SDT like :key or  Email like :key";
+
+    $start = ($page-1) *50 ;
+    if ($collumSort !=""){
+        $sql = "select * from giaovien where MaGV like :key or TenGV like :key or GioiTinh like :key or NgaySinh like :key or Tuoi like :key or QueQuan like :key or  DiaChi like :key or  TrinhDo like :key or  SDT like :key or  Email like :key order by ".$collumSort." ".$order." limit 50 offset ".strval($start) ;
+    }else{
+        $sql = "select * from giaovien where MaGV like :key or TenGV like :key or GioiTinh like :key or NgaySinh like :key or Tuoi like :key or QueQuan like :key or  DiaChi like :key or  TrinhDo like :key or  SDT like :key or  Email like :key limit 50 offset ".strval($start) ;
+    }
+
+    //$sql = "select * from giaovien where MaGV like :key or TenGV like :key or GioiTinh like :key or NgaySinh like :key or Tuoi like :key or QueQuan like :key or  DiaChi like :key or  TrinhDo like :key or  SDT like :key or  Email like :key";
     try {
         $connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         $statement = $connection->prepare($sql);
@@ -156,6 +164,30 @@ function searchTeacher($connection, $key)
         echo $e->getMessage();
     }
 }
+
+
+function searchList($connection, $key)
+{
+    
+   
+    $sql = "select * from giaovien where MaGV like :key or TenGV like :key or GioiTinh like :key or NgaySinh like :key or Tuoi like :key or QueQuan like :key or  DiaChi like :key or  TrinhDo like :key or  SDT like :key or  Email like :key" ;
+    try {
+        $connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        $statement =  $connection->prepare($sql);
+        $statement->bindValue(':key', "%$key%", PDO::PARAM_STR);
+     
+        $statement->execute();
+
+        $listStudent  = $statement->fetchAll(PDO::FETCH_ASSOC);
+
+        $connection = null;
+        return $listStudent;
+    } catch (PDOException $e) {
+        echo $e->getMessage();
+    }
+}
+
+
 
 //
 // search Giao vien

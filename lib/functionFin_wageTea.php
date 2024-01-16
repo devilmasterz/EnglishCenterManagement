@@ -4,142 +4,27 @@
 $path_dir = __DIR__ . '/../lib';
 
 include $path_dir . '/database.php';
-// select danh sách hoa don
-// function listBill($connection)
-// {
-//     $sql = "select * from hdhocphi";
-//     try {
-//         $connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-//         $statement =  $connection->prepare($sql);
-//         $statement->execute();
-
-//         $list  = $statement->fetchAll(PDO::FETCH_ASSOC);
-
-//         $connection = null;
-//         return $list;
-//     } catch (PDOException $e) {
-//         echo $e->getMessage();
-//     }
-// }
-
-
-// // select danh sách hoc sinh
-// function listStudent($connection)
-// {
-//     $sql = "select * from hocsinh";
-//     try {
-//         $connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-//         $statement =  $connection->prepare($sql);
-//         $statement->execute();
-
-//         $list  = $statement->fetchAll(PDO::FETCH_ASSOC);
-
-//         $connection = null;
-//         return $list;
-//     } catch (PDOException $e) {
-//         echo $e->getMessage();
-//     }
-// }
-
-
-// //select danh sách lớp "Đang mở"
-// function listClassOpen($connection)
-// {
-//     $sql = "SELECT * FROM `lop` WHERE TrangThai = \"Đang mở\";";
-//     try {
-//         $connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-//         $statement =  $connection->prepare($sql);
-//         $statement->execute();
-
-//         $list  = $statement->fetchAll(PDO::FETCH_ASSOC);
-
-//         $connection = null;
-//         return $list;
-//     } catch (PDOException $e) {
-//         echo $e->getMessage();
-//     }
-// }
-
-
-// // Select số buổi điểm danh
-
-// function attendOfMonth($connection, $month, $year)
-// {
-//     $begin = date("$year-$month-01");
-
-//     $finish = date("Y-m-t", strtotime($begin));
-
-
-//     $sql = 'SELECT MaLop, MaHS, COUNT(*) AS "SoBuoiDiemDanh" FROM diemdanh WHERE ThoiGian BETWEEN "2023-05-01" AND "2023-05-31" and dd = true GROUP BY MaLop, MaHS';
-//     try {
-//         $connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-//         $statement =  $connection->prepare($sql);
-//         $statement->execute();
-
-//         $statement->bindParam(1, $begin);
-//         $statement->bindParam(2, $finish);
-
-//         $list  = $statement->fetchAll(PDO::FETCH_ASSOC);
-
-//         $connection = null;
-//         return $list;
-//     } catch (PDOException $e) {
-//         echo $e->getMessage();
-//     }
-// }
-
-// // insert hdhocpho
-// function insertHDHocPhi($connection, $tenHD, $maLop, $maHS, $ThoiGian, $SoTien, $GiamHocPhi, $SoTienGiam, $SoTienPhaiDong)
-// {
-//     $s = 'Chưa đóng';
-//     $sql = "insert into  hdhocphi (TenHD, MaLop, MaHS, ThoiGian, SoTien, GiamHocPhi, SoTienGiam, SoTienPhaiDong, NoPhiConLai,TrangThai) values(?,?,?,?,?,?,?,?,?,?)";
-//     try {
-//         $connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-//         $statement =  $connection->prepare($sql);
-
-//         $statement->bindParam(1, $tenHD);
-//         $statement->bindParam(2, $maLop);
-//         $statement->bindParam(3, $maHS);
-//         $statement->bindParam(4, $ThoiGian);
-//         $statement->bindParam(5, $SoTien);
-//         $statement->bindParam(6, $GiamHocPhi);
-//         $statement->bindParam(7, $SoTienGiam);
-//         $statement->bindParam(8, $SoTienPhaiDong);
-//         $statement->bindParam(9, $SoTienPhaiDong);
-//         $statement->bindParam(10, $s);
-//         $statement->execute();
-
-
-//         $connection = null;
-//     } catch (PDOException $e) {
-//         echo $e->getMessage();
-//     }
-// }
-
-// // select hocPhiHS
-// function selecths_hocPhi($connection)
-// {
-//     $sql = "SELECT MaHS , hs_lop.MaLop , GiamHocPhi , lop.HocPhi  FROM hs_lop INNER JOIN lop WHERE hs_lop.MaLop =  lop.MaLop;";
-
-//     try {
-//         $connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-//         $statement =  $connection->prepare($sql);
-//         $statement->execute();
-
-//         $list = $statement->fetchAll(PDO::FETCH_ASSOC);
-
-//         $connection = null;
-//         return $list;
-//     } catch (PDOException $e) {
-//         echo $e->getMessage();
-//     }
-// }
 
 //search  LuongGV x giaovien
-function searchLuongGV($connection, $key)
+function searchLuongGV($connection,$key,$collumSort,$order)
 {
-    $sql = "SELECT luonggv.MaGV , MaLuong, TenHD ,ThoiGian, Lop,ThoiGianTT, SoTien, TrangThai, giaovien.TenGV, giaovien.TenGV, giaovien.GioiTinh, giaovien.NgaySinh, giaovien.Tuoi, giaovien.QueQuan, giaovien.DiaChi, giaovien.TrinhDo, giaovien.SDT, giaovien.Email  FROM luonggv INNER JOIN giaovien WHERE luonggv.MaGV =  giaovien.MaGV and
-         (MaLuong like :key or luonggv.MaGV like :key or giaovien.TenGV like :key or ThoiGian like :key or ThoiGianTT like :key or Lop like :key  or TenHD like :key) order by MaLuong desc";
+
+    if ($collumSort != "") {
+        if ($collumSort == "ThoiGian") {
+            $sql = 'SELECT luonggv.MaGV , MaLuong, TenHD ,ThoiGian, Lop,ThoiGianTT, SoTien, TrangThai, giaovien.TenGV, giaovien.TenGV, giaovien.GioiTinh, giaovien.NgaySinh, giaovien.Tuoi, giaovien.QueQuan, giaovien.DiaChi, giaovien.TrinhDo, giaovien.SDT, giaovien.Email  FROM luonggv INNER JOIN giaovien WHERE luonggv.MaGV =  giaovien.MaGV and
+            (MaLuong like :key or luonggv.MaGV like :key or giaovien.TenGV like :key or ThoiGian like :key or ThoiGianTT like :key or Lop like :key  or TenHD like :key) order by STR_TO_DATE(CONCAT("01/", ThoiGian), "%d/%m/%Y" )' . $order;
+        } else {
+
+            $sql = "SELECT luonggv.MaGV , MaLuong, TenHD ,ThoiGian, Lop,ThoiGianTT, SoTien, TrangThai, giaovien.TenGV, giaovien.TenGV, giaovien.GioiTinh, giaovien.NgaySinh, giaovien.Tuoi, giaovien.QueQuan, giaovien.DiaChi, giaovien.TrinhDo, giaovien.SDT, giaovien.Email  FROM luonggv INNER JOIN giaovien WHERE luonggv.MaGV =  giaovien.MaGV and
+            (MaLuong like :key or luonggv.MaGV like :key or giaovien.TenGV like :key or ThoiGian like :key or ThoiGianTT like :key or Lop like :key  or TenHD like :key) order by " . $collumSort . " " . $order;
+        }
+    } else {
+        $sql = "SELECT luonggv.MaGV , MaLuong, TenHD ,ThoiGian, Lop,ThoiGianTT, SoTien, TrangThai, giaovien.TenGV, giaovien.TenGV, giaovien.GioiTinh, giaovien.NgaySinh, giaovien.Tuoi, giaovien.QueQuan, giaovien.DiaChi, giaovien.TrinhDo, giaovien.SDT, giaovien.Email  FROM luonggv INNER JOIN giaovien WHERE luonggv.MaGV =  giaovien.MaGV and
+        (MaLuong like :key or luonggv.MaGV like :key or giaovien.TenGV like :key or ThoiGian like :key or ThoiGianTT like :key or Lop like :key  or TenHD like :key) order by MaLuong desc";
+    }
+
+    // $sql = "SELECT luonggv.MaGV , MaLuong, TenHD ,ThoiGian, Lop,ThoiGianTT, SoTien, TrangThai, giaovien.TenGV, giaovien.TenGV, giaovien.GioiTinh, giaovien.NgaySinh, giaovien.Tuoi, giaovien.QueQuan, giaovien.DiaChi, giaovien.TrinhDo, giaovien.SDT, giaovien.Email  FROM luonggv INNER JOIN giaovien WHERE luonggv.MaGV =  giaovien.MaGV and
+    //      (MaLuong like :key or luonggv.MaGV like :key or giaovien.TenGV like :key or ThoiGian like :key or ThoiGianTT like :key or Lop like :key  or TenHD like :key) order by MaLuong desc";
     try {
         $connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         $statement =  $connection->prepare($sql);
@@ -147,6 +32,25 @@ function searchLuongGV($connection, $key)
         $statement->execute();
 
         $list  = $statement->fetchAll(PDO::FETCH_ASSOC);
+
+        $connection = null;
+        return $list;
+    } catch (PDOException $e) {
+        echo $e->getMessage();
+    }
+}
+
+
+function listBillLGV($connection)
+{
+
+    $sql = "SELECT luonggv.MaGV , MaLuong, TenHD ,ThoiGian, Lop,ThoiGianTT, SoTien, TrangThai, giaovien.TenGV, giaovien.TenGV, giaovien.GioiTinh, giaovien.NgaySinh, giaovien.Tuoi, giaovien.QueQuan, giaovien.DiaChi, giaovien.TrinhDo, giaovien.SDT, giaovien.Email  FROM luonggv INNER JOIN giaovien WHERE luonggv.MaGV =  giaovien.MaGV ";
+    try {
+        $connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        $statement = $connection->prepare($sql);
+        $statement->execute();
+
+        $list = $statement->fetchAll(PDO::FETCH_ASSOC);
 
         $connection = null;
         return $list;
@@ -193,7 +97,7 @@ function select_gv_LopxDD($connection)
 
 // select so buoi day
 
-function selectSoBuoiDay($connection, $month, $year,$magv)
+function selectSoBuoiDay($connection, $month, $year, $magv)
 {
     $begin = date("$year-$month-01");
 
@@ -215,7 +119,6 @@ function selectSoBuoiDay($connection, $month, $year,$magv)
     } catch (PDOException $e) {
         echo $e->getMessage();
     }
-
 }
 
 // insert Luong gv
@@ -263,7 +166,7 @@ function selectTeacher($connection)
 
 
 // update trang thai luonggv
-function updateStatusLuonggv($connection, $tt, $tg,$mal)
+function updateStatusLuonggv($connection, $tt, $tg, $mal)
 {
 
     $sql = "update luonggv set  TrangThai = ?  , ThoiGianTT = ? where MaLuong = ?";
@@ -285,7 +188,7 @@ function updateStatusLuonggv($connection, $tt, $tg,$mal)
 
 
 // update trang thai luonggv
-function updateLuongGV($connection, $maluong, $tenhd,$magv,$tg,$tgtt,$sotien,$tt)
+function updateLuongGV($connection, $maluong, $tenhd, $magv, $tg, $tgtt, $sotien, $tt)
 {
 
     $sql = "update luonggv set  TrangThai = ?  , ThoiGianTT = ? ,  TenHD = ? ,MaGV =? , ThoiGian = ?, SoTien = ? where MaLuong = ?";
@@ -299,8 +202,7 @@ function updateLuongGV($connection, $maluong, $tenhd,$magv,$tg,$tgtt,$sotien,$tt
         $statement->bindParam(4, $magv);
         $statement->bindParam(5, $tg);
         $statement->bindParam(6, $sotien);
-        $statement->bindParam(7, $maluong);
-        ;
+        $statement->bindParam(7, $maluong);;
 
         $statement->execute();
 
@@ -310,14 +212,14 @@ function updateLuongGV($connection, $maluong, $tenhd,$magv,$tg,$tgtt,$sotien,$tt
     }
 }
 
- //Xoa hoa don hoc phi
+//Xoa hoa don hoc phi
 function deleteLuongGV($connection, $mahd)
 {
     $sql = "delete from luonggv where MaLuong = ?";
     try {
-        $connection -> setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        $connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         $statement =  $connection->prepare($sql);
-        $statement-> execute([$mahd]);
+        $statement->execute([$mahd]);
         $connection = null;
     } catch (PDOException $e) {
         echo $e->getMessage();
@@ -342,9 +244,3 @@ function selectSoBuoiDayAll($connection)
         echo $e->getMessage();
     }
 }
-
-
-
-
-
-

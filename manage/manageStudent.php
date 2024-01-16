@@ -42,10 +42,10 @@ $jsonListPhuHuynh = json_encode($listPhuHuynh);
 		<nav>
 			<ul>
 				<li><a href="./ListClass.php">Quản lý lớp học</a></li>
-				<li><a style="color: #0088cc;" href="../manage/manageStudent.php">Quản lý học viên</a></li>
+				<li><a style="color: #0088cc;" href="../manage/manageStudent.php">Quản lý học sinh</a></li>
 				<li><a href="../manage/manageTeacher.php">Quản lý giáo viên</a></li>
 				<li><a href="../manage/manageParent.php">Quản lý phụ huynh</a></li>
-				<li><a href="../manage/ManageFinance.php">Quản lý tài chính</a></li>
+				<li><a href="../manage/manageFinance.php">Quản lý tài chính</a></li>
 				<li><a href="../manage/manageStatistical.php">Báo cáo thống kê</a></li>
 				<li><a href="../pages/home/home.php" style="display: flex;"><img src="../assets/images/icon-logout.png" alt="" style="width:20px"></a></li>
 
@@ -54,7 +54,7 @@ $jsonListPhuHuynh = json_encode($listPhuHuynh);
 	</header>
 	<main>
 
-		<h1>Quản lý Học viên</h1>
+		<h1>Quản lý Học sinh</h1>
 		<div class="search-container">
 
 			<form id="form-search" method="post" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>" style="width: 50%; margin: unset;display: inline-flex;" autocomplete="off">
@@ -71,7 +71,7 @@ $jsonListPhuHuynh = json_encode($listPhuHuynh);
 		<table id="table-1">
 			<thead>
 				<tr>
-					<th onclick="sortTable(0)">STT</th>
+					<th>STT</th>
 					<th onclick="sortTable(1)">Mã học sinh</th>
 					<th onclick="sortTable(2)">Họ Tên</th>
 					<th onclick="sortTable(3)">Giới tính</th>
@@ -86,7 +86,13 @@ $jsonListPhuHuynh = json_encode($listPhuHuynh);
 
 
 			</tbody>
+
+			
 		</table>
+		<div id="container-index">
+		
+		
+		</div>
 
 		<!-- Thêm học sinh -->
 
@@ -156,7 +162,7 @@ $jsonListPhuHuynh = json_encode($listPhuHuynh);
 			<div class="modal-content">
 
 
-				<h2>Thông tin học viên</h2>
+				<h2>Thông tin học sinh</h2>
 				<button id="edit-button" style="position: absolute;top: 40px;right: 60px;">Sửa</button>
 
 				<button id="delete-button" name="delete" style="position: absolute;top: 40px;right: 11px; background-color: #e90000">Xóa</button>
@@ -183,7 +189,7 @@ $jsonListPhuHuynh = json_encode($listPhuHuynh);
 
 							<table>
 								<tr>
-									<th>Mã học viên:</th>
+									<th>Mã học sinh:</th>
 									<td id="Student-id"></td>
 								</tr>
 								<tr>
@@ -362,12 +368,12 @@ $jsonListPhuHuynh = json_encode($listPhuHuynh);
 				<div>
 					<form id="form_edit" name="form_edit" method="post">
 
-						<h1>Sửa thông tin học viên</h1>
+						<h1>Sửa thông tin học sinh</h1>
 
 						<h2 id="Student-id_edit"></h2>
 						<input type="hidden" id="id_edit" name="id_edit">
 
-						<label for="Student_name">Tên học viên: <label id="lb_name_edit" style="color:red; font-size:13px ; font-style: italic "></label></label>
+						<label for="Student_name">Tên học sinh: <label id="lb_name_edit" style="color:red; font-size:13px ; font-style: italic "></label></label>
 						<input type="text" id="sudent_name_edit" name="sudent_name_edit" required>
 
 						<label for="gender">Giới tính:</label>
@@ -406,7 +412,7 @@ $jsonListPhuHuynh = json_encode($listPhuHuynh);
 
 		<div class="add-success">
 			<img src="../assets/images/icon_success.png" alt="" style=" width: 40px;">
-			<h3>Thêm giáo viên thành công!</h3>
+			<h3>Thêm học sinh thành công!</h3>
 		</div>
 
 		<div class="add-success" id="noti-add-link">
@@ -470,9 +476,7 @@ $jsonListPhuHuynh = json_encode($listPhuHuynh);
 		 <p style="margin-left: 80%; font-style:italic; font-size:13px" id="total">  </p>
 
 	
-		 <div id="container-index">
-			
-		 </div>
+		
 	</main>
 
 

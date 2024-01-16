@@ -1,5 +1,12 @@
+var countData = ds_phuhuynh.length;
+var currentPage = 1;
+var collum = "";
+var orderby =""; 
+showTableParent("", 1,collum,orderby);
+showindex();
 
-showTableParent("");
+
+
 
 
 function convertDateFormat(dateString) {
@@ -13,16 +20,21 @@ function numberWithCommas(x) {
 }
 
 
-function showTableParent(text) {
+function showTableParent(text, page, collumSort ,order) {
 
     $.ajax({
         url: '../jquery_ajax/ajax_showTableParent.php',
         type: 'POST',
         data: {
             key: text,
+            page: page,
+            collumSort: collumSort,
+            order : order,
         },
         success: function (res) {
             document.querySelector('.tbody-1').innerHTML = res;
+            countData = document.getElementById('count-data').textContent;
+            showindex();
         },
         error: function (xhr, status, error) {
             console.error(error);
@@ -33,14 +45,44 @@ function showTableParent(text) {
 
 // tim kiem
 function searchList() {
+    collum ="";
+    orderby = "";
     var text = document.getElementById('keyword').value;
-    showTableParent(text);
+    currentPage = 1;
+    showTableParent(text, 1,collum,orderby);
     removeSortIcons();
 }
 
+function showindex() {
+    var html = "";
 
 
+    var count = Math.ceil(countData / 50);
+   
 
+    for (let i = 1; i <= count; i++) {
+
+        var isActive = i === currentPage ? 'activeIndex' : '';
+        html += '<div class="page-index ' + isActive + '" onclick="handlePageIndexClick(this, ' + i + ')">' + i + '</div>';
+    }
+    document.getElementById("container-index").innerHTML = html;
+}
+
+function handlePageIndexClick(clickedElement, pageNumber) {
+
+    var pageElements = document.querySelectorAll('.page-index');
+    pageElements.forEach(function (element) {
+        element.classList.remove('activeIndex');
+    });
+    clickedElement.classList.add('activeIndex');
+
+ 
+    currentPage = pageNumber;
+    var text = document.getElementById('keyword').value;
+    showTableParent(text, pageNumber,collum,orderby);
+    var table = document.querySelector(".tbody-1");
+    table.scrollTo({ top: table.offsetTop, behavior: 'smooth' });
+}
 
 
 
@@ -294,6 +336,9 @@ document.getElementById('delete-link').addEventListener('click', () => {
         success: function (res) {
             ds_hs_of_ph = JSON.parse(res);
             showStudent();
+
+            var text = document.getElementById('keyword').value;
+            showTableParent(text, currentPage,collum,orderby);
         },
         error: function (xhr, status, error) {
             console.error(error);
@@ -417,7 +462,7 @@ submit_update.addEventListener('click', function (event) {
     } else
         document.getElementById('lb_phone_edit').textContent = "";
 
-    if (!(/\S+@\S+\.\S+/.test(email))) {
+    if (!(/\S+@\S+\.\S+/.test(email))  && email) {
         document.getElementById('lb_email_edit').textContent = "*Email không chính xác (example@xxx.com)";
         check = false;
     } else
@@ -468,7 +513,9 @@ submit_update.addEventListener('click', function (event) {
             } else {
                 img.src = "../assets/images/Parent-female-icon.png";
             }
-            searchList();
+            
+            var text = document.getElementById('keyword').value; 
+            showTableParent(text, currentPage,collum,orderby);
 
         },
         error: function (xhr, status, error) {
@@ -506,7 +553,8 @@ function deleteParent() {
             console.error(error);
         }
     });
-    searchList();
+    var text = document.getElementById('keyword').value;
+    showTableParent(text, currentPage,collum,orderby);
 
     //
     document.querySelector('.delete-ques2').style.display = 'none';
@@ -725,55 +773,67 @@ document.getElementById('cancle-change-pass').addEventListener('click', () => {
 var sortDirection = {}; 
 
 function sortTable(columnIndex) {
-    var table = document.getElementById('table-1');
-    var tbody = table.querySelector('.tbody-1');
-    var rows = Array.from(tbody.getElementsByTagName('tr'));
-    var sttValues = rows.map(function (row) {
-        return parseInt(row.getElementsByTagName('td')[0].innerText.trim());
-    });
+    // var table = document.getElementById('table-1');
+    // var tbody = table.querySelector('.tbody-1');
+    // var rows = Array.from(tbody.getElementsByTagName('tr'));
+    // var sttValues = rows.map(function (row) {
+    //     return parseInt(row.getElementsByTagName('td')[0].innerText.trim());
+    // });
 
-    rows.sort(function (a, b) {
-        var aValue = a.getElementsByTagName('td')[columnIndex].innerText.trim();
-        var bValue = b.getElementsByTagName('td')[columnIndex].innerText.trim();
+    // rows.sort(function (a, b) {
+    //     var aValue = a.getElementsByTagName('td')[columnIndex].innerText.trim();
+    //     var bValue = b.getElementsByTagName('td')[columnIndex].innerText.trim();
 
 
 
-        if (columnIndex === 4 || columnIndex === 1) {
-            var aValue = parseFloat(a.getElementsByTagName('td')[columnIndex].innerText.trim());
-            var bValue = parseFloat(b.getElementsByTagName('td')[columnIndex].innerText.trim());
+    //     if (columnIndex === 4 || columnIndex === 1) {
+    //         var aValue = parseFloat(a.getElementsByTagName('td')[columnIndex].innerText.trim());
+    //         var bValue = parseFloat(b.getElementsByTagName('td')[columnIndex].innerText.trim());
 
-            if (sortDirection[columnIndex] === 'asc') {
-                return aValue - bValue;
-            } else {
-                return bValue - aValue;
-            }
-        } else {
-            var aValue = a.getElementsByTagName('td')[columnIndex].innerText.trim();
-            var bValue = b.getElementsByTagName('td')[columnIndex].innerText.trim();
-            if (sortDirection[columnIndex] === 'asc') {
-                return aValue.localeCompare(bValue);
-            } else {
-                return bValue.localeCompare(aValue);
-            }
-        }
+    //         if (sortDirection[columnIndex] === 'asc') {
+    //             return aValue - bValue;
+    //         } else {
+    //             return bValue - aValue;
+    //         }
+    //     } else {
+    //         var aValue = a.getElementsByTagName('td')[columnIndex].innerText.trim();
+    //         var bValue = b.getElementsByTagName('td')[columnIndex].innerText.trim();
+    //         if (sortDirection[columnIndex] === 'asc') {
+    //             return aValue.localeCompare(bValue);
+    //         } else {
+    //             return bValue.localeCompare(aValue);
+    //         }
+    //     }
 
-    });
-    rows.forEach(function (row, index) {
-        var sttCell = row.getElementsByTagName('td')[0];
-        sttCell.innerText = sttValues[index];
-    });
+    // });
+    // rows.forEach(function (row, index) {
+    //     var sttCell = row.getElementsByTagName('td')[0];
+    //     sttCell.innerText = sttValues[index];
+    // });
 
-    rows.forEach(function (row) {
-        tbody.appendChild(row);
-    });
+    // rows.forEach(function (row) {
+    //     tbody.appendChild(row);
+    // });
 
 
     
+    if (columnIndex == 1 ) collum = "MaPH";
+    else if(columnIndex == 2) collum = "TenPH";
+    else if(columnIndex == 3) collum = "GioiTinh";
+    else if(columnIndex == 4) collum = "Tuoi";
+    else if(columnIndex == 5) collum = "DiaChi";
+    else if(columnIndex == 6) collum = "dshs";
+
     if (sortDirection[columnIndex] === 'asc') {
         sortDirection[columnIndex] = 'desc';
+        orderby = "desc";
+        
     } else {
         sortDirection[columnIndex] = 'asc';
+        orderby = "asc";    
     }
+    var text = document.getElementById('keyword').value;
+    showTableParent(text, currentPage,collum,orderby);
 
     
     updateSortIcon(columnIndex);
@@ -893,7 +953,7 @@ document.getElementById('add').addEventListener('click', function (event) {
     } else
         document.getElementById('lb_phone_add').textContent = "";
 
-    if (!/\S+@\S+\.\S+/.test(email)) {
+    if (!/\S+@\S+\.\S+/.test(email) && email) {
         document.getElementById('lb_email_add').textContent = "*Email không chính xác (example@xxx.com)";
         check = false;
     } else
@@ -934,7 +994,10 @@ document.getElementById('add').addEventListener('click', function (event) {
             ds_phuhuynh = JSON.parse(res).parent;
             ds_hs_of_ph = JSON.parse(res).phhs;
             ds_tk_ph = JSON.parse(res).acc;
-            searchList();
+
+            var text = document.getElementById('keyword').value;
+            
+            showTableParent(text,currentPage,collum,orderby);
 
         },
         error: function (xhr, status, error) {
@@ -1109,6 +1172,9 @@ document.getElementById('btn-add-link').addEventListener('click', () => {
         success: function (res) {
             ds_hs_of_ph= JSON.parse(res);
             showStudent();
+            
+            var text = document.getElementById('keyword').value;
+            showTableParent(text, currentPage,collum,orderby);
         },
         error: function (xhr, status, error) {
             console.error(error);

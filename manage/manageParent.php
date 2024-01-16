@@ -46,10 +46,10 @@ $jsonListtk_ph = json_encode($listtk_ph);
 		<nav>
 			<ul>
 				<li><a href="./ListClass.php">Quản lý lớp học</a></li>
-				<li><a href="../manage/manageStudent.php">Quản lý học viên</a></li>
+				<li><a href="../manage/manageStudent.php">Quản lý học sinh</a></li>
 				<li><a href="../manage/manageTeacher.php">Quản lý giáo viên</a></li>
 				<li><a style="color: #0088cc;" href="../manage/manageParent.php">Quản lý phụ huynh</a></li>
-				<li><a href="../manage/ManageFinance.php">Quản lý tài chính</a></li>
+				<li><a href="../manage/manageFinance.php">Quản lý tài chính</a></li>
 				<li><a href="../manage/manageStatistical.php">Báo cáo thống kê</a></li>
 				<li><a href="../pages/home/home.php" style="display: flex;"><img src="../assets/images/icon-logout.png" alt="" style="width:20px"></a></li>
 
@@ -74,7 +74,7 @@ $jsonListtk_ph = json_encode($listtk_ph);
 		<table id="table-1">
 			<thead>
 				<tr>
-					<th onclick="sortTable(0)">STT</th>
+					<th >STT</th>
 					<th onclick="sortTable(1)">Mã phụ huynh</th>
 					<th onclick="sortTable(2)">Họ tên</th>
 					<th onclick="sortTable(3)">Giới tính</th>
@@ -91,7 +91,7 @@ $jsonListtk_ph = json_encode($listtk_ph);
 
 			</tbody>
 		</table>
-
+		<div id="container-index"></div>
 		<!-- Thêm phụ huynh -->
 
 		<div class="modal-bg-add">
@@ -176,7 +176,7 @@ $jsonListtk_ph = json_encode($listtk_ph);
 
 						<div class="tab">
 							<button class="tablinks" id="tb1" onclick="openTab(event, 'tab1')">Chung</button>
-							<button class="tablinks" id="tb2" onclick="openTab(event, 'tab2')">Học viên liên kết</button>
+							<button class="tablinks" id="tb2" onclick="openTab(event, 'tab2')">Học sinh liên kết</button>
 							<button class="tablinks" id="tb3" onclick="openTab(event, 'tab3')">Tài khoản</button>
 						</div>
 
@@ -208,7 +208,7 @@ $jsonListtk_ph = json_encode($listtk_ph);
 
 
 								<tr>
-									<th>Phụ huynh của học viên:</th>
+									<th>Phụ huynh của học sinh:</th>
 									<td id="Parent-parent"></td>
 								</tr>
 
@@ -402,7 +402,7 @@ $jsonListtk_ph = json_encode($listtk_ph);
 
 		<div class="add-success">
 			<img src="../assets/images/icon_success.png" alt="" style=" width: 40px;">
-			<h3>Thêm giáo viên thành công!</h3>
+			<h3>Thêm phụ huynh thành công!</h3>
 		</div>
 		<div class="add-success" id="noti-add-link">
 			<img src="../assets/images/icon_success.png" alt="" style=" width: 40px;">

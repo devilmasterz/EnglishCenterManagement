@@ -124,7 +124,7 @@ if (isset($_POST['submit'])) {
                     </div>
 
                     <div>
-                        <a class="form-submit" href="login.php">Quay lại trang đăng nhập</a>
+                        <a class="form-submit" href="../login_pages/login.php">Quay lại trang đăng nhập</a>
                     </div>
 
 

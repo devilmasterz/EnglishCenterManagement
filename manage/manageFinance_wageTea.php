@@ -3,7 +3,7 @@ require '../lib/functionFin_wageTea.php';
 
 // $listBill = listBill($connection);
 
-$listBill = searchLuongGV($connection, '');
+$listBill = searchLuongGV($connection, "","","");
 $listgv_lopxlop = select_gv_LopxLop($connection);
 $listgv_lopxdd = select_gv_LopxDD($connection);
 $listTeacher = selectTeacher($connection);
@@ -11,24 +11,10 @@ $listSoBuoiDayAll =  selectSoBuoiDayAll($connection);
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
-
-
 	if (isset($_POST['refesh'])) {
 		header("Location: manageFinance_wageTea.php");
 	}
 
-
-
-
-
-	if (isset($_POST['mahd-delete-2'])) {
-
-		$mahd = $_POST['mahd-delete-2'];
-
-		deleteLuongGV($connection, $mahd);
-
-		header("Location: manageFinance_wageTea.php");
-	}
 }
 
 $jslistBill = json_encode($listBill);
@@ -66,10 +52,10 @@ $jslistSoBuoiDayAll = json_encode($listSoBuoiDayAll);
 		<nav>
 			<ul>
 				<li><a href="./ListClass.php">Quản lý lớp học</a></li>
-				<li><a href="../manage/ManageStudent.php">Quản lý học viên</a></li>
+				<li><a href="../manage/manageStudent.php">Quản lý học sinh</a></li>
 				<li><a href="../manage/manageTeacher.php">Quản lý giáo viên</a></li>
 				<li><a href="../manage/manageParent.php">Quản lý phụ huynh</a></li>
-				<li><a style="color: #0088cc;" href="../manage/ManageFinance.php">Quản lý tài chính</a></li>
+				<li><a style="color: #0088cc;" href="../manage/manageFinance.php">Quản lý tài chính</a></li>
 				<li><a href="../manage/manageStatistical.php">Báo cáo thống kê</a></li>
 				<li><a href="../pages/home/home.php" style="display: flex;"><img src="../assets/images/icon-logout.png" alt="" style="width:20px"></a></li>
 			</ul>
@@ -99,9 +85,12 @@ $jslistSoBuoiDayAll = json_encode($listSoBuoiDayAll);
 					<input type="button" id="search" value="Tìm kiếm" style="width: 100px;  background-color: #4CAF50;">
 					<button type="submit" id="refesh-btn" name="refesh" style=" background-color: currentcolor "> <img style="width: 30px;" src="../assets/images/Refresh-icon.png" alt=""></button>
 				</form>
-				<div style="display:inline-flex">
+				<div style="display:inline-flex; align-items: center">
+				<h3 > Thời gian: </h3>
+				<input type="month" id="month-year" style="height: 30px;background-color: beige;margin-right: 20px;">
+			
 					<h3 style="margin-right:5px">Trạng thái :</h3>
-					<select style=" border: groove;background-color: beige;font-size: 14px;padding:0; width:200px;height:50px" id="select-status">
+					<select style=" border: groove;background-color: beige;font-size: 14px;padding:0; width:200px;height:40px" id="select-status">
 						<option value="">...</option>
 						<option value="Chưa thanh toán">Chưa thanh toán</option>
 						<option value="Đã thanh toán">Đã thanh toán</option>
@@ -117,14 +106,10 @@ $jslistSoBuoiDayAll = json_encode($listSoBuoiDayAll);
 
 			<div>
 				<table id="table-1">
-					<?php $i = 1;
-					if (!$listBill) {
-						echo ' <h2>Không tìm thấy kết quả phù hợp "' . $_POST['keyword'] . '"</h2>';
-					}
-					?>
+				
 					<thead id="thead-1">
 						<tr>
-							<th data-column="0" style="width:20px" onclick="sortTable(0)">STT</th>
+							<th data-column="0" style="width:20px">STT</th>
 							<th data-column="1" onclick="sortTable(1)">Mã hóa đơn</th>
 							<th data-column="2" onclick="sortTable(2)">Tên hóa đơn</th>
 							<th data-column="3" onclick="sortTable(3)">Mã Giáo viên</th>
@@ -134,21 +119,15 @@ $jslistSoBuoiDayAll = json_encode($listSoBuoiDayAll);
 							<th data-column="7" onclick="sortTable(7)">Số tiền </th>
 							<th data-column="8" onclick="sortTable(8)">Thời gian thanh toán </th>
 							<th data-column="9" onclick="sortTable(9)">Trạng thái </th>
-
 						</tr>
 					</thead>
 					<tbody class="tbody-1">
-
-
-
 					</tbody>
 					<tbody class="tbody-5">
-
-
-
 					</tbody>
 
 				</table>
+				<div id="container-index"></div>
 			</div>
 			<!-- Them hoa don -->
 			<div class="modal-bg-add">
@@ -401,7 +380,7 @@ $jslistSoBuoiDayAll = json_encode($listSoBuoiDayAll);
 		<div class="modal-bg-edit">
 			<div class="modal-content-edit">
 				<div>
-					<h2>Sửa thông tin hóa đơn</h2>
+					<h2 style="margin: 0px;">Sửa thông tin hóa đơn</h2>
 					<form id="form-edit-bill" name="form-edit-bill" method="post">
 						<table>
 							<tr>

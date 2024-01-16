@@ -37,7 +37,7 @@ require '../lib/functionFinance.php';
     updateHDTHP_addLSTHP($connection, $totalAmount, $remainingFee, $tt, $mahd);
 
     $result = [
-        "hoadon" =>  searchHDHocPhi($connection, ""),
+        "hoadon" =>  listBillHP($connection),
         "lsthp" => listLSTHP($connection),
     ];
     

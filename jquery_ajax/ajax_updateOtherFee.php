@@ -24,6 +24,6 @@ require '../lib/functionFin_OtherFee.php';
         
     updateChiPhiKhac($connection,$tenhd,$loaiHD,$thoiGian,$soTien,$tt,$tgtt,$mahd);
 
-    $listBill = searchChiPhiKhac($connection, "");
+    $listBill = listBillCPK($connection);
 
     print_r(json_encode($listBill)) ;

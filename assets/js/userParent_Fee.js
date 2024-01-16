@@ -42,7 +42,7 @@ function hienthids(status, kind, filteredData) {
     }
 
     if (filteredData.length == 0) {
-        document.querySelector(".tbody-1").innerHTML = 'Không có dữ liệu phù hợp';
+        document.querySelector(".tbody-1").innerHTML = 'Không có dữ liệu phù hợp !';
     }
     filteredData_ds = filteredData;
 

@@ -23,7 +23,7 @@ if ($status == 'Đã thanh toán') {
 updateLuongGV($connection,$mahd,$ten,$teacher,$thoiGian,$time,$money,$status);
 
 
-$listBill = searchLuongGV($connection, '');
+$listBill = listBillLGV($connection);
 print_r(json_encode($listBill)) ;
 
 

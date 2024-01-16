@@ -88,10 +88,10 @@ tr:hover {
 
 .tbody-1 {
     display: block;
-    max-height: 600px;
-    /* set maximum height */
+    max-height: 500px;
+   
     overflow-y: auto;
-    /* enable vertical scroll */
+    
 }
 
 thead,

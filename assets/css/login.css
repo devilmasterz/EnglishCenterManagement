@@ -75,7 +75,7 @@ body {
     align-items: center;
 }
 .login-student-form div{
-    padding-bottom: 25px;
+    padding-top: 25px;
     width: 100%;
     display: flex;
     justify-content: center;

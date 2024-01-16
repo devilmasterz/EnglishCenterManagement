@@ -17,6 +17,6 @@ require '../lib/functionFin_OtherFee.php';
 
 
    
-    $listBill = searchChiPhiKhac($connection, "");
+    $listBill = listBillCPK($connection);
 
     print_r(json_encode($listBill)) ;

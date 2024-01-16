@@ -1,3 +1,13 @@
+var countData = dsHoaDon.length;
+var currentPage = 1;
+var collum = "";
+var orderby = "";
+var selectedStatus = "";
+var dateFilter = "";
+showTableFinance("", 1, collum, orderby,"");
+
+
+
 function convertDateFormat(dateString) {
     var dateParts = dateString.split("-");
     var formattedDate = dateParts[2] + "-" + dateParts[1] + "-" + dateParts[0];
@@ -19,10 +29,12 @@ function numberWithCommas(x) {
 }
 //Hiẹn thị bảng
 var filteredData_ds;
-var selectedStatus = "";
-hienthids(selectedStatus, filteredData_ds);
 
-function hienthids(status, filteredData) {
+
+//hienthids(selectedStatus, filteredData_ds , currentPage);
+
+function hienthids(status, filteredData, page, date) {
+    
     filteredData_ds = [];
     document.querySelector(".tbody-1").innerHTML = '';
     document.querySelector(".tbody-5").innerHTML = '';
@@ -33,8 +45,23 @@ function hienthids(status, filteredData) {
             return hoaDon['TrangThai'] === status;
         });
     }
+    if(date != ""){
+        filteredData = filteredData.filter(function (hoaDon) {
+          
+            let thang1 = hoaDon['ThoiGian'].split('/')[0];
+            let nam1 = hoaDon['ThoiGian'].split('/')[1];
+
+            let thang2 = parseInt(date.split('-')[1], 10);
+           
+            let nam2 = date.split('-')[0];
+            
+            return (thang1 == thang2 && nam1 == nam2);
+            //return hoaDon['TrangThai'] === status;
+        });
+    }
+
     if (filteredData.length == 0) {
-        document.querySelector(".tbody-1").innerHTML = 'Không có dữ liệu phù hợp với "' + document.getElementById('keyword').value.trim() + '"';
+        document.querySelector(".tbody-1").innerHTML = 'Không có dữ liệu phù hợp !';
     }
     filteredData_ds = filteredData;
 
@@ -48,25 +75,27 @@ function hienthids(status, filteredData) {
             }
             else if (filteredData[i]['TrangThai'] === 'Chưa đóng') { color = "#ff9393" }
             else { color = "#bcbdff" }
+            if (i >= (page - 1) * 50  && i <= page * 50-1) {
 
-            html += '<tr onclick="handleRowClick(' + i + ')">';
-            html += '<td style="width:20px ;background-color:' + color + '">' + (i + 1) + '</td>';
-            html += '<td style = "background-color:' + color + '">' + filteredData[i]['MaHD'] + '</td>';
-            html += '<td style = "background-color:' + color + '">' + filteredData[i]['TenHD'] + '</td>';
-            html += '<td style = "background-color:' + color + '">' + filteredData[i]['TenHS'] + '</td>';
-            html += '<td style = "background-color:' + color + '">' + filteredData[i]['MaLop'] + '</td>';
-            html += '<td style = "background-color:' + color + '">' + filteredData[i]['ThoiGian'] + '</td>';
-            html += '<td style = "background-color:' + color + '">' + numberWithCommas(filteredData[i]['SoTien']) + '</td>';
-            html += '<td style = "background-color:' + color + '">' + filteredData[i]['GiamHocPhi'] + '%</td>';
-            html += '<td style = "background-color:' + color + '">' + numberWithCommas(filteredData[i]['SoTienGiam']) + '</td>';
-            html += '<td style = "background-color:' + color + '">' + numberWithCommas(filteredData[i]['SoTienPhaiDong']) + '</td>';
-            html += '<td style = "background-color:' + color + '">' + numberWithCommas(filteredData[i]['SoTienDaDong']) + '</td>';
-            html += '<td style = "background-color:' + color + '">' + numberWithCommas(filteredData[i]['NoPhiConLai']) + '</td>';
 
-            html += '<td style = "background-color:' + color + '">' + filteredData[i]['TrangThai'] + '</td>';
+                html += '<tr onclick="handleRowClick(' + i + ')">';
+                html += '<td style="width:20px ;background-color:' + color + '">' + (i + 1) + '</td>';
+                html += '<td style = "background-color:' + color + '">' + filteredData[i]['MaHD'] + '</td>';
+                html += '<td style = "background-color:' + color + '">' + filteredData[i]['TenHD'] + '</td>';
+                html += '<td style = "background-color:' + color + '">' + filteredData[i]['TenHS'] + '</td>';
+                html += '<td style = "background-color:' + color + '">' + filteredData[i]['MaLop'] + '</td>';
+                html += '<td style = "background-color:' + color + '">' + filteredData[i]['ThoiGian'] + '</td>';
+                html += '<td style = "background-color:' + color + '">' + numberWithCommas(filteredData[i]['SoTien']) + '</td>';
+                html += '<td style = "background-color:' + color + '">' + filteredData[i]['GiamHocPhi'] + '%</td>';
+                html += '<td style = "background-color:' + color + '">' + numberWithCommas(filteredData[i]['SoTienGiam']) + '</td>';
+                html += '<td style = "background-color:' + color + '">' + numberWithCommas(filteredData[i]['SoTienPhaiDong']) + '</td>';
+                html += '<td style = "background-color:' + color + '">' + numberWithCommas(filteredData[i]['SoTienDaDong']) + '</td>';
+                html += '<td style = "background-color:' + color + '">' + numberWithCommas(filteredData[i]['NoPhiConLai']) + '</td>';
 
-            html += '</tr>';
+                html += '<td style = "background-color:' + color + '">' + filteredData[i]['TrangThai'] + '</td>';
 
+                html += '</tr>';
+            }
             tongSoTien += filteredData[i]['SoTien'];
             tongSoTienGiam += filteredData[i]['SoTienGiam'];
             tongSoTienPhaiDong += filteredData[i]['SoTienPhaiDong'];
@@ -98,22 +127,35 @@ function hienthids(status, filteredData) {
 var selectStatus = document.getElementById('select-status');
 selectStatus.addEventListener('change', function () {
     selectedStatus = selectStatus.value;
-
-    hienthids(selectedStatus, filteredData_ds);
+    currentPage = 1;
+    hienthids(selectedStatus, filteredData_ds,currentPage,dateFilter);
+    showindex();
 
 });
 
-function showTableFinance(text) {
+document.getElementById("month-year").addEventListener('change',function(){
+    dateFilter = document.getElementById("month-year").value;
+    currentPage = 1;
+    hienthids(selectedStatus, filteredData_ds,currentPage,dateFilter);
+    showindex();
+    
+
+});
+
+function showTableFinance(text, page, collumSort, order,date) {
 
     $.ajax({
         url: '../jquery_ajax/ajax_showTableFinance.php',
         type: 'POST',
         data: {
             key: text,
+            collumSort: collumSort,
+            order: order,
         },
         success: function (res) {
             dsHoaDon = JSON.parse(res);
-            hienthids(selectedStatus, filteredData_ds);
+            hienthids(selectedStatus, filteredData_ds, page,date);
+            showindex();
         },
         error: function (xhr, status, error) {
             console.error(error);
@@ -125,14 +167,45 @@ function showTableFinance(text) {
 
 
 function searchList() {
+    collum ="";
+    orderby = "";
     var text = document.getElementById('keyword').value;
-    showTableFinance(text);
+    currentPage = 1;
+    showTableFinance(text, 1, collum, orderby,dateFilter);
     removeSortIcons();
 }
 
 
+function showindex() {
+    var html = "";
 
 
+    var count = Math.ceil(filteredData_ds.length / 50);
+
+
+    for (let i = 1; i <= count; i++) {
+
+        var isActive = i === currentPage ? 'activeIndex' : '';
+        html += '<div class="page-index ' + isActive + '" onclick="handlePageIndexClick(this, ' + i + ')">' + i + '</div>';
+    }
+    document.getElementById("container-index").innerHTML = html;
+}
+
+function handlePageIndexClick(clickedElement, pageNumber) {
+
+    var pageElements = document.querySelectorAll('.page-index');
+    pageElements.forEach(function (element) {
+        element.classList.remove('activeIndex');
+    });
+    clickedElement.classList.add('activeIndex');
+
+ 
+    currentPage = pageNumber;
+    var text = document.getElementById('keyword').value;
+    showTableFinance(text, pageNumber,collum,orderby,dateFilter);
+    var table = document.querySelector(".tbody-1");
+    table.scrollTo({ top: table.offsetTop, behavior: 'smooth' });
+}
 
 
 // sap xep bang
@@ -150,68 +223,88 @@ function parseDateValue(value) {
 var sortDirection = {}; // Store the current sort direction for each column
 
 function sortTable(columnIndex) {
-    var table = document.getElementById('table-1');
-    var tbody = table.querySelector('.tbody-1');
-    var rows = Array.from(tbody.getElementsByTagName('tr'));
-    var sttValues = rows.map(function (row) {
-        return parseInt(row.getElementsByTagName('td')[0].innerText.trim());
-    });
+    // var table = document.getElementById('table-1');
+    // var tbody = table.querySelector('.tbody-1');
+    // var rows = Array.from(tbody.getElementsByTagName('tr'));
+    // var sttValues = rows.map(function (row) {
+    //     return parseInt(row.getElementsByTagName('td')[0].innerText.trim());
+    // });
 
-    rows.sort(function (a, b) {
-        var aValue = a.getElementsByTagName('td')[columnIndex].innerText.trim();
-        var bValue = b.getElementsByTagName('td')[columnIndex].innerText.trim();
-
-
-        if (columnIndex === 2 || columnIndex === 3 || columnIndex === 4 || columnIndex === 12) {
-            if (sortDirection[columnIndex] === 'asc') {
-                return aValue.localeCompare(bValue);
-            } else {
-                return bValue.localeCompare(aValue);
-            }
-        }
-        else
-            if (columnIndex === 0) {
-                return;
-            } else if (columnIndex === 5) {
-                var aDate = parseDateValue(aValue);
-                var bDate = parseDateValue(bValue);
-
-                if (sortDirection[columnIndex] === 'asc') {
-                    return aDate - bDate;
-                } else {
-                    return bDate - aDate;
-                }
-            } else {
-                aValue = parseNumericValue(aValue);
-                bValue = parseNumericValue(bValue);
-
-                if (sortDirection[columnIndex] === 'asc') {
-                    return aValue - bValue;
-                } else {
-                    return bValue - aValue;
-                }
-            }
+    // rows.sort(function (a, b) {
+    //     var aValue = a.getElementsByTagName('td')[columnIndex].innerText.trim();
+    //     var bValue = b.getElementsByTagName('td')[columnIndex].innerText.trim();
 
 
-    });
+    //     if (columnIndex === 2 || columnIndex === 3 || columnIndex === 4 || columnIndex === 12) {
+    //         if (sortDirection[columnIndex] === 'asc') {
+    //             return aValue.localeCompare(bValue);
+    //         } else {
+    //             return bValue.localeCompare(aValue);
+    //         }
+    //     }
+    //     else
+    //         if (columnIndex === 0) {
+    //             return;
+    //         } else if (columnIndex === 5) {
+    //             var aDate = parseDateValue(aValue);
+    //             var bDate = parseDateValue(bValue);
+
+    //             if (sortDirection[columnIndex] === 'asc') {
+    //                 return aDate - bDate;
+    //             } else {
+    //                 return bDate - aDate;
+    //             }
+    //         } else {
+    //             aValue = parseNumericValue(aValue);
+    //             bValue = parseNumericValue(bValue);
+
+    //             if (sortDirection[columnIndex] === 'asc') {
+    //                 return aValue - bValue;
+    //             } else {
+    //                 return bValue - aValue;
+    //             }
+    //         }
+
+
+    // });
 
 
 
-    rows.forEach(function (row, index) {
-        var sttCell = row.getElementsByTagName('td')[0];
-        sttCell.innerText = sttValues[index];
-    });
+    // rows.forEach(function (row, index) {
+    //     var sttCell = row.getElementsByTagName('td')[0];
+    //     sttCell.innerText = sttValues[index];
+    // });
 
-    rows.forEach(function (row) {
-        tbody.appendChild(row);
-    });
+    // rows.forEach(function (row) {
+    //     tbody.appendChild(row);
+    // });
+
+
+    if (columnIndex == 1 ) collum = "MaHD";
+    else if(columnIndex == 2) collum = "TenHD";
+    else if(columnIndex == 3) collum = "TenHS";
+    else if(columnIndex == 4) collum = "MaLop";
+    else if(columnIndex == 5) collum = "ThoiGian";
+    else if(columnIndex == 6) collum = "SoTien";
+    else if(columnIndex == 7) collum = "GiamHocPhi";
+    else if(columnIndex == 8) collum = "SoTienGiam";
+    else if(columnIndex == 9) collum = "SoTienPhaiDong";
+    else if(columnIndex == 10) collum = "SoTienDaDong";
+    else if(columnIndex == 11) collum = "NoPhiConLai";
+    else if(columnIndex == 12) collum = "TrangThai";
 
 
     if (sortDirection[columnIndex] === 'asc') {
         sortDirection[columnIndex] = 'desc';
+        orderby = "desc";
+        
     } else {
         sortDirection[columnIndex] = 'asc';
+        orderby = "asc";    
     }
+    var text = document.getElementById('keyword').value;
+    showTableFinance(text, currentPage,collum,orderby,dateFilter);
+
 
     updateSortIcon(columnIndex);
 
@@ -522,7 +615,8 @@ document.getElementById('sumit-bill-add').addEventListener('click', function (ev
         },
         success: function (res) {
 
-            searchList();
+            var text = document.getElementById('keyword').value;
+            showTableFinance(text, currentPage, collum, orderby,dateFilter);
         },
         error: function (xhr, status, error) {
             console.error(error);
@@ -707,7 +801,8 @@ document.getElementById('sumit-bill-add-ps').addEventListener('click', function 
             student: name_student,
         },
         success: function (res) {
-            searchList();
+            var text = document.getElementById('keyword').value;
+            showTableFinance(text, currentPage, collum, orderby,dateFilter);
         },
         error: function (xhr, status, error) {
             console.error(error);
@@ -979,10 +1074,11 @@ document.getElementById('delete-bill').addEventListener('click', function (event
         url: '../jquery_ajax/ajax_deleteBill.php',
         type: 'POST',
         data: {
-           mahd:hoaDon_select.MaHD
+            mahd: hoaDon_select.MaHD
         },
         success: function (res) {
-            searchList();
+            var text = document.getElementById('keyword').value;
+            showTableFinance(text, currentPage, collum, orderby,dateFilter);
         },
         error: function (xhr, status, error) {
             console.error(error);
@@ -996,7 +1092,7 @@ document.getElementById('delete-bill').addEventListener('click', function (event
     document.querySelector('.delete-success').style.display = 'block';
     setTimeout(function () {
         document.querySelector('.delete-success').style.display = 'none';
-        
+
     }, 1500);
 
 });
@@ -1014,10 +1110,11 @@ document.getElementById('delete-bill-2').addEventListener('click', function (eve
         url: '../jquery_ajax/ajax_deleteBill.php',
         type: 'POST',
         data: {
-           mahd:hoaDon_select.MaHD
+            mahd: hoaDon_select.MaHD
         },
         success: function (res) {
-            searchList();
+            var text = document.getElementById('keyword').value;
+           showTableFinance(text, currentPage, collum, orderby,dateFilter);
         },
         error: function (xhr, status, error) {
             console.error(error);
@@ -1028,7 +1125,7 @@ document.getElementById('delete-bill-2').addEventListener('click', function (eve
 
     document.querySelector('.delete-bill-ques-2').style.display = 'none';
     document.querySelector('#modal-ques').style.display = 'none';
-    
+
     modalBg.style.display = 'none';
     document.querySelector('.delete-success').style.display = 'block';
     setTimeout(function () {
@@ -1096,7 +1193,7 @@ document.getElementById('form-add-trans').addEventListener('submit', function (e
         data: {
             id: hoaDon_select.MaHD,
             date: date,
-            money: money,
+            money: money,  
             key: text,
         },
         success: function (res) {
@@ -1169,8 +1266,9 @@ document.getElementById('form-add-trans').addEventListener('submit', function (e
             document.getElementById('tbody-lsthp').innerHTML = rowsHTML;
 
 
-            hienthids(selectedStatus, filteredData_ds);
-
+         
+           var text = document.getElementById('keyword').value;
+           showTableFinance(text, currentPage, collum, orderby,dateFilter);
 
         },
         error: function (xhr, status, error) {
@@ -1410,7 +1508,8 @@ function updateLSTHP() {
             document.getElementById('tbody-lsthp').innerHTML = rowsHTML;
 
 
-            searchList();
+            var text = document.getElementById('keyword').value;
+            showTableFinance(text, currentPage, collum, orderby,dateFilter);
         },
         error: function (xhr, status, error) {
 

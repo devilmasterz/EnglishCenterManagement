@@ -49,10 +49,10 @@ $jsonlistClassActive = json_encode($listClassActive);
 		<nav>
 			<ul>
 				<li><a href="./ListClass.php">Quản lý lớp học</a></li>
-				<li><a href="../manage/manageStudent.php">Quản lý học viên</a></li>
+				<li><a href="../manage/manageStudent.php">Quản lý học sinh</a></li>
 				<li><a style="color: #0088cc;" href="../manage/manageTeacher.php">Quản lý giáo viên</a></li>
 				<li><a href="../manage/ManageParent.php">Quản lý phụ huynh</a></li>
-				<li><a href="../manage/ManageFinance.php">Quản lý tài chính</a></li>
+				<li><a href="../manage/manageFinance.php">Quản lý tài chính</a></li>
 				<li><a href="../manage/manageStatistical.php">Báo cáo thống kê</a></li>
 				<li><a href="../pages/home/home.php" style="display: flex;"><img src="../assets/images/icon-logout.png" alt="" style="width:20px"></a></li>
 
@@ -79,7 +79,7 @@ $jsonlistClassActive = json_encode($listClassActive);
 		<table id="table-1">
 			<thead>
 				<tr>
-					<th onclick="sortTable(0)">STT</th>
+					<th >STT</th>
 					<th onclick="sortTable(1)">Mã Giáo viên</th>
 					<th onclick="sortTable(2)">Họ tên</th>
 					<th onclick="sortTable(3)">Giới tính</th>
@@ -94,7 +94,7 @@ $jsonlistClassActive = json_encode($listClassActive);
 
 			</tbody>
 		</table>
-
+		<div id="container-index"></div>
 		<!-- Thong tin chi tiet -->
 		<div class="modal-bg">
 			<div class="modal-content">

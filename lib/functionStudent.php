@@ -92,13 +92,21 @@ function updateStudentbyID($connection, $MaHS, $ten, $gt, $ns, $tuoi, $dc, $sdt,
 
 
 // search Hoc vien
-function searchStudent($connection, $key)
+function searchStudent($connection, $key,$page,$collumSort, $order)
 {
-    $sql = "select * from hocsinh where MaHS like :key or TenHS like :key or GioiTinh like :key or NgaySinh like :key or Tuoi like :key  or  DiaChi like :key  or  SDT like :key or  Email like :key";
+    $start = ($page-1) *50 ;
+    if ($collumSort !=""){
+        $sql = "select * from hocsinh where MaHS like :key or TenHS like :key or GioiTinh like :key or NgaySinh like :key or Tuoi like :key  or  DiaChi like :key  or  SDT like :key or  Email like :key order by ".$collumSort." ".$order." limit 50 offset ".strval($start) ;
+    }else{
+        $sql = "select * from hocsinh where MaHS like :key or TenHS like :key or GioiTinh like :key or NgaySinh like :key or Tuoi like :key  or  DiaChi like :key  or  SDT like :key or  Email like :key limit 50 offset ".strval($start) ;
+    }
+   
     try {
         $connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         $statement =  $connection->prepare($sql);
         $statement->bindValue(':key', "%$key%", PDO::PARAM_STR);
+     
+      
         $statement->execute();
 
         $listStudent  = $statement->fetchAll(PDO::FETCH_ASSOC);
@@ -109,6 +117,30 @@ function searchStudent($connection, $key)
         echo $e->getMessage();
     }
 }
+
+
+
+function searchList($connection, $key)
+{
+    
+   
+    $sql = "select * from hocsinh where MaHS like :key or TenHS like :key or GioiTinh like :key or NgaySinh like :key or Tuoi like :key  or  DiaChi like :key  or  SDT like :key or  Email like :key  " ;
+    try {
+        $connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        $statement =  $connection->prepare($sql);
+        $statement->bindValue(':key', "%$key%", PDO::PARAM_STR);
+     
+        $statement->execute();
+
+        $listStudent  = $statement->fetchAll(PDO::FETCH_ASSOC);
+
+        $connection = null;
+        return $listStudent;
+    } catch (PDOException $e) {
+        echo $e->getMessage();
+    }
+}
+
 
 
 function deleteNgaydk($connection, $MaHS)

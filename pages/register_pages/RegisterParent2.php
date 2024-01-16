@@ -30,7 +30,7 @@ if (isset($_POST['submit'])) {
 
     if (empty($userName_error) && empty($passWord_error) && empty($confirmPassword_error)) {
         $check = false;
-        if (checkExitUser($userName, $connection)) {
+        if (checkExitParents($userName, $connection)) {
             $userName_error = "Tài khoản bạn đã bị trùng";
             $check = true;
         }

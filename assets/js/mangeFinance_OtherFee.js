@@ -1,3 +1,12 @@
+var countData = dsHoaDon.length;
+var currentPage = 1;
+var collum = "";
+var orderby = "";
+var selectedKind = "";
+var selectedStatus = "";
+var dateFilter = "";
+showTableFinance("",  1, collum, orderby, "");
+
 
 function convertDateFormat(dateString) {
     var dateParts = dateString.split("-");
@@ -26,17 +35,16 @@ document.getElementById("btn-tab2").classList.add("active");
 
 
 
-// var a = Math.round(203000/100*24.123);
 
 function numberWithCommas(x) {
     return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 //Hiẹn thị bảng
-var selectedKind = '';
-var selectedStatus = '';
+
+
 var filteredData_ds;
-hienthids('', '', filteredData_ds);
-function hienthids(status, kind, filteredData) {
+
+function hienthids(status, kind, filteredData, page, date) {
     filteredData_ds = [];
     document.querySelector(".tbody-1").innerHTML = '';
     document.querySelector(".tbody-5").innerHTML = '';
@@ -65,11 +73,27 @@ function hienthids(status, kind, filteredData) {
 
     }
 
+    if (date != "") {
+        filteredData = filteredData.filter(function (hoaDon) {
+
+            let thang1 = hoaDon['ThoiGian'].split('/')[0];
+            let nam1 = hoaDon['ThoiGian'].split('/')[1];
+
+            let thang2 = parseInt(date.split('-')[1], 10);
+
+            let nam2 = date.split('-')[0];
+
+            return (thang1 == thang2 && nam1 == nam2);
+            //return hoaDon['TrangThai'] === status;
+        });
+    }
+
     if (filteredData.length == 0) {
-        document.querySelector(".tbody-1").innerHTML = 'Không có dữ liệu phù hợp với "' + document.getElementById('keyword').value.trim() + '"';
+        document.querySelector(".tbody-1").innerHTML = 'Không có dữ liệu phù hợp !';
         return;
     }
     filteredData_ds = filteredData;
+
     var html = ''; var html_last = '';
     var color = '';
     var tongSoTien = 0; var tienChuaTT = 0; var tienDaTT = 0; var dem1 = 0; var dem0 = 0;
@@ -87,27 +111,27 @@ function hienthids(status, kind, filteredData) {
                 dem0++;
             }
 
+            if (i >= (page - 1) * 50 && i <= page * 50 - 1) {
+                
+                html += '<tr onclick="handleRowClick(' + i + ')">';
+                html += '<td style="width:20px ;background-color:' + color + '">' + (i + 1) + '</td>';
+                html += '<td style = "background-color:' + color + '">' + filteredData[i]['MaHD'] + '</td>';
+                html += '<td style = "background-color:' + color + '">' + filteredData[i]['TenHD'] + '</td>';
+                html += '<td style = "background-color:' + color + '">' + filteredData[i]['LoaiHD'] + '</td>';
+                html += '<td style = "background-color:' + color + '">' + filteredData[i]['ThoiGian'] + '</td>';
+                html += '<td style = "background-color:' + color + '">' + numberWithCommas(filteredData[i]['SoTien']) + '</td>';
 
-            html += '<tr onclick="handleRowClick(' + i + ')">';
-            html += '<td style="width:20px ;background-color:' + color + '">' + (i + 1) + '</td>';
-            html += '<td style = "background-color:' + color + '">' + filteredData[i]['MaHD'] + '</td>';
-            html += '<td style = "background-color:' + color + '">' + filteredData[i]['TenHD'] + '</td>';
-            html += '<td style = "background-color:' + color + '">' + filteredData[i]['LoaiHD'] + '</td>';
-            html += '<td style = "background-color:' + color + '">' + filteredData[i]['ThoiGian'] + '</td>';
-            html += '<td style = "background-color:' + color + '">' + numberWithCommas(filteredData[i]['SoTien']) + '</td>';
 
+                if (filteredData[i]['ThoiGianTT'] != null) {
+                    html += '<td style = "background-color:' + color + '">' + convertDateFormat(filteredData[i]['ThoiGianTT']) + '</td>';
+                }
+                else {
+                    html += '<td style = "background-color:' + color + '">' + '' + '</td>';
+                }
 
-            if (filteredData[i]['ThoiGianTT'] != null) {
-                html += '<td style = "background-color:' + color + '">' + convertDateFormat(filteredData[i]['ThoiGianTT']) + '</td>';
+                html += '<td style = "background-color:' + color + '">' + filteredData[i]['TrangThai'] + '</td>';
+                html += '</tr>';
             }
-            else {
-                html += '<td style = "background-color:' + color + '">' + '' + '</td>';
-            }
-
-            html += '<td style = "background-color:' + color + '">' + filteredData[i]['TrangThai'] + '</td>';
-
-            html += '</tr>';
-
             tongSoTien += filteredData[i]['SoTien'];
 
 
@@ -151,34 +175,45 @@ var check_kind = false;
 
 selectStatus.addEventListener('change', function () {
     selectedStatus = selectStatus.value;
-
-    hienthids(selectedStatus, selectedKind, filteredData_ds);
-
+    currentPage = 1;
+    hienthids(selectedStatus, selectedKind, filteredData_ds, currentPage, dateFilter);
+    showindex();
 });
 
 
 selectKind.addEventListener('change', function () {
     selectedKind = selectKind.value;
+    currentPage = 1;
+    hienthids(selectedStatus, selectedKind, filteredData_ds, currentPage, dateFilter);
+    showindex();
+});
 
-    hienthids(selectedStatus, selectedKind, filteredData_ds);
+document.getElementById("month-year").addEventListener('change',function(){
+    dateFilter = document.getElementById("month-year").value;
+    currentPage = 1;
+    hienthids(selectedStatus, selectedKind, filteredData_ds, currentPage, dateFilter);
+    showindex();
+    
 });
 
 
 
 
-
-
-function showTableFinance(text) {
+function showTableFinance(text, page, collumSort, order, date) {
 
     $.ajax({
         url: '../jquery_ajax/ajax_showTableOtherFee.php',
         type: 'POST',
         data: {
             key: text,
+            collumSort: collumSort,
+            order: order,
         },
         success: function (res) {
             dsHoaDon = JSON.parse(res);
-            hienthids(selectedStatus, selectedKind, filteredData_ds);
+            
+            hienthids(selectedStatus, selectedKind, filteredData_ds, page, date);
+            showindex();
         },
         error: function (xhr, status, error) {
             console.error(error);
@@ -189,11 +224,44 @@ function showTableFinance(text) {
 
 
 function searchList() {
+    collum = "";
+    orderby = "";
     var text = document.getElementById('keyword').value;
-    showTableFinance(text);
+    currentPage = 1;
+    showTableFinance(text, 1, collum, orderby, dateFilter);
     removeSortIcons();
 }
 
+
+
+function showindex() {
+    var html = "";
+    var count = Math.ceil(filteredData_ds.length / 50);
+
+
+    for (let i = 1; i <= count; i++) {
+
+        var isActive = i === currentPage ? 'activeIndex' : '';
+        html += '<div class="page-index ' + isActive + '" onclick="handlePageIndexClick(this, ' + i + ')">' + i + '</div>';
+    }
+    document.getElementById("container-index").innerHTML = html;
+}
+
+function handlePageIndexClick(clickedElement, pageNumber) {
+
+    var pageElements = document.querySelectorAll('.page-index');
+    pageElements.forEach(function (element) {
+        element.classList.remove('activeIndex');
+    });
+    clickedElement.classList.add('activeIndex');
+
+
+    currentPage = pageNumber;
+    var text = document.getElementById('keyword').value;
+    showTableFinance(text, pageNumber, collum, orderby, dateFilter);
+    var table = document.querySelector(".tbody-1");
+    table.scrollTo({ top: table.offsetTop, behavior: 'smooth' });
+}
 
 
 
@@ -212,90 +280,27 @@ function parseDateValue(value) {
 var sortDirection = {}; // Store the current sort direction for each column
 
 function sortTable(columnIndex) {
-    var table = document.getElementById('table-1');
-    var tbody = table.querySelector('.tbody-1');
-    var rows = Array.from(tbody.getElementsByTagName('tr'));
-    var sttValues = rows.map(function (row) {
-        return parseInt(row.getElementsByTagName('td')[0].innerText.trim());
-    });
 
-    rows.sort(function (a, b) {
-        var aValue = a.getElementsByTagName('td')[columnIndex].innerText.trim();
-        var bValue = b.getElementsByTagName('td')[columnIndex].innerText.trim();
+    if (columnIndex == 1) collum = "MaHD";
+    else if (columnIndex == 2) collum = "TenHD";
+    else if (columnIndex == 3) collum = "LoaiHD";
+    else if (columnIndex == 4) collum = "ThoiGian";
+    else if (columnIndex == 5) collum = "SoTien";
+    else if (columnIndex == 6) collum = "ThoiGianTT";
+    else if (columnIndex == 7) collum = "TrangThai";
 
 
-        if (columnIndex === 1 || columnIndex === 2 || columnIndex === 3 || columnIndex === 7) {
-            if (sortDirection[columnIndex] === 'asc') {
-                return aValue.localeCompare(bValue);
-            } else {
-                return bValue.localeCompare(aValue);
-            }
-        }
-        else
-            if (columnIndex === 0) {
-
-                return;
-            } else if (columnIndex === 4) {
-                var aDate = parseDateValue(aValue);
-                var bDate = parseDateValue(bValue);
-
-                if (sortDirection[columnIndex] === 'asc') {
-                    return aDate - bDate;
-                } else {
-                    return bDate - aDate;
-                }
-            } else if (columnIndex === 4 || columnIndex === 6) {
-
-                if (aValue === '' && bValue !== '') {
-                    return 1;
-                } else if (aValue !== '' && bValue === '') {
-                    return -1;
-                } else if (aValue === '' && bValue === '') {
-                    return 0;
-                }
-
-                var aDate = parseCustomDateFormat(aValue, 'd-m-y');
-                var bDate = parseCustomDateFormat(bValue, 'd-m-y');
-
-                if (sortDirection[columnIndex] === 'asc') {
-                    return aDate - bDate;
-                } else {
-                    return bDate - aDate;
-                }
-            } else {
-                aValue = parseNumericValue(aValue);
-                bValue = parseNumericValue(bValue);
-
-                if (sortDirection[columnIndex] === 'asc') {
-                    return aValue - bValue;
-                } else {
-                    return bValue - aValue;
-                }
-            }
-
-
-    });
-
-
-
-    rows.forEach(function (row, index) {
-        var sttCell = row.getElementsByTagName('td')[0];
-        sttCell.innerText = sttValues[index];
-    });
-
-    rows.forEach(function (row) {
-        tbody.appendChild(row);
-    });
-
-
-    // Reverse the sort direction for the clicked column
     if (sortDirection[columnIndex] === 'asc') {
         sortDirection[columnIndex] = 'desc';
+        orderby = "desc";
+
     } else {
         sortDirection[columnIndex] = 'asc';
+        orderby = "asc";
     }
+    var text = document.getElementById('keyword').value;
+    showTableFinance(text, currentPage, collum, orderby, dateFilter);
 
-    // Update the sort icon in the column header
     updateSortIcon(columnIndex);
 
 
@@ -450,7 +455,8 @@ document.getElementById('sumit-bill-add').addEventListener('click', function (ev
             status: status,
         },
         success: function (res) {
-            searchList();
+            var text = document.getElementById('keyword').value;
+            showTableFinance(text, currentPage, collum, orderby, dateFilter);
         },
         error: function (xhr, status, error) {
             console.error(error);
@@ -616,7 +622,8 @@ document.getElementById('update-tt').addEventListener('click', function (event) 
 
             }
 
-            searchList();
+            var text = document.getElementById('keyword').value;
+            showTableFinance(text, currentPage, collum, orderby, dateFilter);
         },
         error: function (xhr, status, error) {
             console.error(error);
@@ -832,7 +839,8 @@ document.getElementById('update-bill-edit').addEventListener('click', function (
                 select_tt.style.color = 'red';
             }
 
-            searchList();
+            var text = document.getElementById('keyword').value;
+            showTableFinance(text, currentPage, collum, orderby, dateFilter);
         },
         error: function (xhr, status, error) {
             console.error(error);
@@ -846,7 +854,7 @@ document.getElementById('update-bill-edit').addEventListener('click', function (
 
     setTimeout(function () {
         document.querySelector('.add-success').style.display = 'none';
-        
+
     }, 1500);
 
 });
@@ -880,10 +888,11 @@ document.getElementById('delete-bill').addEventListener('click', function (event
         url: '../jquery_ajax/ajax_deleteOtherFee.php',
         type: 'POST',
         data: {
-           mahd:hoaDon_select.MaHD,
+            mahd: hoaDon_select.MaHD,
         },
         success: function (res) {
-            searchList();
+            var text = document.getElementById('keyword').value;
+            showTableFinance(text, currentPage, collum, orderby, dateFilter);
         },
         error: function (xhr, status, error) {
             console.error(error);
@@ -914,10 +923,11 @@ document.getElementById('delete-bill-2').addEventListener('click', function (eve
         url: '../jquery_ajax/ajax_deleteOtherFee.php',
         type: 'POST',
         data: {
-           mahd:hoaDon_select.MaHD,
+            mahd: hoaDon_select.MaHD,
         },
         success: function (res) {
-            searchList();
+            var text = document.getElementById('keyword').value;
+            showTableFinance(text, currentPage, collum, orderby, dateFilter);
         },
         error: function (xhr, status, error) {
             console.error(error);

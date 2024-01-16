@@ -19,55 +19,7 @@ foreach ($listClass as $dataCodeClass) {
 };
 $listClassJson = json_encode($arr);
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-	// if (isset($_POST['classcode'])) {
-	// 	$classcode = trim($_POST['classcode']);
-	// 	$classname = trim($_POST['classname']);
-	// 	$classAge = $_POST['classAge'];
-	// 	$classTimeOpen = $_POST['classTimeOpen'];
-	// 	$schedules0 = $_POST['schedules0'];
-	// 	$condition = $_POST['SelectCondition'];
-	// 	if (isset($_POST['schedules1'])) {
-	// 		$schedules1 = $_POST['schedules1'];
-	// 	} else {
-	// 		$schedules1 = "schedules1";
-	// 	}
 
-	// 	if (isset($_POST['schedules2'])) {
-	// 		$schedules2 = $_POST['schedules2'];
-	// 	} else {
-	// 		$schedules2 = "schedules2";
-	// 	}
-
-	// 	$price = str_replace(',', '', $_POST['price']);
-	// 	$numberlessons = trim($_POST['numberlessons']);
-	// 	$students = trim($_POST['students']);
-
-	// 	$teachers = $_POST['teachers'];
-	// 	$maLop = CreateClass($classcode, $classname, $classAge, $classTimeOpen, 0, $students, $price, $numberlessons, 0, $condition, $connection);
-	// 	if ($maLop != null) {
-
-	// 		// for($i=0; i<=10)
-	// 		$schedulesClass0 = CreateSchedules_Class($schedules0, $maLop, $connection);
-	// 		if ($schedules1 != "schedules1") {
-	// 			$schedulesClass1 = CreateSchedules_Class($schedules1, $maLop, $connection);
-	// 		}
-	// 		if ($schedules2 != "schedules2") {
-	// 			$schedulesClass2 = CreateSchedules_Class($schedules2, $maLop, $connection);
-	// 		}
-	// 		$tientraGV = str_replace(',', '', $_POST['TeacherSalarie']);
-
-	// 		$teacherClass = CreateTeacher_Class($teachers, $maLop, $tientraGV, $connection);
-	// 		if ($teacherClass && isset($_POST['startDiscount']) && isset($_POST['endDiscount']) && isset($_POST['discountpercent'])) {
-	// 			insertDiscount($_POST['startDiscount'], $_POST['endDiscount'], $_POST['discountpercent'], $maLop, $connection);
-	// 		} else {
-	// 			insertDiscount('2023-1-1', '2023-1-1', 0, $maLop, $connection);
-	// 		}
-	// 		header("Location: ListClass.php");
-	// 		exit();
-	// 	}
-	// }
-}
 ?>
 
 <!DOCTYPE html>
@@ -100,10 +52,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 		<nav>
 			<ul>
 				<li><a style="color: #0088cc;" href="./ListClass.php">Quản lý lớp học</a></li>
-				<li><a href="../manage/ManageStudent.php">Quản lý học viên</a></li>
+				<li><a href="../manage/manageStudent.php">Quản lý học sinh</a></li>
 				<li><a href="../manage/manageTeacher.php">Quản lý giáo viên</a></li>
 				<li><a href="../manage/manageParent.php">Quản lý phụ huynh</a></li>
-				<li><a href="../manage/ManageFinance.php">Quản lý tài chính</a></li>
+				<li><a href="../manage/manageFinance.php">Quản lý tài chính</a></li>
 				<li><a href="../manage/manageStatistical.php">Báo cáo thống kê</a></li>
 				<li><a href="../pages/home/home.php" style="display: flex;"><img src="../assets/images/icon-logout.png" alt="" style="width:20px"></a></li>
 
@@ -195,8 +147,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 								</div>
 
 								<div class="col-md-6">
-									<label for="students" class="fw-bold">Số lượng sinh viên tối đa:<label class="lbStyle" id="lbstudents" style="color:red; font-size:13px ; font-style: italic "></label></label>
-									<br><input type="text" id="students" name="students" placeholder="Nhập số lượng sinh viên...">
+									<label for="students" class="fw-bold">Số lượng học sinh tối đa:<label class="lbStyle" id="lbstudents" style="color:red; font-size:13px ; font-style: italic "></label></label>
+									<br><input type="text" id="students" name="students" placeholder="Nhập số lượng học sinh...">
 									<br>
 								</div>
 								<div class="col-md-6">

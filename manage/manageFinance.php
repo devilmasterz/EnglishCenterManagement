@@ -3,7 +3,7 @@ require '../lib/functionFinance.php';
 
 // $listBill = listBill($connection);
 
-$listBill = searchHDHocPhi($connection, '');
+$listBill = searchHDHocPhi($connection, "","","");
 $listStudent = listStudent($connection);
 $listClassOpen = listClassOpen($connection);
 $lisths_lopxHS = lisths_lopxHS($connection);
@@ -13,20 +13,7 @@ $listDD = listDD($connection);
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
-	// if (isset($_POST['id-bill-edit'])) {
-
-	// 	$mahd = $_POST['id-bill-edit'];
-	// 	$ten = trim($_POST['name-bill-edit']);
-	// 	$thang = $_POST['month-bill-edit'];
-	// 	$nam = $_POST['year-bill-edit'];
-	// 	$tt = $_POST['status-bill-edit'];
-
-	// 	$thoiGian = $thang . "/" . $nam;
-
-	// 	updateHoaDonHocPhi($connection, $ten, $thoiGian, $tt, $mahd);
-
-	// 	header("Location: manageFinance.php");
-	// }
+	
 
 	if (isset($_POST['refesh'])) {
 		header("Location: manageFinance.php");
@@ -68,7 +55,7 @@ $jslistDD = json_encode($listDD);
 		<nav>
 			<ul>
 				<li><a href="./ListClass.php">Quản lý lớp học</a></li>
-				<li><a href="../manage/ManageStudent.php">Quản lý học viên</a></li>
+				<li><a href="../manage/manageStudent.php">Quản lý học sinh</a></li>
 				<li><a href="../manage/manageTeacher.php">Quản lý giáo viên</a></li>
 				<li><a href="../manage/manageParent.php">Quản lý phụ huynh</a></li>
 				<li><a style="color: #0088cc;" href="../manage/manageFinance.php">Quản lý tài chính</a></li>
@@ -95,7 +82,7 @@ $jslistDD = json_encode($listDD);
 
 
 		</div>
-
+		
 		<div id="Tab1" class="tabcontent">
 			<h1>Thu Học phí</h1>
 			<div class="search-container">
@@ -104,9 +91,11 @@ $jslistDD = json_encode($listDD);
 					<input type="button" id="search" value="Tìm kiếm" style="width: 100px;  background-color: #4CAF50;">
 					<button type="submit" id="refesh-btn" name="refesh" style=" background-color: currentcolor "> <img style="width: 30px;" src="../assets/images/Refresh-icon.png" alt=""></button>
 				</form>
-				<div style="display:inline-flex">
+				<div style="display:inline-flex; align-items: center">
+				<h3 > Thời gian: </h3>
+				<input type="month" id="month-year" style="height: 30px;background-color: beige;margin-right: 20px;">
 					<h3 style="margin-right:5px">Trạng thái :</h3>
-					<select style=" border: groove;background-color: beige;font-size: 14px;padding:0; width:200px;height:50px" id="select-status">
+					<select style=" border: groove;background-color: beige;font-size: 14px;padding:0; width:200px;height:40px" id="select-status">
 						<option value="">...</option>
 						<option value="Chưa đóng">Chưa đóng</option>
 						<option value="Còn nợ">Còn nợ</option>
@@ -126,7 +115,7 @@ $jslistDD = json_encode($listDD);
 
 					<thead id="thead-1">
 						<tr>
-							<th data-column="0" style="width:20px" onclick="sortTable(0)">STT</th>
+							<th data-column="0" style="width:20px" >STT</th>
 							<th data-column="1" onclick="sortTable(1)">Mã Hóa dơn</th>
 							<th data-column="2" onclick="sortTable(2)">Tên hóa đơn</th>
 							<th data-column="3" onclick="sortTable(3)">Tên Học sinh</th>
@@ -144,15 +133,12 @@ $jslistDD = json_encode($listDD);
 					</thead>
 
 					<tbody class="tbody-1">
-
-
-
 					</tbody>
 
 					</tbody>
-
 					<tbody class="tbody-5">
 				</table>
+				<div id="container-index"></div>
 			</div>
 			<!-- Them hoa don -->
 			<div class="modal-bg-add">
@@ -297,7 +283,7 @@ $jslistDD = json_encode($listDD);
 								</select>
 
 								<br>
-								<label for="name-student-add-bill">Tên học viên: <label id="lb-name-student-add-bill" style="color:red; font-size:13px ; font-style: italic "></label></label>
+								<label for="name-student-add-bill">Tên học sinh: <label id="lb-name-student-add-bill" style="color:red; font-size:13px ; font-style: italic "></label></label>
 								<br>
 								<select style="width: 50%;" name="name-student-add-bill" id="name-student-add-bill">
 									<option value="">Chọn Học viên</option>
@@ -393,11 +379,11 @@ $jslistDD = json_encode($listDD);
 										<td id="class-bill-detail"></td>
 									</tr>
 									<tr>
-										<th class="lb-detail-bill">Mã học viên :</th>
+										<th class="lb-detail-bill">Mã học sinh :</th>
 										<td id="id-st-detail"></td>
 									</tr>
 									<tr>
-										<th class="lb-detail-bill">Tên học viên :</th>
+										<th class="lb-detail-bill">Tên học sinh :</th>
 										<td id="name-st-bill-detail"></td>
 									</tr>
 
@@ -542,11 +528,11 @@ $jslistDD = json_encode($listDD);
 
 							<tr>
 								<td>
-									<label>Mã học viên : <strong style="color: #ff1ace; font-weight: inherit;font-size: small;">(Không thể sửa)</strong></label>
+									<label>Mã học sinh : <strong style="color: #ff1ace; font-weight: inherit;font-size: small;">(Không thể sửa)</strong></label>
 									<input type="text" id="id-st-bill-edit" name="id-st-bill-edit" readonly>
 								</td>
 								<td>
-									<label>Tên học viên : <strong style="color: #ff1ace; font-weight: inherit;font-size: small;">(Không thể sửa)</strong></label>
+									<label>Tên học sinh : <strong style="color: #ff1ace; font-weight: inherit;font-size: small;">(Không thể sửa)</strong></label>
 									<input type="text" id="name-st-bill-edit" name="name-st-bill-edit" readonly>
 								</td>
 							</tr>

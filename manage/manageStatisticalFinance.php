@@ -70,7 +70,7 @@ $jslistThuTheoNam = json_encode($listThuTheoNam);
         <nav>
             <ul>
                 <li><a href="./ListClass.php">Quản lý lớp học</a></li>
-                <li><a href="../manage/ManageStudent.php">Quản lý học viên</a></li>
+                <li><a href="../manage/manageStudent.php">Quản lý học viên</a></li>
                 <li><a href="../manage/manageTeacher.php">Quản lý giáo viên</a></li>
                 <li><a href="../manage/manageParent.php">Quản lý phụ huynh</a></li>
                 <li><a href="../manage/manageFinance.php">Quản lý tài chính</a></li>

@@ -27,7 +27,7 @@ updateHDTHP_addLSTHP($connection, $stdd, $npcl, $tt, $mahd);
 
 
 $result = [
-    "hoadon" =>  searchHDHocPhi($connection, $key),
+    "hoadon" =>  listBillHP($connection),
     "lsthp" => listLSTHP($connection),
 ];
 

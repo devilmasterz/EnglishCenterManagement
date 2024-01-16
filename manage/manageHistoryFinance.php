@@ -3,7 +3,7 @@ require '../lib/functionFin_History.php';
 
 
 
-$listBill =  searchHistory($connection, '');
+// $listBill =  searchHistory($connection, '');
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
@@ -14,7 +14,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
    
 }
-$jslistBill = json_encode($listBill);
+// $jslistBill = json_encode($listBill);
 
 ?>
 
@@ -41,10 +41,10 @@ $jslistBill = json_encode($listBill);
         <nav>
             <ul>
                 <li><a href="./ListClass.php">Quản lý lớp học</a></li>
-                <li><a href="../manage/ManageStudent.php">Quản lý học viên</a></li>
+                <li><a href="../manage/manageStudent.php">Quản lý học sinh</a></li>
                 <li><a href="../manage/manageTeacher.php">Quản lý giáo viên</a></li>
                 <li><a href="../manage/manageParent.php">Quản lý phụ huynh</a></li>
-                <li><a  style="color: #0088cc;"href="../manage/ManageFinance.php">Quản lý tài chính</a></li>
+                <li><a  style="color: #0088cc;"href="../manage/manageFinance.php">Quản lý tài chính</a></li>
                 <li><a href="../manage/manageStatistical.php">Báo cáo thống kê</a></li>
                 <li><a href="../pages/home/home.php" style="display: flex;"><img src="../assets/images/icon-logout.png" alt="" style="width:20px"></a></li>
 
@@ -71,7 +71,7 @@ $jslistBill = json_encode($listBill);
         <div id="Tab1" class="tabcontent">
             <h1>Lịch sử thu chi</h1>
             <div class="search-container">
-                <form id="form-search" method="post" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>" style="width: 45%; margin: unset;display: inline-flex;" autocomplete="off">
+                <form id="form-search" method="post" action="" style="width: 45%; margin: unset;display: inline-flex;" autocomplete="off">
                 <input type="text" name="keyword" id="keyword" placeholder="Tìm kiếm..." style="width: 70% ; border-radius: 0px; border-color:black;"   oninput="searchList()">
 			<input type="button" id="search"  value="Tìm kiếm" style="width: 100px;  background-color: #4CAF50;">	
                     <button type="submit" id="refesh-btn" name="refesh" style=" background-color: currentcolor "> <img style="width: 30px;" src="../assets/images/Refresh-icon.png" alt=""></button>
@@ -91,7 +91,7 @@ $jslistBill = json_encode($listBill);
                 </form>
                 <div style="display:inline-flex ">
                     <h3 style="margin-right:5px;    width: 138px;">Loại hóa đơn :</h3>
-                    <select style=" border: groove;background-color: beige;font-size: 14px;padding:0; width:200px;height:50px" id="select-kind-bill">
+                    <select style=" border: groove;background-color: beige;font-size: 14px;padding:0; width:200px;height:40px" id="select-kind-bill">
                         <option value="">...</option>
                         <option value="chi">Hóa đơn chi</option>
                         <option value="thu">Hóa đơn thu</option>
@@ -106,14 +106,10 @@ $jslistBill = json_encode($listBill);
 
             <div>
                 <table id="table-1">
-                    <?php $i = 1;
-                    if (!$listBill) {
-                        echo ' <h2>Không tìm thấy kết quả phù hợp "' . $_POST['keyword'] . '"</h2>';
-                    }
-                    ?>
+                  
                     <thead id="thead-1">
                         <tr>
-                            <th data-column="0" style="width:100px" onclick="sortTable(0)">STT</th>
+                            <th data-column="0" style="width:100px">STT</th>
                             <th data-column="1" onclick="sortTable(1)">Tên hóa đơn</th>
                             <th data-column="2" onclick="sortTable(2)">Đối tượng</th>
                             <th data-column="3" onclick="sortTable(3)">Loại hóa đơn</th>
@@ -122,14 +118,13 @@ $jslistBill = json_encode($listBill);
                         </tr>
                     </thead>
                     <tbody class="tbody-1">
-
                     </tbody>
 
                     <tbody class="tbody-5">
-
                     </tbody>
                     
                 </table>
+                <div id="container-index"></div>
             </div>
      
             
@@ -151,7 +146,7 @@ $jslistBill = json_encode($listBill);
 
 
 <script>
-    var dsHoaDon = <?php print_r($jslistBill); ?>;
+    
 </script>
 
 <script src="../../assets/js/manageFinance_History.js"></script>

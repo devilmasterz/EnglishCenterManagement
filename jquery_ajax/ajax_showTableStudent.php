@@ -3,40 +3,29 @@ require '../lib/functionStudent.php';
 
 
 $key = trim($_POST['key']);
+$page = $_POST['page'];
+$collumSort = $_POST['collumSort'];
+$order =  $_POST['order'];
 
-    $listStudent = searchStudent($connection, $key);
+    
+$listStudent = searchStudent($connection, $key, $page,$collumSort,$order);
 
 $i = 1;
-$nam = 0;
-$nu = 0;
+
 if (!$listStudent) {
     echo ' <h2>Không tìm thấy kết quả phù hợp "' . $key  . '"</h2>';
 } else {
     foreach ($listStudent as $Student) : ?>
-        <?php if ($Student['GioiTinh'] == 'Nam') {
-            $nam++;
-        } else {
-            $nu++;
-        }
-        ?>
-        <tr>
+       
+        <tr  <?php if($i >20){echo "hidden";}  ?> >
             <td><?php echo $i++ ?></td>
             <td><?php echo $Student['MaHS']; ?></td>
             <td><?php echo $Student['TenHS']; ?></td>
             <td><?php echo $Student['GioiTinh']; ?></td>
             <td><?php echo $Student['Tuoi']; ?></td>
             <td style="width :200px"><?php echo $Student['DiaChi']; ?></td>
-            <!-- <td><?php
-                $listClass = classOfStudent($connection, $Student['MaHS']);
-                foreach ($listClass as $class) :
-                    if ($class['TrangThai'] =="Đang mở") {
-                        echo $class['MaLop'] . '; ';
-                    }
-                  
-                endforeach;
-                ?></td> -->
-
-
         </tr>
-<?php endforeach;
-} ?>
+        
+<?php endforeach;}
+   ?>
+   <p hidden id="count-data"> <?php if(searchList($connection,$key)) {echo count(searchList($connection,$key));} ?> </p>

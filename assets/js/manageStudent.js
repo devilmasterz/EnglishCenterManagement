@@ -1,6 +1,9 @@
-
-showTableStudent("");
-
+var countData = ds_hocsinh.length;
+var currentPage = 1;
+var collum = "";
+var orderby =""; 
+showTableStudent("", 1,collum,orderby);
+showindex();
 
 function convertDateFormat(dateString) {
     var dateParts = dateString.split("-");
@@ -14,43 +17,74 @@ function numberWithCommas(x) {
 
 
 
-function showTableStudent(text) {
+function showTableStudent(text, page, collumSort ,order) {
 
     $.ajax({
         url: '../jquery_ajax/ajax_showTableStudent.php',
         type: 'POST',
         data: {
             key: text,
+            page: page,
+            collumSort: collumSort,
+            order : order,
         },
         success: function (res) {
             document.querySelector('.tbody-1').innerHTML = res;
+
+            countData = document.getElementById('count-data').textContent;
+            showindex();
         },
         error: function (xhr, status, error) {
             console.error(error);
         }
     });
-
 }
 
 // tim kiem
 function searchList() {
+    collum ="";
+    orderby = "";
     var text = document.getElementById('keyword').value;
-    showTableStudent(text);
+    currentPage = 1;
+    showTableStudent(text, 1,collum,orderby);
     removeSortIcons();
+   
 }
 
-// showindex();
-// function showindex(){
-//     var html = "";
-//     var index =0;
-//     var  count = Math.ceil(ds_hocsinh.length /50)
-   
-//      for(let i =1; i<=count; i++){
-//          index++;
-//              html += '<div class="page-index">'+ index +'</div>';
-//      }
-//     document.getElementById("container-index").innerHTML  = html;
-// }
+
+
+
+
+function showindex() {
+    var html = "";
+
+
+    var count = Math.ceil(countData / 50);
+    
+
+    for (let i = 1; i <= count; i++) {
+
+        var isActive = i === currentPage ? 'activeIndex' : '';
+        html += '<div class="page-index ' + isActive + '" onclick="handlePageIndexClick(this, ' + i + ')">' + i + '</div>';
+    }
+    document.getElementById("container-index").innerHTML = html;
+}
+
+function handlePageIndexClick(clickedElement, pageNumber) {
+
+    var pageElements = document.querySelectorAll('.page-index');
+    pageElements.forEach(function (element) {
+        element.classList.remove('activeIndex');
+    });
+    clickedElement.classList.add('activeIndex');
+
+ 
+    currentPage = pageNumber;
+    var text = document.getElementById('keyword').value;
+    showTableStudent(text, pageNumber,collum,orderby);
+    var table = document.querySelector(".tbody-1");
+    table.scrollTo({ top: table.offsetTop, behavior: 'smooth' });
+}
 
 
 
@@ -151,7 +185,7 @@ document.querySelector('.tbody-1').addEventListener('click', function (event) {
         var html = '';
         var color = '';
         if (classes.length === '0') {
-            html += '<p>Học viên chưa tham gia lớp học nào </p>';
+            html += '<p>Học sinh chưa tham gia lớp học nào </p>';
         } else {
             html += '<p> Số lớp đã tham gia: ' + classes.length + '</p>';
 
@@ -372,6 +406,9 @@ document.getElementById('delete-link').addEventListener('click', () => {
         success: function (res) {
             ds_ph_hs = JSON.parse(res);
             showParent();
+
+            var text = document.getElementById('keyword').value;
+            showTableStudent(text, currentPage,collum,orderby);
         },
         error: function (xhr, status, error) {
             console.error(error);
@@ -439,7 +476,7 @@ editButton.addEventListener('click', () => {
 
     document.getElementById('birthday_edit').value = student_select.NgaySinh;
     document.getElementById('age_edit').value = student_select.Tuoi;
-    document.getElementById('Student-id_edit').textContent = "Mã Học viên : " + student_select.MaHS;
+    document.getElementById('Student-id_edit').textContent = "Mã Học sinh : " + student_select.MaHS;
     document.getElementById('address_edit').value = student_select.DiaChi;
     document.getElementById('phone_number_edit').value = student_select.SDT;
     document.getElementById('email_edit').value = student_select.Email;
@@ -545,7 +582,10 @@ submit_update.addEventListener('click', function (event) {
             } else {
                 img.src = "../assets/images/Student-female-icon.png";
             }
-            searchList();
+          
+
+            var text = document.getElementById('keyword').value;
+            showTableStudent(text, currentPage,collum,orderby);
 
 
         },
@@ -576,12 +616,14 @@ function deleteStudent() {
         },
         success: function (res) {
             ds_hocsinh = JSON.parse(res);
+          
         },
         error: function (xhr, status, error) {
             console.error(error);
         }
     });
-    searchList();
+    var text = document.getElementById('keyword').value;
+    showTableStudent(text, currentPage,collum,orderby);
 
     //
     document.querySelector('.delete-ques2').style.display = 'none';
@@ -673,22 +715,19 @@ document.getElementById('delete2').addEventListener('click', function (event) {
 document.getElementById("tab1").classList.add("show");
 
 function openTab(evt, tabName) {
-    // Declare all variables
+    
     var i, tabcontent, tablinks;
 
-    // Get all elements with class="tabcontent" and hide them
     tabcontent = document.getElementsByClassName("tabcontent");
     for (i = 0; i < tabcontent.length; i++) {
         tabcontent[i].classList.remove("show");
     }
 
-    // Get all elements with class="tablinks" and remove the class "active"
     tablinks = document.getElementsByClassName("tablinks");
     for (i = 0; i < tablinks.length; i++) {
         tablinks[i].classList.remove("active");
     }
 
-    // Show the current tab, and add an "active" class to the button that opened the tab
     document.getElementById(tabName).classList.add("show");
     evt.currentTarget.classList.add("active");
 }
@@ -795,59 +834,28 @@ document.getElementById('cancle-change-pass').addEventListener('click', () => {
 
 
 
-var sortDirection = {}; 
+var sortDirection = {};
 
 function sortTable(columnIndex) {
-    var table = document.getElementById('table-1');
-    var tbody = table.querySelector('.tbody-1');
-    var rows = Array.from(tbody.getElementsByTagName('tr'));
-    var sttValues = rows.map(function (row) {
-        return parseInt(row.getElementsByTagName('td')[0].innerText.trim());
-    });
+  
 
-    rows.sort(function (a, b) {
+    if (columnIndex == 1 ) collum = "MaHS";
+    else if(columnIndex == 2) collum = "TenHS";
+    else if(columnIndex == 3) collum = "GioiTinh";
+    else if(columnIndex == 4) collum = "Tuoi";
+    else if(columnIndex == 5) collum = "DiaChi";
 
-
-        if (columnIndex === 4 || columnIndex === 1) {
-            var aValue = parseFloat(a.getElementsByTagName('td')[columnIndex].innerText.trim());
-            var bValue = parseFloat(b.getElementsByTagName('td')[columnIndex].innerText.trim());
-
-            if (sortDirection[columnIndex] === 'asc') {
-                return aValue - bValue;
-            } else {
-                return bValue - aValue;
-            }
-        } else {
-            var aValue = a.getElementsByTagName('td')[columnIndex].innerText.trim();
-            var bValue = b.getElementsByTagName('td')[columnIndex].innerText.trim();
-            if (sortDirection[columnIndex] === 'asc') {
-                return aValue.localeCompare(bValue);
-            } else {
-                return bValue.localeCompare(aValue);
-            }
-        }
-
-
-    });
-
-
-
-    rows.forEach(function (row, index) {
-        var sttCell = row.getElementsByTagName('td')[0];
-        sttCell.innerText = sttValues[index];
-    });
-
-    rows.forEach(function (row) {
-        tbody.appendChild(row);
-    });
-
-
-    
     if (sortDirection[columnIndex] === 'asc') {
         sortDirection[columnIndex] = 'desc';
+        orderby = "desc";
+        
     } else {
         sortDirection[columnIndex] = 'asc';
+        orderby = "asc";    
     }
+    var text = document.getElementById('keyword').value;
+    showTableStudent(text, currentPage,collum,orderby);
+
 
     updateSortIcon(columnIndex);
 
@@ -922,7 +930,7 @@ document.querySelector('.cancle-btn-add').addEventListener('click', () => {
     }
     document.getElementById('lb_name_add').textContent = "";
     document.getElementById('lb_birthday_add').textContent = "";
-    
+
     document.getElementById('lb_address_add').textContent = "";
     document.getElementById('lb_phone_add').textContent = "";
     document.getElementById('lb_email_add').textContent = "";
@@ -1011,11 +1019,13 @@ document.getElementById('add').addEventListener('click', function (event) {
             parents: selectedValues,
         },
         success: function (res) {
-           
+
             ds_hocsinh = JSON.parse(res).student;
             ds_ph_hs = JSON.parse(res).phhs;
             ds_tk_hs = JSON.parse(res).acc;
-            searchList();
+
+            var text = document.getElementById('keyword').value;
+            showTableStudent(text, currentPage,collum,orderby);
 
         },
         error: function (xhr, status, error) {
@@ -1188,6 +1198,9 @@ document.getElementById('btn-add-link').addEventListener('click', () => {
         success: function (res) {
             ds_ph_hs = JSON.parse(res);
             showParent();
+
+            var text = document.getElementById('keyword').value;
+            showTableStudent(text, currentPage,collum,orderby);
         },
         error: function (xhr, status, error) {
             console.error(error);

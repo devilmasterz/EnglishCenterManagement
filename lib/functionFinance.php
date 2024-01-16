@@ -147,11 +147,31 @@ function selecths_hocPhi($connection)
 }
 
 //search HD
-function searchHDHocPhi($connection, $key)
+function searchHDHocPhi($connection, $key,$collumSort, $order)
 {
-    $sql = "SELECT hdhocphi.MaHS , MaHD, TenHD,MaLop , ThoiGian, SoTien, GiamHocPhi,SoTienGiam, SoTienPhaiDong, SoTienDaDong, NoPhiConLai,TrangThai ,hocsinh.TenHS, hocsinh.GioiTinh, hocsinh.NgaySinh, hocsinh.Tuoi, hocsinh.DiaChi, hocsinh.SDT, hocsinh.Email  FROM `hdhocphi` INNER JOIN hocsinh WHERE hdhocphi.MaHS = hocsinh.MaHS and
+    
+    if ($collumSort !=""){
+        if($collumSort == "ThoiGian"){
+            $sql = 'SELECT hdhocphi.MaHS , MaHD, TenHD,MaLop , ThoiGian, SoTien, GiamHocPhi,SoTienGiam, SoTienPhaiDong, SoTienDaDong, NoPhiConLai,TrangThai ,hocsinh.TenHS, hocsinh.GioiTinh, hocsinh.NgaySinh, hocsinh.Tuoi, hocsinh.DiaChi, hocsinh.SDT, hocsinh.Email  FROM `hdhocphi` INNER JOIN hocsinh WHERE hdhocphi.MaHS = hocsinh.MaHS and
 
-         (MaHD like :key or TenHD like :key or ThoiGian like :key or TrangThai like :key or hocsinh.TenHS like :key or MaLop like :key ) order by MaHD desc";
+        (MaHD like :key or TenHD like :key or ThoiGian like :key or TrangThai like :key or hocsinh.TenHS like :key or MaLop like :key ) order by STR_TO_DATE(CONCAT("01/", ThoiGian), "%d/%m/%Y" )'.$order ;
+        }else{
+
+            $sql = "SELECT hdhocphi.MaHS , MaHD, TenHD,MaLop , ThoiGian, SoTien, GiamHocPhi,SoTienGiam, SoTienPhaiDong, SoTienDaDong, NoPhiConLai,TrangThai ,hocsinh.TenHS, hocsinh.GioiTinh, hocsinh.NgaySinh, hocsinh.Tuoi, hocsinh.DiaChi, hocsinh.SDT, hocsinh.Email  FROM `hdhocphi` INNER JOIN hocsinh WHERE hdhocphi.MaHS = hocsinh.MaHS and
+
+            (MaHD like :key or TenHD like :key or ThoiGian like :key or TrangThai like :key or hocsinh.TenHS like :key or MaLop like :key ) order by ".$collumSort." ".$order ;
+        }
+
+       
+    }else{
+        $sql = "SELECT hdhocphi.MaHS , MaHD, TenHD,MaLop , ThoiGian, SoTien, GiamHocPhi,SoTienGiam, SoTienPhaiDong, SoTienDaDong, NoPhiConLai,TrangThai ,hocsinh.TenHS, hocsinh.GioiTinh, hocsinh.NgaySinh, hocsinh.Tuoi, hocsinh.DiaChi, hocsinh.SDT, hocsinh.Email  FROM `hdhocphi` INNER JOIN hocsinh WHERE hdhocphi.MaHS = hocsinh.MaHS and
+
+        (MaHD like :key or TenHD like :key or ThoiGian like :key or TrangThai like :key or hocsinh.TenHS like :key or MaLop like :key ) order by MaHD desc" ;
+    }
+
+    // $sql = "SELECT hdhocphi.MaHS , MaHD, TenHD,MaLop , ThoiGian, SoTien, GiamHocPhi,SoTienGiam, SoTienPhaiDong, SoTienDaDong, NoPhiConLai,TrangThai ,hocsinh.TenHS, hocsinh.GioiTinh, hocsinh.NgaySinh, hocsinh.Tuoi, hocsinh.DiaChi, hocsinh.SDT, hocsinh.Email  FROM `hdhocphi` INNER JOIN hocsinh WHERE hdhocphi.MaHS = hocsinh.MaHS and
+
+    //      (MaHD like :key or TenHD like :key or ThoiGian like :key or TrangThai like :key or hocsinh.TenHS like :key or MaLop like :key ) order by MaHD desc";
     try {
         $connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         $statement = $connection->prepare($sql);
@@ -166,6 +186,28 @@ function searchHDHocPhi($connection, $key)
         echo $e->getMessage();
     }
 }
+
+
+function listBillHP($connection)
+{
+ 
+     $sql = "SELECT hdhocphi.MaHS , MaHD, TenHD,MaLop , ThoiGian, SoTien, GiamHocPhi,SoTienGiam, SoTienPhaiDong, SoTienDaDong, NoPhiConLai,TrangThai ,hocsinh.TenHS, hocsinh.GioiTinh, hocsinh.NgaySinh, hocsinh.Tuoi, hocsinh.DiaChi, hocsinh.SDT, hocsinh.Email  FROM `hdhocphi` INNER JOIN hocsinh WHERE hdhocphi.MaHS = hocsinh.MaHS ";
+    try {
+        $connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        $statement = $connection->prepare($sql);
+        $statement->execute();
+
+        $list = $statement->fetchAll(PDO::FETCH_ASSOC);
+
+        $connection = null;
+        return $list;
+    } catch (PDOException $e) {
+        echo $e->getMessage();
+    }
+}
+
+
+
 // select hs_lop hocsinh
 function lisths_lopxHS($connection)
 {
