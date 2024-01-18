@@ -59,7 +59,7 @@ function menubarv2(tenHS,gioitinh,obj = "student",preDirectLink = "."){
     <a class="menubar-nav ${pathname.includes("/userStudent_link") ? "menubar-active" : ""}  last-nav" href="${preDirectLink}/userStudent_link.php">Liên kết với phụ huynh</a>`)
   ): ""}
   ${obj === "teacher" ? (
-    `<a class="menubar-nav ${pathname.includes("/homeTeacher") ? "menubar-active" : ""}"  href="${preDirectLink}/homeTeacher.php" style="color:darkcyan">Thông tin lớp dạy</a>
+    `<a class="menubar-nav ${pathname.includes("/homeTeacher") ? "menubar-active" : ""}"  href="${preDirectLink}/homeTeacher.php">Thông tin lớp dạy</a>
     <a class="menubar-nav ${pathname.includes("/userTeacher_wage") ? "menubar-active" : ""}  last-nav"  href="${preDirectLink}/userTeacher_wage.php"">Lịch sử lương</a>`
   ): ""}
   <div class="menubar-info-wrap">

@@ -1,6 +1,6 @@
-var toastEl = (text, title, type) => `
-<div class="toast" style="position: fixed; bottom: 15px; right: 15px;">
-  <div class="toast-header toast-header-cus">
+var toastEl = (text, title, type = "success") => `
+<div class="toast toast-div" style="position: fixed; right: 15px;">
+  <div class="toast-header toast-header-cus ${type =="success" ? "toast-success":"toas-fail"}">
     <strong class="mr-auto">${title || "Thông báo"}</strong>
     <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
       <span aria-hidden="true">&times;</span>

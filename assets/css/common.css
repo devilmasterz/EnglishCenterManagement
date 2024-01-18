@@ -57,6 +57,9 @@
     overflow-y: hidden;
     transition: .4s;
   }
+  .menubar-dropdown-menu form {
+    margin-bottom: 0;
+  }
   .menubar-show{
     display: block!important;
   }
@@ -120,7 +123,7 @@
     font-size: 16px;
   }
   .toast {
-    bottom: 15px;
+    top: 100px;
     right: 15px;
     z-index: 9999;
   }
@@ -128,6 +131,23 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+  }
+  .toast-header button {
+    border: none;
+    color: #fff;
+    font-size: 20px;
+
+    background-color: inherit;
+  }
+  .toast-header.toast-success {
+    background-color: #4cb050;
+    color: #fff;
+  }
+  
+  .toast-header.toast-fail {
+    background-color: #e51c24;
+    color: #fff;
+
   }
   @keyframes menubar-show {
     0%{

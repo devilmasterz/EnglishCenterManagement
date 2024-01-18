@@ -788,12 +788,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     }, 5100);
                 }
                 if (res === "MaxCount") {
-                    useToast("Lớp đã đủ học sinh");
+                    useToast("Lớp đã đủ học sinh","Đăng kí thất bại","fail");
                 }
 
             },
             error: function(xhr, status, error) {
-                useToast("Đăng kí thất bại")
+                useToast("Đăng kí thất bại",null,"fail")
                 console.error(error);
             }
         });
@@ -820,12 +820,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     }, 5100);
                 }
                 if (res === "MaxCount") {
-                    useToast("Lớp đã đủ học sinh");
+                    useToast("Lớp đã đủ học sinh","Đăng kí thất bại","fail");
                 }
 
             },
             error: function(xhr, status, error) {
-                useToast("Đăng kí thất bại")
+                useToast("Đăng kí thất bại",null,"fail")
                 console.error(error);
             }
         });

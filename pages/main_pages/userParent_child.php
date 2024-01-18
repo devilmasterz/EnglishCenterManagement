@@ -5,7 +5,7 @@ session_start();
 $ma = $_SESSION['MaPH'];
 
 
-$maPH= $ma['MaPH'];
+$maPH = $ma['MaPH'];
 
 
 $tenPH = selecttenPH($connection, $maPH);
@@ -37,7 +37,7 @@ $jslistRequest = json_encode($listRequest);
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
-  
+
   if (isset($_POST['btn-logout'])) {
 
     session_start();
@@ -81,8 +81,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       <div id="div-child">
       
       </div>
-     
-      <div style="display:flex">
+
+      <div style="display:flex;align-items:center;justify-content:center;">
         <button id="btn-add-child" onclick="toggleDivLink()"> Thêm liên kết với học viên</button>
         <button type="button" id="btn-nofi"><img id="img-nofi" width="30px"  alt=""></button>
       </div>
@@ -141,7 +141,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 
   <div id="div-nofi">
-   
+
   </div>
 
   <div class="add-success">
@@ -168,7 +168,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   var dsHoaDon_CD = <?php print_r($jslistBill_CD); ?>;
   var dsHoaDon_CN = <?php print_r($jslistBill_CN); ?>;
 
-  menubarv2(tenPH[0].TenPH,detailParent[0].GioiTinh,"parent")
+  menubarv2(tenPH[0].TenPH, detailParent[0].GioiTinh, "parent")
 </script>
 
 <script src="../../assets/js/userParent_child.js"></script>
