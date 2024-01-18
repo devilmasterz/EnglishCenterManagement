@@ -72,16 +72,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </div>
 
     <div id="content">
-        <h1 style="text-align: center;margin-top:70px">Danh sách các lớp dạy</h1>
-        <h1 style="background-color:yellowgreen">Lớp đang hoạt động</h1>
-        <div id="class-on">
-
-
-
-
+        <h1 class="title-page" style="text-align: center;margin-top:88px">Danh sách các lớp dạy</h1>
+        <div class="div-class-t">
+            <h1 style="background-color:yellowgreen">Lớp đang hoạt động</h1>
+            <div id="class-on">
+    
+            </div>
         </div>
-        <div>
-            <h1 style="margin-top: 100px;   background-color: tomato;">Lớp đã đóng</h1>
+        <div class="div-class-t">
+            <h1 style="background-color: tomato;">Lớp đã đóng</h1>
             <div id="class-off">
 
 

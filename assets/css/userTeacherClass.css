@@ -2,23 +2,26 @@
     display: flex;
     flex-wrap: wrap;
     /* justify-content: center; */
-    align-items: center;
+    align-items: flex-start;
     height: 100vh;
-    width: 90%;
-    margin-left: 5%;
-    margin-right: 5%;
+    margin-left: 12px;
+    margin-right: 12px;
     max-height: 1000px;
     min-width: 90%;
-    align-content: flex-start;
+    justify-content: flex-start;
     overflow-y: auto;
-    
+    gap:10px;
 }
 #btn-logout:hover{
     cursor: pointer;
 }
+#class-on div {
+    min-height: 600px;
+    width: 30%;
+}
 
 .class {
-    flex-basis: calc(30% - 20px);
+    flex-basis: calc(29% - 20px);
     margin: 10px;
     background-color: #f5f5f5;
     border: 1px solid #ccc;
@@ -90,7 +93,9 @@
 
 
 
-
+#date-list{
+    margin-top: 12px;
+}
 
 
 .date{
@@ -101,6 +106,7 @@
     background-color: whitesmoke;
     width: 80%;
     margin-left: 10%;
+    margin-bottom: 12px;
 }
 
 .date:hover{
@@ -222,4 +228,22 @@
   
   #modal-noti-add,#modal-noti-delete{
     display: none;
+  }
+  .title-page{
+    margin-top: 24px;
+    margin-bottom: 32px;
+  }
+  .div-class-t{
+      margin: 0 16px;
+      border: 1px solid #ccc;
+      border-radius: 12px;
+      margin-bottom: 24px;
+  }
+  .div-class-t h1 {
+    margin-top: 0;
+    padding-bottom: 12px;
+    padding-top: 12px;
+    padding-left: 24px;
+    border-top-right-radius: 12px;
+    border-top-left-radius: 12px;
   }
