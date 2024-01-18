@@ -95,7 +95,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </div>
                 <form action="" method="POST" id='form-update'>
                     <div class=" personal-inner-item">
-                        <div class="personal-inner-key">Mã giáo viên :</div>
+                        <div class="personal-inner-key">Mã phụ huynh :</div>
                         <div id="id" class="personal-inner-value personal-inner-value-info">Long</div>
                     </div>
                     <div id="id-inp" class="personal-inner-edit-range personal-inner-edit-range-info"></div>
@@ -368,7 +368,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         $.ajax({
             type: 'POST',
-            url: '../../jquery_ajax/ajax_updateInfor.php',
+            url: '../../api/updateInfor.php',
             data: {
                 id: detailParent[0].MaPH,
                 name: name,
@@ -424,7 +424,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             return;
         $.ajax({
             type: 'POST',
-            url: '../../jquery_ajax/ajax_updatePass.php',
+            url: '../../api/updatePass.php',
             data: {
                 id: detailParent[0].MaPH,
                 username: accountParent[0].UserName,
@@ -599,7 +599,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 
         $.ajax({
-            url: '../../jquery_ajax/ajax_replyRequest.php',
+            url: '../../api/replyRequest.php',
             type: 'POST',
             data: {
                 maph: maPH,
@@ -623,7 +623,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 
         $.ajax({
-            url: '../../jquery_ajax/ajax_replyRequest.php',
+            url: '../../api/replyRequest.php',
             type: 'POST',
             data: {
                 maph: maPH,

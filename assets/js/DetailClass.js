@@ -2,7 +2,7 @@ showDetailClass();
 
 function showDetailClass() {
     $.ajax({
-        url: '../jquery_ajax/ajax_detailClass.php',
+        url: '../api/detailClass.php',
         type: 'POST',
         data: {
             maLop: malop,
@@ -20,7 +20,7 @@ function showDetailClass() {
 showEditClass();
 function showEditClass() {
     $.ajax({
-        url: '../jquery_ajax/ajax_editClass.php',
+        url: '../api/editClass.php',
         type: 'POST',
         data: {
             maLop: malop,
@@ -40,7 +40,7 @@ function showEditClass() {
 showStudent();
 function showStudent() {
     $.ajax({
-        url: '../jquery_ajax/ajax_showStudents.php',
+        url: '../api/showStudents.php',
         type: 'POST',
         data: {
             malop: malop,
@@ -74,7 +74,7 @@ function formatNumber(input) {
     input.value = value;
 }
 
-
+var maHS_delete;
 listStudents();
 function listStudents() {
     const selectElement = document.getElementById("select-student");
@@ -89,8 +89,7 @@ function listStudents() {
     document.getElementById("div-btn-delete").innerHTML = "";
     jsonListStudents.forEach(data => {
         const form = document.createElement('form');
-        form.style.marginTop = '13px';
-        form.method = 'post';
+        form.style.marginBottom = '34px';
 
         const input = document.createElement('input');
         input.type = 'hidden';
@@ -108,53 +107,10 @@ function listStudents() {
         button.addEventListener('click', function (event) {
             event.preventDefault();
 
-
-
+            maHS_delete = input.value;
+            
             document.querySelector('#modal-ques2').style.display = 'block';
-            const yesDelete = document.getElementById('yesDeleteStudent');
-            const noDelete = document.getElementById('noDeleteStudent');
-
-            yesDelete.addEventListener('click', function (event) {
-
-                $.ajax({
-                    url: '../jquery_ajax/ajax_deleteStudentClass.php',
-                    type: 'POST',
-                    data: {
-                        malop: malop,
-                        mahs: input.value,
-                    },
-                    success: function (res) {
-
-                        listAddStudent = JSON.parse(res).listNo;
-                        jsonListStudents = JSON.parse(res).listYes;
-
-                        listStudents();
-                        showStudent();
-                        showDetailClass();
-                        showLisAttendance();
-                        showDetailAdttendance();
-                        showAddAttend();
-                    },
-                    error: function (xhr, status, error) {
-                        console.error(error);
-                    }
-                });
-
-                document.querySelector('#modal-ques2').style.display = 'none';
-                document.querySelector('.delete-success').style.display = 'block';
-                setTimeout(function () {
-                    document.querySelector('.delete-success').style.display = 'none';
-
-
-                }, 1000);
-
-            });
-
-            noDelete.addEventListener('click', function (event) {
-
-                document.querySelector('#modal-ques2').style.display = 'none';
-
-            });
+           
 
 
 
@@ -168,6 +124,53 @@ function listStudents() {
     });
 
 }
+
+
+const yesDelete = document.getElementById('yesDeleteStudent');
+const noDelete = document.getElementById('noDeleteStudent');
+
+yesDelete.addEventListener('click', function (event) {
+   
+
+    $.ajax({
+        url: '../api/deleteStudentClass.php',
+        type: 'POST',
+        data: {
+            malop: malop,
+            mahs: maHS_delete,
+        },
+        success: function (res) {
+
+            listAddStudent = JSON.parse(res).listNo;
+            jsonListStudents = JSON.parse(res).listYes;
+
+            listStudents();
+            showStudent();
+            showDetailClass();
+            showLisAttendance();
+            showDetailAdttendance();
+            showAddAttend();
+        },
+        error: function (xhr, status, error) {
+            console.error(error);
+        }
+    });
+
+    document.querySelector('#modal-ques2').style.display = 'none';
+    document.querySelector('.delete-success').style.display = 'block';
+    setTimeout(function () {
+        document.querySelector('.delete-success').style.display = 'none';
+
+
+    }, 1000);
+
+});
+
+noDelete.addEventListener('click', function (event) {
+
+    document.querySelector('#modal-ques2').style.display = 'none';
+
+});
 
 
 function showDetails(id) {
@@ -212,7 +215,7 @@ document.getElementById('div-detail').addEventListener('click', function (event)
 
 
         $.ajax({
-            url: '../jquery_ajax/ajax_updateAttendAd.php',
+            url: '../api/updateAttendAd.php',
             type: 'POST',
             data: {
                 malop: malop,
@@ -221,7 +224,7 @@ document.getElementById('div-detail').addEventListener('click', function (event)
             },
             success: function (res) {
 
-                console.log(res);
+                
 
                 showStudent();
                 showDetailClass();
@@ -259,16 +262,16 @@ document.getElementById('div-detail').addEventListener('click', function (event)
             event.preventDefault();
 
             $.ajax({
-                url: '../jquery_ajax/ajax_deleteAttendAd.php',
+                url: '../api/deleteAttendAd.php',
                 type: 'POST',
                 data: {
                     malop: malop,
                     date: time,
                 },
                 success: function (res) {
-    
-    
-    
+
+
+
                     showStudent();
                     showDetailClass();
                     showLisAttendance();
@@ -279,7 +282,7 @@ document.getElementById('div-detail').addEventListener('click', function (event)
                     console.error(error);
                 }
             });
-            
+
 
             document.querySelector('#modal-ques3').style.display = 'none';
             document.querySelector('.delete-success').style.display = 'block';
@@ -299,8 +302,8 @@ document.getElementById('div-detail').addEventListener('click', function (event)
 
 
 
-       
-        
+
+
     }
 
 
@@ -311,7 +314,7 @@ document.getElementById('div-detail').addEventListener('click', function (event)
 showLisAttendance();
 function showLisAttendance() {
     $.ajax({
-        url: '../jquery_ajax/ajax_showAttendance.php',
+        url: '../api/showAttendance.php',
         type: 'POST',
         data: {
             malop: malop,
@@ -330,7 +333,7 @@ showDetailAdttendance();
 function showDetailAdttendance() {
 
     $.ajax({
-        url: '../jquery_ajax/ajax_showDetailAttend.php',
+        url: '../api/showDetailAttend.php',
         type: 'POST',
         data: {
             malop: malop,
@@ -350,7 +353,7 @@ showAddAttend();
 function showAddAttend() {
 
     $.ajax({
-        url: '../jquery_ajax/ajax_showAddAttend.php',
+        url: '../api/showAddAttend.php',
         type: 'POST',
         data: {
             malop: malop,
@@ -409,9 +412,12 @@ document.getElementById("btn-add-attend").addEventListener('click', function (ev
 
         data.push({ MaHS: maHS, isChecked: isChecked });
     }
-
+    if(data.length ==0){
+        document.getElementById("err-add").textContent = "*Lớp chưa có học sinh";
+    }else{
+        document.getElementById("err-add").textContent = "";
     $.ajax({
-        url: '../jquery_ajax/ajax_addAttendAd.php',
+        url: '../api/addAttendAd.php',
         type: 'POST',
         data: {
             malop: malop,
@@ -420,7 +426,7 @@ document.getElementById("btn-add-attend").addEventListener('click', function (ev
         },
         success: function (res) {
 
-            console.log(res);
+           
 
             showStudent();
             showDetailClass();
@@ -443,6 +449,7 @@ document.getElementById("btn-add-attend").addEventListener('click', function (ev
         document.querySelector('.add-success2').style.display = 'none';
 
     }, 1000);
+    }
 });
 
 
@@ -460,6 +467,7 @@ function showAddDateDD() {
 
     const closeboxDateDD = document.getElementById('closeboxDateDD');
     closeboxDateDD.addEventListener('click', () => {
+        document.getElementById("err-add").textContent = "";
         addboxDateDD.classList.remove('active');
         boxDateDD.classList.remove('active');
     });
@@ -473,46 +481,47 @@ submit_discount.addEventListener('click', function (event) {
 
 
     const studentRows = document.querySelectorAll('.tr-student');
+    if (studentRows.length != 0) {
+        const data = [];
+        studentRows.forEach(row => {
+            const maHS = row.getAttribute('data-maHS');
 
-    const data = [];
-    studentRows.forEach(row => {
-        const maHS = row.getAttribute('data-maHS');
+            const discountInput = row.querySelector('input[name^="discount"]');
+            const discountValue = discountInput.value;
 
-        const discountInput = row.querySelector('input[name^="discount"]');
-        const discountValue = discountInput.value;
-
-        data.push({ MaHS: maHS, DiscountValue: discountValue });
-    });
-
-
-    $.ajax({
-        url: '../jquery_ajax/ajax_updateDiscount.php',
-        type: 'POST',
-        data: {
-            malop: malop,
-            data: JSON.stringify(data),
-        },
-        success: function (res) {
+            data.push({ MaHS: maHS, DiscountValue: discountValue });
+        });
 
 
-
-            jsonListStudents = JSON.parse(res)
-
-            listStudents();
-            showStudent();
-        },
-        error: function (xhr, status, error) {
-            console.error(error);
-        }
-    });
+        $.ajax({
+            url: '../api/updateDiscount.php',
+            type: 'POST',
+            data: {
+                malop: malop,
+                data: JSON.stringify(data),
+            },
+            success: function (res) {
 
 
-    document.querySelector('.update-success').style.display = 'block';
-    setTimeout(function () {
-        document.querySelector('.update-success').style.display = 'none';
+
+                jsonListStudents = JSON.parse(res)
+
+                listStudents();
+                showStudent();
+            },
+            error: function (xhr, status, error) {
+                console.error(error);
+            }
+        });
 
 
-    }, 1000);
+        document.querySelector('.update-success').style.display = 'block';
+        setTimeout(function () {
+            document.querySelector('.update-success').style.display = 'none';
+
+
+        }, 1000);
+    }
 
 })
 var buttonClicked = false;
@@ -548,39 +557,45 @@ document.getElementById('addStudent-submit').addEventListener('click', function 
 
 
     const selectedValues = Array.from(document.getElementById('select-student').selectedOptions).map(option => option.value);
+    if (selectedValues.length == 0) {
+        document.getElementById("empty-student").textContent = "Chưa chọn học sinh !";
+    } else {
+        document.getElementById("empty-student").textContent = "";
+        $.ajax({
+            url: '../api/addStudentOnClass.php',
+            type: 'POST',
+            data: {
+                malop: malop,
+                addstudents: selectedValues,
+            },
+            success: function (res) {
+
+                listAddStudent = JSON.parse(res).listNo;
+                jsonListStudents = JSON.parse(res).listYes;
+
+                listStudents();
+                showStudent();
+                showDetailClass();
+                showLisAttendance();
+                showDetailAdttendance();
+                showAddAttend();
+            },
+            error: function (xhr, status, error) {
+                console.error(error);
+            }
+        });
+
+
+        document.querySelector('.add-success').style.display = 'block';
+        setTimeout(function () {
+            document.querySelector('.add-success').style.display = 'none';
+
+        }, 1000);
+
+    }
 
 
 
-    $.ajax({
-        url: '../jquery_ajax/ajax_addStudentOnClass.php',
-        type: 'POST',
-        data: {
-            malop: malop,
-            addstudents: selectedValues,
-        },
-        success: function (res) {
-
-            listAddStudent = JSON.parse(res).listNo;
-            jsonListStudents = JSON.parse(res).listYes;
-
-            listStudents();
-            showStudent();
-            showDetailClass();
-            showLisAttendance();
-            showDetailAdttendance();
-            showAddAttend();
-        },
-        error: function (xhr, status, error) {
-            console.error(error);
-        }
-    });
-
-
-    document.querySelector('.add-success').style.display = 'block';
-    setTimeout(function () {
-        document.querySelector('.add-success').style.display = 'none';
-
-    }, 1000);
 });
 
 
@@ -621,7 +636,7 @@ document.getElementById('delete').addEventListener('click', function (event) {
         document.querySelector('.delete-success').style.display = 'block';
 
         $.ajax({
-            url: '../jquery_ajax/ajax_deleteClass.php',
+            url: '../api/deleteClass.php',
             type: 'POST',
             data: {
                 malop: malop,
@@ -667,7 +682,7 @@ closeBtn.addEventListener('click', () => {
 // document.getElementById('btn-add-schedule').addEventListener('click', function (event) {
 //         event.preventDefault();
 //         var containerDiv = document.getElementById("schedule-container");
-        
+
 //         var html = ''
 
 
@@ -680,7 +695,7 @@ function addSchedule() {
     let scheduleContainer = document.getElementById('schedule-container');
     let newDiv = document.createElement('div');
     let newSelect = document.createElement('select');
-   
+
     newSelect.setAttribute('style', 'width: 80% !important; margin-right:5px');
     newSelect.classList.add('w-100', 'mb-2');
 
@@ -692,15 +707,15 @@ function addSchedule() {
     listSchedule.forEach(schedule => {
         var newOption = document.createElement('option');
         newOption.value = schedule.MaLich;
-        newOption.text = schedule.Ngay+ " - " +schedule.TGBatDau+"-"+schedule.TGKetThuc;
+        newOption.text = schedule.Ngay + " - " + schedule.TGBatDau + "-" + schedule.TGKetThuc;
         newSelect.appendChild(newOption);
     });
-   
+
 
     let newButton = document.createElement('button');
     newButton.id = 'btn-delete-schedule';
-    
-    newButton.onclick = function() { deleteSchedule(this); };
+
+    newButton.onclick = function () { deleteSchedule(this); };
     newButton.textContent = 'Xóa';
 
     newDiv.appendChild(newSelect);
@@ -719,10 +734,10 @@ function deleteSchedule(element) {
 
 
 
-document.getElementById("form_edit").addEventListener("submit", function(event) {
-    
+document.getElementById("form_edit").addEventListener("submit", function (event) {
+
     event.preventDefault();
-   
+
 });
 
 function getSelectedValues() {
@@ -732,7 +747,7 @@ function getSelectedValues() {
     for (let select of selects) {
         selectedValues.push(select.value);
     }
-    console.log(selectedValues);
+    
 }
 
 
@@ -756,14 +771,14 @@ document.getElementById('btn-update').addEventListener('click', function (event)
     const condition = document.getElementById('SelectCondition').value;
 
 
-    
+
 
     var teacherScheduleArray = [];
     var schedules = [];
 
     let scheduleContainer = document.getElementById('schedule-container');
     let selects = scheduleContainer.querySelectorAll('select');
-  
+
     for (let select of selects) {
         if (select.value != "") {
             teacherScheduleArray.push({
@@ -771,9 +786,9 @@ document.getElementById('btn-update').addEventListener('click', function (event)
                 MAGV: teachers
             });
             schedules.push(select.value);
-        }      
+        }
     }
-    console.log(schedules);
+    
 
 
     // for (let i = 0; i <= 10; i++) {
@@ -922,14 +937,14 @@ document.getElementById('btn-update').addEventListener('click', function (event)
     const compressedData = JSON.stringify(data);
 
     $.ajax({
-        url: '../jquery_ajax/ajax_updateClass.php',
+        url: '../api/updateClass.php',
         type: 'POST',
         data: {
             compressedData: compressedData,
             schedules: schedules,
         },
         success: function (res) {
-            console.log(res);
+           
             showDetailClass();
             showEditClass();
 
@@ -994,8 +1009,10 @@ openBtnaddtudents.addEventListener('click', () => {
     boxaddStudent.classList.add('active');
 });
 closebtnstudents.addEventListener('click', () => {
+    document.getElementById("empty-student").textContent = "";
     overlayaddStudent.classList.remove('active');
     boxaddStudent.classList.remove('active');
+    
 });
 
 

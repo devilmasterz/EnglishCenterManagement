@@ -275,7 +275,7 @@ document.getElementById('btn-update').addEventListener('click', function (event)
     var time = document.getElementById('time-update').value;
 
     $.ajax({
-        url: '../../jquery_ajax/ajax_updateAttend.php',
+        url: '../../api/updateAttend.php',
         type: 'POST',
         data: {
             malop :  class_select,
@@ -443,7 +443,7 @@ document.getElementById('btn-add-submit').addEventListener('click', function (ev
 
 
     $.ajax({
-        url: '../../jquery_ajax/ajax_addAttend.php',
+        url: '../../api/addAttend.php',
         type: 'POST',
         data: {
             malop :  class_select,
@@ -529,7 +529,7 @@ document.getElementById('delete').addEventListener('click', function(event) {
 
     
     $.ajax({
-        url: '../../jquery_ajax/ajax_deleteAttend.php',
+        url: '../../api/deleteAttend.php',
         type: 'POST',
         data: {
             malop :  class_select,

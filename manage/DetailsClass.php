@@ -124,7 +124,7 @@ $timeTeacher = timeTeacherOther($connection, $malop);
 
     <!--5 12 2023 start -->
     <div>
-        <div class="card p-3 shadow" style="">
+        <div class="card p-3 shadow">
             <!-- <h2 class="text-center p-3 fw-bold"><?php echo $malop; ?></h2> -->
             <nav>
                 <div class="nav nav-tabs mb-3" id="nav-tab" role="tablist">
@@ -275,6 +275,7 @@ $timeTeacher = timeTeacherOther($connection, $malop);
                                                     </select>
                                                 </form>
                                                 <input class="btn" id="addStudent-submit" style="border: groove;margin-top: 20px;" type="submit" value="Thêm học sinh">
+                                                <p style="color: red;" id ="empty-student"></p>
                                             </div>
                                         </div>
                                     </div>
@@ -282,7 +283,7 @@ $timeTeacher = timeTeacherOther($connection, $malop);
                             </div>
                         </div>
                     </div>
-                    <div style="position: absolute; right: 130px; top:220px" id="div-btn-delete">
+                    <div style="position: absolute; right: 130px; top:275px" id="div-btn-delete">
 
                     </div>
                 </div>
@@ -397,6 +398,8 @@ $timeTeacher = timeTeacherOther($connection, $malop);
         <p>© 2023 Hệ thống quản lý giáo dục. All rights reserved.</p>
     </footer>
 
+    
+    
 
     <div class="add-success2">
         <img src="../assets/images/icon_success.png" alt="" style=" width: 40px;">

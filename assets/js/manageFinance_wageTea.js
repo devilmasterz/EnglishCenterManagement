@@ -179,7 +179,7 @@ document.getElementById("month-year").addEventListener('change',function(){
 function showTableFinance(text, page, collumSort, order,date) {
 
     $.ajax({
-        url: '../jquery_ajax/ajax_showTableWageTea.php',
+        url: '../api/showTableWageTea.php',
         type: 'POST',
         data: {
             key: text,
@@ -561,7 +561,7 @@ document.getElementById('sumit-bill-add').addEventListener('click', function (ev
         return;
 
     $.ajax({
-        url: '../jquery_ajax/ajax_addWageTeacher.php',
+        url: '../api/addWageTeacher.php',
         type: 'POST',
         data: {
             name: name_bill,
@@ -729,7 +729,7 @@ document.getElementById('sumit-bill-add-ps').addEventListener('click', function 
     const teacher_bill_ps = document.getElementById('teacher-add-bill-ps').value;
 
     $.ajax({
-        url: '../jquery_ajax/ajax_addWageTeacherps.php',
+        url: '../api/addWageTeacherps.php',
         type: 'POST',
         data: {
             name: name_bill,
@@ -858,7 +858,7 @@ document.getElementById('update-tt').addEventListener('click', function (event) 
 
     const status = document.getElementById('status-detail').value;
     $.ajax({
-        url: '../jquery_ajax/ajax_updateStatusWage.php',
+        url: '../api/updateStatusWage.php',
         type: 'POST',
         data: {
             id: hoaDon_select.MaLuong,
@@ -1060,7 +1060,7 @@ document.getElementById('update-bill-edit').addEventListener('click', function (
 
 
     $.ajax({
-        url: '../jquery_ajax/ajax_updateWageTeacher.php',
+        url: '../api/updateWageTeacher.php',
         type: 'POST',
         data: {
             id: hoaDon_select.MaLuong,
@@ -1168,7 +1168,7 @@ document.getElementById('delete-bill').addEventListener('click', function (event
 
 
     $.ajax({
-        url: '../jquery_ajax/ajax_deleteWage.php',
+        url: '../api/deleteWage.php',
         type: 'POST',
         data: {
             mahd: hoaDon_select.MaLuong,
@@ -1203,7 +1203,7 @@ document.getElementById('delete-bill-2').addEventListener('click', function (eve
     event.preventDefault();
 
     $.ajax({
-        url: '../jquery_ajax/ajax_deleteWage.php',
+        url: '../api/deleteWage.php',
         type: 'POST',
         data: {
             mahd: hoaDon_select.MaLuong,

@@ -145,7 +145,7 @@ document.getElementById("month-year").addEventListener('change',function(){
 function showTableFinance(text, page, collumSort, order,date) {
 
     $.ajax({
-        url: '../jquery_ajax/ajax_showTableFinance.php',
+        url: '../api/showTableFinance.php',
         type: 'POST',
         data: {
             key: text,
@@ -605,7 +605,7 @@ document.getElementById('sumit-bill-add').addEventListener('click', function (ev
     const class_bill = document.getElementById('class-add-bill').value;
 
     $.ajax({
-        url: '../jquery_ajax/ajax_addBill.php',
+        url: '../api/addBill.php',
         type: 'POST',
         data: {
             name: name_bill,
@@ -791,7 +791,7 @@ document.getElementById('sumit-bill-add-ps').addEventListener('click', function 
     }
 
     $.ajax({
-        url: '../jquery_ajax/ajax_addBillps.php',
+        url: '../api/addBillps.php',
         type: 'POST',
         data: {
             name: name_bill,
@@ -1071,7 +1071,7 @@ document.getElementById('delete-bill').addEventListener('click', function (event
     }
 
     $.ajax({
-        url: '../jquery_ajax/ajax_deleteBill.php',
+        url: '../api/deleteBill.php',
         type: 'POST',
         data: {
             mahd: hoaDon_select.MaHD
@@ -1107,7 +1107,7 @@ document.getElementById('delete-bill-2').addEventListener('click', function (eve
     event.preventDefault();
 
     $.ajax({
-        url: '../jquery_ajax/ajax_deleteBill.php',
+        url: '../api/deleteBill.php',
         type: 'POST',
         data: {
             mahd: hoaDon_select.MaHD
@@ -1188,7 +1188,7 @@ document.getElementById('form-add-trans').addEventListener('submit', function (e
     var text = document.getElementById('keyword').value;
 
     $.ajax({
-        url: '../jquery_ajax/ajax_addTrans.php',
+        url: '../api/addTrans.php',
         type: 'POST',
         data: {
             id: hoaDon_select.MaHD,
@@ -1435,7 +1435,7 @@ function updateLSTHP() {
     form.appendChild(hiddenInputmahd);
 
     $.ajax({
-        url: '../jquery_ajax/ajax_updatelsthp.php',
+        url: '../api/updatelsthp.php',
         type: 'POST',
         data: $('#form-edit-trans').serialize(),
 

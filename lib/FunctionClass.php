@@ -515,7 +515,7 @@ function numberAttend($mahs, $malop, $connection)
 // danh sách điểm danh của lớp học
 function ListTimeAttendance($malop, $connection)
 {
-    $sql = "select DISTINCT ThoiGian from diemdanh where MaLop = ?";
+    $sql = "select DISTINCT ThoiGian from diemdanh where MaLop = ? order by ThoiGian desc";
     try {
         $statement = $connection->prepare($sql);
         $statement->bindParam(1, $malop);
@@ -753,7 +753,7 @@ function addStudentsClass($mahs, $malop, $connection)
 
 
 
-        $sqlUpdate = "UPDATE Lop SET SLHS = SLHS + 1 WHERE MaLop = ?";
+        $sqlUpdate = "UPDATE lop SET SLHS = SLHS + 1 WHERE MaLop = ?";
         $statementUpdate = $connection->prepare($sqlUpdate);
         $statementUpdate->bindParam(1, $malop);
         $statementUpdate->execute();
@@ -775,7 +775,7 @@ function deletedStudentsClass($mahs, $malop, $connection)
         $deleteSuccess = $statement->execute();
 
         if ($deleteSuccess) {
-            $sqlUpdate = "UPDATE Lop SET SLHS = SLHS - 1 WHERE MaLop = ?";
+            $sqlUpdate = "UPDATE lop SET SLHS = SLHS - 1 WHERE MaLop = ?";
             $statementUpdate = $connection->prepare($sqlUpdate);
             $statementUpdate->bindParam(1, $malop);
             $statementUpdate->execute();

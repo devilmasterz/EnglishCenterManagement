@@ -23,7 +23,7 @@ function numberWithCommas(x) {
 function showTableParent(text, page, collumSort ,order) {
 
     $.ajax({
-        url: '../jquery_ajax/ajax_showTableParent.php',
+        url: '../api/showTableParent.php',
         type: 'POST',
         data: {
             key: text,
@@ -327,7 +327,7 @@ document.getElementById('delete-link').addEventListener('click', () => {
 
     $.ajax({
         type: 'POST',
-        url: '../jquery_ajax/ajax_deleteLinkStudent.php',
+        url: '../api/deleteLinkStudent.php',
         data: {
             maph: parent_select.MaPH,
             mahs: maHS_delete,
@@ -474,7 +474,7 @@ submit_update.addEventListener('click', function (event) {
 
     $.ajax({
         type: 'POST',
-        url: '../jquery_ajax/ajax_updateInforParent.php',
+        url: '../api/updateInforParent.php',
         data: {
             id: id,
             name: parent_name,
@@ -541,7 +541,7 @@ submit_update.addEventListener('click', function (event) {
 
 function deleteParent() {
     $.ajax({
-        url: '../jquery_ajax/ajax_deleteParent.php',
+        url: '../api/deleteParent.php',
         type: 'POST',
         data: {
             id: parent_select.MaPH,
@@ -595,7 +595,7 @@ document.getElementById('delete-cancle').addEventListener('click', () => {
 document.getElementById('delete').addEventListener('click', function (event) {
 
     $.ajax({
-        url: '../jquery_ajax/ajax_checkAccParent.php',
+        url: '../api/checkAccParent.php',
         type: 'POST',
         data: {
             id: parent_select.MaPH,
@@ -718,7 +718,7 @@ document.getElementById('change').addEventListener('click', function (event) {
 
 
     $.ajax({
-        url: '../jquery_ajax/ajax_changeAccParent.php',
+        url: '../api/changeAccParent.php',
         type: 'POST',
         data: {
             id: parent_select.MaPH,
@@ -978,7 +978,7 @@ document.getElementById('add').addEventListener('click', function (event) {
     });
 
     $.ajax({
-        url: '../jquery_ajax/ajax_addParent.php',
+        url: '../api/addParent.php',
         type: 'POST',
         data: {
             name: name,
@@ -1163,7 +1163,7 @@ document.getElementById('btn-add-link').addEventListener('click', () => {
 
 
     $.ajax({
-        url: '../jquery_ajax/ajax_addLinkStudent.php',
+        url: '../api/addLinkStudent.php',
         type: 'POST',
         data: {
             id: parent_select.MaPH,

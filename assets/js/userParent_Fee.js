@@ -127,7 +127,7 @@ selectKind.addEventListener('change', function () {
 function showTableBill(text) {
 
     $.ajax({
-        url: '../../jquery_ajax/ajax_showTableBillFee.php',
+        url: '../../api/showTableBillFee.php',
         type: 'POST',
         data: {
             key: text,
@@ -442,7 +442,7 @@ function tuChoi(maHS, maPH) {
     
 
     $.ajax({
-        url: '../../jquery_ajax/ajax_replyRequest.php',
+        url: '../../api/replyRequest.php',
         type: 'POST',
         data: {
             maph: maPH,
@@ -470,7 +470,7 @@ function chapNhan(maHS, maPH) {
 
 
     $.ajax({
-        url: '../../jquery_ajax/ajax_replyRequest.php',
+        url: '../../api/replyRequest.php',
         type: 'POST',
         data: {
             maph: maPH,

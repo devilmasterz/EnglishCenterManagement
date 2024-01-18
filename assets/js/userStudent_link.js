@@ -78,7 +78,7 @@ document.getElementById('btn-link').addEventListener('click', function (event) {
 
 
     $.ajax({
-        url: '../../jquery_ajax/ajax_sentRequest.php',
+        url: '../../api/sentRequest.php',
         type: 'POST',
         data: {
             maph: maph,
@@ -127,7 +127,7 @@ function tuChoi(maHS, maPH) {
     
 
     $.ajax({
-        url: '../../jquery_ajax/ajax_replyRequest.php',
+        url: '../../api/replyRequest.php',
         type: 'POST',
         data: {
             maph: maPH,
@@ -155,7 +155,7 @@ function chapNhan(maHS, maPH) {
 
 
     $.ajax({
-        url: '../../jquery_ajax/ajax_replyRequest.php',
+        url: '../../api/replyRequest.php',
         type: 'POST',
         data: {
             maph: maPH,

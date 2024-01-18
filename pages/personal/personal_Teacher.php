@@ -350,7 +350,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             return;
         $.ajax({
             type: 'POST',
-            url: '../../jquery_ajax/ajax_updateInfor.php',
+            url: '../../api/updateInfor.php',
             data: {
                 id: detailTeacher[0].MaGV,
                 name: name,
@@ -406,7 +406,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         $.ajax({
             type: 'POST',
-            url: '../../jquery_ajax/ajax_updatePass.php',
+            url: '../../api/updatePass.php',
             data: {
                 id: detailTeacher[0].MaGV,
                 username: accountTeacher[0].UserName,

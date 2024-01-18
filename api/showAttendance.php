@@ -17,3 +17,7 @@ $j = 1;
     </tr>
 
 <?php endforeach ?>
+<?php  if(!$listTime) {
+    ?> <p style="color: crimson;">Lớp chưa có dữ liệu điểm danh !</p>
+    <?php
+}?>

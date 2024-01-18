@@ -36,3 +36,7 @@ $i =1;
     </tr>
 <?php endforeach ?>
 
+<?php  if(!$listStudents) {
+    ?> <p style="color: crimson;">Lớp chưa có học sinh !</p>
+    <?php
+}?>

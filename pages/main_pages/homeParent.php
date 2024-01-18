@@ -854,7 +854,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 
       $.ajax({
-        url: '../../jquery_ajax/ajax_replyRequest.php',
+        url: '../../api/replyRequest.php',
         type: 'POST',
         data: {
           maph: maPH,
@@ -880,7 +880,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 
       $.ajax({
-        url: '../../jquery_ajax/ajax_replyRequest.php',
+        url: '../../api/replyRequest.php',
         type: 'POST',
         data: {
           maph: maPH,

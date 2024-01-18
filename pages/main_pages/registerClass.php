@@ -659,7 +659,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 
         $.ajax({
-            url: '../../jquery_ajax/ajax_replyRequest.php',
+            url: '../../api/replyRequest.php',
             type: 'POST',
             data: {
                 maph: maPH,
@@ -685,7 +685,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 
         $.ajax({
-            url: '../../jquery_ajax/ajax_replyRequest.php',
+            url: '../../api/replyRequest.php',
             type: 'POST',
             data: {
                 maph: maPH,
@@ -772,7 +772,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     function chonHocSinh(selectedId) {
         console.log("xac nhan")
         $.ajax({
-            url: '../../jquery_ajax/ajax_registClassByParent.php',
+            url: '../../api/registClassByParent.php',
             type: 'POST',
             data: {
                 MaLop: maLop,
@@ -804,7 +804,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     function dangki() {
         $.ajax({
-            url: '../../jquery_ajax/ajax_registClass.php',
+            url: '../../api/registClass.php',
             type: 'POST',
             data: {
                 MaLop: maLop,

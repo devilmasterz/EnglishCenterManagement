@@ -2,7 +2,7 @@ $(document).ready(function () {
   
     $('#province').on('change', function () {
         var province_id = $(this).val(); 
-        $.post('../jquery_ajax/ajax_get_listClass.php',{idSelect:province_id},function(idSelect){
+        $.post('../api/get_listClass.php',{idSelect:province_id},function(idSelect){
             $('.class-container').html(idSelect);
        })
 
@@ -12,7 +12,7 @@ $(document).ready(function () {
         province_id: province_id
       };
 
-      $.post('../jquery_ajax/ajax_get_searchClass.php',{data:data},function(response){
+      $.post('../api/get_searchClass.php',{data:data},function(response){
         $('.class-container').html(response);
    })
 
@@ -27,7 +27,7 @@ $(document).ready(function () {
             key: txt,
             province_id: province_id
           };
-        $.post('../jquery_ajax/ajax_get_searchClass.php',{data:data},function(response){
+        $.post('../api/get_searchClass.php',{data:data},function(response){
              $('.class-container').html(response);
         })
     })

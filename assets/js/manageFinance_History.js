@@ -172,7 +172,7 @@ btnFilter.addEventListener('click', function (event) {
 function showTableFinance(text, collumSort, order) {
 
     $.ajax({
-        url: '../jquery_ajax/ajax_showTableHistory.php',
+        url: '../api/showTableHistory.php',
         type: 'POST',
         data: {
             key: text,

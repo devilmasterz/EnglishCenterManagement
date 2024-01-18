@@ -19,7 +19,7 @@ function numberWithCommas(x) {
 function showTableTeacher(text, page, collumSort ,order) {
 
     $.ajax({
-        url: '../jquery_ajax/ajax_showTableTeacher.php',
+        url: '../api/showTableTeacher.php',
         type: 'POST',
         data: {
             key: text,
@@ -363,7 +363,7 @@ submit_update.addEventListener('click', function (event) {
 
    $.ajax({
         type: 'POST',
-        url: '../jquery_ajax/ajax_updateInforTeacher.php',
+        url: '../api/updateInforTeacher.php',
         data: {
             id: id,
             name: teacher_name,
@@ -549,7 +549,7 @@ submit_add.addEventListener('click', function (event) {
         return;
 
     $.ajax({
-        url: '../jquery_ajax/ajax_addTeacher.php',
+        url: '../api/addTeacher.php',
         type: 'POST',
         data: {
             name: teacher_name,
@@ -596,7 +596,7 @@ submit_add.addEventListener('click', function (event) {
 // Khi nhan nut Xoa
 function deleteTeacher() {
     $.ajax({
-        url: '../jquery_ajax/ajax_deleteTeacher.php',
+        url: '../api/deleteTeacher.php',
         type: 'POST',
         data: {
             id: teacher_select.MaGV,
@@ -650,7 +650,7 @@ document.getElementById('delete-cancle').addEventListener('click', () => {
 document.getElementById('delete').addEventListener('click', function (event) {
 
     $.ajax({
-        url: '../jquery_ajax/ajax_checkAccTeacher.php',
+        url: '../api/checkAccTeacher.php',
         type: 'POST',
         data: {
             id: teacher_select.MaGV,
@@ -765,7 +765,7 @@ document.getElementById('change').addEventListener('click', function (event) {
 
 
     $.ajax({
-        url: '../jquery_ajax/ajax_changeAccTeacher.php',
+        url: '../api/changeAccTeacher.php',
         type: 'POST',
         data: {
             id: teacher_select.MaGV,

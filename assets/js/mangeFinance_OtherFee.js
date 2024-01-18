@@ -202,7 +202,7 @@ document.getElementById("month-year").addEventListener('change',function(){
 function showTableFinance(text, page, collumSort, order, date) {
 
     $.ajax({
-        url: '../jquery_ajax/ajax_showTableOtherFee.php',
+        url: '../api/showTableOtherFee.php',
         type: 'POST',
         data: {
             key: text,
@@ -444,7 +444,7 @@ document.getElementById('sumit-bill-add').addEventListener('click', function (ev
 
 
     $.ajax({
-        url: '../jquery_ajax/ajax_addOtherFee.php',
+        url: '../api/addOtherFee.php',
         type: 'POST',
         data: {
             name: name_bill,
@@ -591,7 +591,7 @@ document.getElementById('update-tt').addEventListener('click', function (event) 
     event.preventDefault();
 
     $.ajax({
-        url: '../jquery_ajax/ajax_updateStatusOF.php',
+        url: '../api/updateStatusOF.php',
         type: 'POST',
         data: {
             id: hoaDon_select.MaHD,
@@ -798,7 +798,7 @@ document.getElementById('update-bill-edit').addEventListener('click', function (
         return;
 
     $.ajax({
-        url: '../jquery_ajax/ajax_updateOtherFee.php',
+        url: '../api/updateOtherFee.php',
         type: 'POST',
         data: {
             id: hoaDon_select.MaHD,
@@ -885,7 +885,7 @@ document.getElementById('delete-bill').addEventListener('click', function (event
     }
 
     $.ajax({
-        url: '../jquery_ajax/ajax_deleteOtherFee.php',
+        url: '../api/deleteOtherFee.php',
         type: 'POST',
         data: {
             mahd: hoaDon_select.MaHD,
@@ -920,7 +920,7 @@ document.getElementById('delete-bill-2').addEventListener('click', function (eve
 
     event.preventDefault();
     $.ajax({
-        url: '../jquery_ajax/ajax_deleteOtherFee.php',
+        url: '../api/deleteOtherFee.php',
         type: 'POST',
         data: {
             mahd: hoaDon_select.MaHD,

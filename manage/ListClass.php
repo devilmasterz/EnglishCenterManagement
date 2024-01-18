@@ -231,7 +231,7 @@ $listClassJson = json_encode($arr);
 			province_id: province_id
 		};
 
-		$.post('../jquery_ajax/ajax_get_searchClass.php', {
+		$.post('../api/get_searchClass.php', {
 			data: data
 		}, function(response) {
 			document.querySelector('.class-container').innerHTML = response;
@@ -275,9 +275,13 @@ $listClassJson = json_encode($arr);
 		var container = document.getElementById("addSchedules");
 		var card = document.createElement("div");
 		card.className = "card";
-		card.style.width = "323px";
+		card.style.width = "100%";
+		card.style.display ="flex";
+		card.style.flexDirection = "row";
+		card.style.border = "unset";
+		card.style.marginTop = "5px";
 		card.innerHTML = `
-  		<select style='' name="schedules${counter}" id="schedules${counter}">
+  		<select style='width: 70%; margin-right:5px' name="schedules${counter}" id="schedules${counter}">
           <option value="">Thời gian</option>
           <?php foreach ($result as $results) : ?>
             <?php $counter = 1 ?>
@@ -538,7 +542,7 @@ $listClassJson = json_encode($arr);
 
 
 		$.ajax({
-			url: '../jquery_ajax/ajax_addClass.php',
+			url: '../api/addClass.php',
 			type: 'POST',
 			data: {
 				 compressedData: compressedData,

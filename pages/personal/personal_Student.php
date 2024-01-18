@@ -63,7 +63,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </div>
                 <form action="" method="POST" id='form-update'>
                     <div class=" personal-inner-item">
-                        <div class="personal-inner-key">Mã giáo viên :</div>
+                        <div class="personal-inner-key">Mã học sinh :</div>
                         <div id="id" class="personal-inner-value personal-inner-value-info">Long</div>
                     </div>
                     <div id="id-inp" class="personal-inner-edit-range personal-inner-edit-range-info"></div>
@@ -334,7 +334,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         $.ajax({
             type: 'POST',
-            url: '../../jquery_ajax/ajax_updateInfor.php',
+            url: '../../api/updateInfor.php',
             data: {
                 id: detailStudent[0].MaHS,
                 name: name,
@@ -390,7 +390,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         $.ajax({
             type: 'POST',
-            url: '../../jquery_ajax/ajax_updatePass.php',
+            url: '../../api/updatePass.php',
             data: {
                 id: detailStudent[0].MaHS,
                 username: accountStudent[0].UserName,
